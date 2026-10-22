@@ -15,7 +15,9 @@
 | 배포 | Vercel | - | `CLAUDE.md` |
 
 - **버전은 `npm install` 뒤 `package.json`·`package-lock.json`에 고정되며, 그 값이 기준이다.** 위 표는 조회 시점 값이므로 설치 후 이 표를 다시 맞춘다.
-- **새로 들이는 라이브러리:** 위 표의 것이 전부다(과제에 로그인·DB가 필수). 그 밖의 라이브러리(차트, UI 키트, 날짜 도구 등)는 넣기 전에 사용자에게 묻는다.
+- **뼈대 단계에서 실제로 설치된 값(`package.json`, 2026-10-22):** next ^16.4.2 · react ^19.3.1 · @supabase/supabase-js ^2.118.0 · @supabase/ssr ^0.12.7 · typescript ^7.0.2 · tailwindcss ^4.3.3 · @tailwindcss/postcss ^4.3.3 · vitest ^5.0.5 · 타입 패키지(@types/node ^26.6.5, @types/react·react-dom ^19.3.0). Playwright(1.64.1)는 화면 시험을 만들 때 설치한다.
+
+**새로 들이는 라이브러리:** 위 표의 것이 전부다(과제에 로그인·DB가 필수). 그 밖의 라이브러리(차트, UI 키트, 날짜 도구 등)는 넣기 전에 사용자에게 묻는다.
 - 새 DB 프로젝트(Supabase)와 Vercel 연결은 외부 서비스라 **만들기 전에 사용자에게 묻는다**(spec Q-05).
 
 ## 2. 구조와 파일
@@ -32,10 +34,13 @@
 | `src/infrastructure/kev/fetchKev.ts` | 새로 | KEV JSON 가져오기·변환·저장·실패 기록 | R-05, R-06 |
 | `src/infrastructure/kev/testData.ts` | 새로 | 시험 모드용 가짜 KEV | R-21 |
 | `src/app/(auth)/login`, `signup` | 새로 | AU-01-P, AU-02-P | R-01 |
-| `src/app/(member)/…` | 새로 | DB-01-P, RK-*, AS-*, RQ-* 화면 | R-03~17 |
-| `src/app/admin/…` | 새로 | AD-01~06-P (서버에서 역할 확인) | R-02, R-19~21, R-24 |
+| `src/app/(app)/…` | 새로(뼈대 완료) | 담당자 화면 DB-01-P, RK-*, AS-*, RQ-*와 `admin/` 아래 AD-01~06-P. 공통 메뉴 틀은 `(app)/layout.tsx` | R-03~17, R-19~21, R-24 |
+| `src/app/(auth)/…` | 새로(뼈대 완료) | 로그인·가입 화면(아직 연결 전) | R-01 |
+| `src/components/*` | 새로(뼈대 완료) | 메뉴 틀, 상태 칩, 받은 시각 표시줄, 위험 표 | R-06, R-09 |
+| `src/application/demoRisks.ts` | 새로(뼈대 완료) | DB 없이 가상 자산 × 시험용 KEV로 위험 목록 계산 | R-21 |
+| `src/infrastructure/seed/*` | 새로(뼈대 완료) | 가상 자산 40개, 시험용 KEV 12개 | R-21, R-22 |
+| 관리자 역할 확인 | 새로 | 서버에서 역할을 확인하는 지점(`(app)/admin/layout.tsx` 또는 Next.js 16의 접근 제어 방식 — **공식 문서 확인 후 확정**) | R-02 |
 | `src/app/api/kev/refresh/route.ts` | 새로 | 자동·수동 갱신 진입점(서버 전용, 비밀은 환경변수) | R-05 |
-| `src/middleware.ts` | 새로 | 로그인·역할 확인 | R-01, R-02 |
 | `supabase/migrations/0001_init.sql` | 새로 | 표 10개·색인·RLS ([erd](docs/db/erd.md) 2·3절) | R-01~22 |
 | `supabase/seed.sql` | 새로 | 가상 자산 약 40개·가상 사용자·시험용 KEV | R-22 |
 | `tests/unit/*`, `tests/e2e/*` | 새로 | 함수 시험(Vitest), 화면 시험(Playwright) | 전체 |

@@ -1,0 +1,110 @@
+@import "tailwindcss";
+
+/* 디자인 토큰: docs/design.md 2~3절. 색은 여기 한곳에서만 정한다. */
+:root {
+  --bg: #ffffff;
+  --surface: #f8fafc;
+  --border: #e2e8f0;
+  --text: #111827;
+  --muted: #475569;
+  --accent: #2563eb;
+  --accent-text: #ffffff;
+  --danger: #b91c1c;
+  --warn: #b45309;
+  --ok: #15803d;
+  --radius: 8px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --border: #334155;
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --accent: #60a5fa;
+    --accent-text: #0f172a;
+    --danger: #f87171;
+    --warn: #fbbf24;
+    --ok: #4ade80;
+  }
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  font-size: 16px;
+  word-break: keep-all;
+}
+
+.shell { display: flex; min-height: 100vh; }
+.sidebar {
+  width: 220px; padding: 24px 16px; background: var(--surface);
+  border-right: 1px solid var(--border); flex-shrink: 0;
+}
+.sidebar a, .tabbar a {
+  display: block; min-height: 40px; padding: 10px 12px; border-radius: var(--radius);
+  color: var(--text); text-decoration: none;
+}
+.sidebar a:hover, .tabbar a:hover { background: var(--border); }
+.nav-title { margin: 16px 12px 8px; font-size: 12px; color: var(--muted); }
+.content { flex: 1; min-width: 0; padding: 24px 16px; max-width: 1100px; }
+.tabbar { display: none; }
+
+.page-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 16px; }
+.page-head h1 { font-size: 24px; font-weight: 700; }
+.screen-id { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.lead { color: var(--muted); margin-bottom: 16px; }
+
+.status-bar {
+  display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; min-height: 40px;
+  padding: 8px 12px; margin-bottom: 16px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius); font-size: 14px;
+}
+
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; min-width: 72px; justify-content: center;
+  padding: 2px 8px; border: 1px solid var(--border); border-radius: 4px; font-size: 12px;
+}
+.chip::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+.chip.ok::before { background: var(--ok); }
+.chip.warn::before { background: var(--warn); }
+.chip.danger::before { background: var(--danger); }
+.chip.info::before { background: var(--accent); }
+
+.table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { height: 44px; padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+th { background: var(--surface); font-weight: 600; white-space: nowrap; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+tr:last-child td { border-bottom: none; }
+.empty { text-align: center; color: var(--muted); }
+
+.card {
+  padding: 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg);
+}
+.card + .card { margin-top: 16px; }
+.field { display: grid; gap: 4px; margin-bottom: 16px; }
+.field input, .field select {
+  height: 40px; padding: 0 12px; border: 1px solid var(--border); border-radius: var(--radius);
+  background: var(--bg); color: var(--text);
+}
+.btn {
+  min-height: 40px; padding: 0 16px; border-radius: var(--radius); border: 1px solid var(--border);
+  background: var(--bg); color: var(--text); cursor: pointer;
+}
+.btn.primary { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.notice { padding: 12px; border-radius: var(--radius); background: var(--surface); color: var(--muted); font-size: 14px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+@media (max-width: 767px) {
+  .sidebar { display: none; }
+  .content { padding-bottom: 88px; }
+  .tabbar {
+    display: flex; position: fixed; inset: auto 0 0 0; background: var(--surface);
+    border-top: 1px solid var(--border);
+  }
+  .tabbar a { flex: 1; text-align: center; padding: 14px 4px; font-size: 13px; }
+}

@@ -18,3 +18,7 @@ dist/
 Thumbs.db
 .claude/
 scratch/
+
+# 자동 생성
+*.tsbuildinfo
+next-env.d.ts

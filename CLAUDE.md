@@ -18,7 +18,9 @@
 Next.js · Supabase(로그인·DB·RLS) · Vercel — 버전은 `plan.md`에서 확정
 
 ## 명령
-- 시험·실행·빌드: 확인 필요 (`plan.md`가 만들어질 때 채운다)
+- 시험: `npm test` (Vitest, 규칙 26건) · 타입 점검: `npm run typecheck`
+- 실행: `npm run dev` (http://localhost:3000) · 빌드: `npm run build` · 크기 점검: `python ~/.claude/skills/code-rules/check_size.py .`
+- 환경변수: `.env.example`에 이름만 있다. 값은 `.env.local`에만 넣는다.
 
 ## 코드 규칙 예외
 - 없음 (전역 300/500줄, 30/40줄 그대로)
