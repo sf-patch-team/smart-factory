@@ -1,0 +1,20 @@
+# 비밀 (절대 올리지 않는다)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# 의존성·빌드
+node_modules/
+.next/
+out/
+dist/
+.vercel/
+
+# 임시·개인
+*.log
+.DS_Store
+Thumbs.db
+.claude/
+scratch/
