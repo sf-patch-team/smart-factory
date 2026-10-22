@@ -18,6 +18,9 @@ export type Asset = {
   product: string;
   version: string;
   category: Category;
+  assetType: string; // 예: HMI PC, PLC, 산업용 스위치, 방화벽
+  zone: string; // 구역 (예: 조립동)
+  line: string; // 라인 (예: 조립 라인 1)
   criticality: Criticality;
   affectedEquipment: string;
   patchConstraints: string[];

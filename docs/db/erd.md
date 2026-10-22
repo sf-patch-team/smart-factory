@@ -37,6 +37,8 @@ erDiagram
 | name | text | 자산 이름 |
 | vendor / product / version | text | KEV 매칭에 쓰는 벤더·제품, 버전은 참고용 |
 | category | text | `OT` / `IT` |
+| asset_type | text | 자산 종류(PLC, HMI PC, 산업용 스위치, 방화벽 등) |
+| zone / line | text | 구역(조립동 등) / 라인(조립 라인 1 등) |
 | criticality | text | `high` / `mid` / `low` (중요도) |
 | affected_equipment | text | 영향 설비(라인·설비 이름) |
 | patch_constraints | text[] | `vendor_approval` / `no_downtime` / `maintenance_window` |
@@ -170,4 +172,4 @@ submitted/approved/in_progress → on_hold(사유·재검토일 필수) → appr
 | AD-06-P(Could) | request_status_history |
 
 ## 7. 시드 데이터 (FR-21)
-가상 자산 약 40개(IT·네트워크 중심 + 설비 연결 장비), 가상 사용자(담당자 3명·관리자 1명), 일부는 KEV와 맞고 일부는 맞지 않게 구성. 시험 모드용 KEV 샘플 `is_test=true`. 실제 회사·개인 정보 없음.
+가상 자산 115개(구역 9 · 라인별: 프레스·조립·도장·포장·물류·검사·수전·제어실·데이터센터·경계망, OT 91 · IT 24), 가상 사용자(담당자 3명·관리자 1명), 일부는 KEV와 맞고 일부는 맞지 않게 구성. 시험 모드용 KEV 샘플 `is_test=true`. 실제 회사·개인 정보 없음.

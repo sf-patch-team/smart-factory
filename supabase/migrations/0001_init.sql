@@ -1,5 +1,5 @@
--- smart-factory 초기 표 (docs/db/erd.md 2~5절). 아직 어떤 DB에도 적용하지 않았다.
--- 적용 전에 사용자 승인이 필요하다(plan.md 5절 "먼저 물어본다").
+-- smart-factory 초기 표 (docs/db/erd.md 2~5절).
+-- 2026-10-22 사용자가 본인 Supabase 계정 사용을 승인해 새 프로젝트 smart-factory에 적용한다.
 
 create table profiles (
   id uuid primary key references auth.users (id) on delete cascade,
@@ -34,6 +34,9 @@ create table assets (
   product text not null,
   version text not null default '',
   category text not null check (category in ('OT', 'IT')),
+  asset_type text not null default '',
+  zone text not null default '',
+  line text not null default '',
   criticality text not null check (criticality in ('high', 'mid', 'low')),
   affected_equipment text not null default '',
   patch_constraints text[] not null default '{}',
@@ -185,3 +188,8 @@ create policy history_read on request_status_history for select using (
 );
 
 create policy audit_admin_read on audit_log for select using (is_admin());
+
+-- 보안 함수는 API로 직접 부르지 못하게 한다(로그인하지 않은 사용자 포함).
+revoke execute on function is_admin() from public, anon;
+grant execute on function is_admin() to authenticated;
+revoke execute on function handle_new_user() from public, anon, authenticated;
