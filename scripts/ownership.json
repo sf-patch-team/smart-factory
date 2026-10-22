@@ -75,7 +75,6 @@
     "src/domain/types.ts"
   ],
   "anyone": [
-    "docs/설계/",
     "docs/IA.md",
     "docs/UJ.md",
     "docs/PRD.md",
