@@ -1,0 +1,277 @@
+{
+  "source": "BPI Challenge 2014 (Rabobank Group ICT), B.F. van Dongen. 집계 통계만 포함",
+  "changes": {
+    "changes": 30275,
+    "distinct_ci": 10193,
+    "changes_per_ci": {
+      "p10": 1,
+      "p25": 1,
+      "p50": 1,
+      "p75": 2,
+      "p90": 5,
+      "p99": 27,
+      "mean": 2.97,
+      "max": 747,
+      "n": 10193
+    },
+    "risk_assessment": {
+      "Minor Change": 0.9396,
+      "Business Change": 0.0567,
+      "Major Business Change": 0.0037
+    },
+    "emergency": {
+      "N": 0.997,
+      "Y": 0.003
+    },
+    "cab_needed": {
+      "N": 0.934,
+      "Y": 0.066
+    },
+    "change_type_top": {
+      "Standard Change Type 81": 0.0532,
+      "Release Type 09": 0.0514,
+      "Standard Activity Type 09": 0.0507,
+      "Standard Change Type 91": 0.0421,
+      "Standard Change Type 06": 0.0361,
+      "Standard Change Type 103": 0.0339,
+      "Standard Activity Type 10": 0.0325,
+      "Standard Change Type 138": 0.0283
+    },
+    "ci_type": {
+      "computer": 0.3501,
+      "application": 0.1966,
+      "networkcomponents": 0.1706,
+      "database": 0.089,
+      "software": 0.0536,
+      "subapplication": 0.0414,
+      "applicationcomponent": 0.0405,
+      "storage": 0.0239,
+      "hardware": 0.0231,
+      "no type": 0.0056,
+      "Phone": 0.0049,
+      "officeelectronics": 0.0006,
+      "displaydevice": 0.0001
+    },
+    "share_with_scheduled_downtime": 0.0246,
+    "scheduled_downtime_minutes": {
+      "p10": 20.0,
+      "p25": 120.0,
+      "p50": 240.0,
+      "p75": 420.0,
+      "p90": 570.0,
+      "p99": 16140.0,
+      "mean": 2101.09,
+      "max": 585908.0,
+      "n": 744
+    },
+    "actual_duration_minutes": {
+      "p10": 0.0,
+      "p25": 0.0,
+      "p50": 30.0,
+      "p75": 300.0,
+      "p90": 3321.0,
+      "p99": 45646.0,
+      "mean": 2771.65,
+      "max": 530897.0,
+      "n": 27013
+    },
+    "start_delay_days_vs_plan": {
+      "p10": -0.01,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 0.29,
+      "p90": 3.81,
+      "p99": 44.2,
+      "mean": 2.04,
+      "max": 2557.07,
+      "n": 27017
+    },
+    "share_with_related_incident": {
+      "없음": 0.9357,
+      "있음": 0.0643
+    },
+    "related_incident_share_by_risk": {
+      "Minor Change": {
+        "changes": 28445,
+        "share_with_incident": 0.053
+      },
+      "Business Change": {
+        "changes": 1717,
+        "share_with_incident": 0.2487
+      },
+      "Major Business Change": {
+        "changes": 113,
+        "share_with_incident": 0.115
+      }
+    }
+  },
+  "incidents": {
+    "incidents": 46809,
+    "distinct_ci": 3020,
+    "period_days": 785,
+    "mean_incidents_per_ci_by_type": {
+      "subapplication": 78.61,
+      "application": 64.26,
+      "computer": 1.81,
+      "no type": 5.55,
+      "displaydevice": 11.16,
+      "software": 7.4,
+      "storage": 8.08,
+      "database": 21.4,
+      "hardware": 7.62,
+      "officeelectronics": 3.04,
+      "networkcomponents": 1.06,
+      "applicationcomponent": 1.67,
+      "Phone": 1.0,
+      "(없음)": 203.0
+    },
+    "impact": {
+      "4": 0.4824,
+      "5": 0.3576,
+      "3": 0.1408,
+      "2": 0.0148,
+      "(없음)": 0.0043,
+      "1": 0.0001
+    },
+    "urgency": {
+      "4": 0.4826,
+      "5": 0.3585,
+      "3": 0.1396,
+      "2": 0.0149,
+      "(없음)": 0.0043,
+      "1": 0.0001,
+      "5 - Very Low": 0.0
+    },
+    "priority": {
+      "4": 0.4853,
+      "5": 0.3522,
+      "3": 0.1432,
+      "2": 0.0149,
+      "(없음)": 0.0043,
+      "1": 0.0001
+    },
+    "ci_type": {
+      "application": 0.7029,
+      "subapplication": 0.1663,
+      "computer": 0.0778,
+      "storage": 0.015,
+      "hardware": 0.0094,
+      "software": 0.0071,
+      "database": 0.0046,
+      "displaydevice": 0.0045,
+      "(없음)": 0.0043,
+      "officeelectronics": 0.0032,
+      "no type": 0.0024,
+      "networkcomponents": 0.0023,
+      "applicationcomponent": 0.0001,
+      "Phone": 0.0
+    },
+    "ci_subtype_top": {
+      "Server Based Application": 0.4019,
+      "Web Based Application": 0.3271,
+      "Desktop Application": 0.0828,
+      "Laptop": 0.041,
+      "SAP": 0.0256,
+      "Banking Device": 0.0196,
+      "Citrix": 0.0164,
+      "SAN": 0.0117,
+      "Client Based Application": 0.0105,
+      "Desktop": 0.009,
+      "DataCenterEquipment": 0.0059,
+      "System Software": 0.0058
+    },
+    "status": {
+      "Closed": 0.9955,
+      "(없음)": 0.0043,
+      "Work in progress": 0.0002
+    },
+    "closure_code_top": {
+      "Other": 0.3519,
+      "Software": 0.2783,
+      "User error": 0.0759,
+      "No error - works as designed": 0.0754,
+      "Hardware": 0.0641,
+      "Data": 0.0472,
+      "Unknown": 0.034,
+      "Operator error": 0.0329
+    },
+    "incidents_per_ci": {
+      "p10": 1,
+      "p25": 1,
+      "p50": 1,
+      "p75": 2,
+      "p90": 9,
+      "p99": 330,
+      "mean": 15.5,
+      "max": 3050,
+      "n": 3020
+    },
+    "handle_time_hours": {
+      "p10": 0.23,
+      "p25": 0.89,
+      "p50": 3.92,
+      "p75": 16.54,
+      "p90": 48.35,
+      "p99": 395.46,
+      "mean": 25.69,
+      "max": 4843.12,
+      "n": 46605
+    },
+    "reassignments": {
+      "p10": 0.0,
+      "p25": 0.0,
+      "p50": 0.0,
+      "p75": 2.0,
+      "p90": 3.0,
+      "p99": 10.0,
+      "mean": 1.13,
+      "max": 46.0,
+      "n": 46605
+    },
+    "open_to_resolved_days": {
+      "p10": 0.02,
+      "p25": 0.05,
+      "p50": 0.78,
+      "p75": 3.99,
+      "p90": 10.98,
+      "p99": 77.0,
+      "mean": 5.19,
+      "max": 655.11,
+      "n": 44826
+    }
+  },
+  "interactions": {
+    "interactions": 147004,
+    "first_call_resolution": {
+      "Y": 0.6394,
+      "N": 0.3606
+    },
+    "ci_type": {
+      "application": 0.6767,
+      "subapplication": 0.1411,
+      "storage": 0.0805,
+      "computer": 0.0572,
+      "software": 0.0135,
+      "displaydevice": 0.0113,
+      "hardware": 0.0067,
+      "no type": 0.0053,
+      "officeelectronics": 0.0045,
+      "database": 0.0023,
+      "networkcomponents": 0.0008,
+      "#N/B": 0.0001,
+      "applicationcomponent": 0.0,
+      "Phone": 0.0
+    },
+    "handle_time_secs": {
+      "p10": 87.0,
+      "p25": 176.0,
+      "p50": 324.0,
+      "p75": 562.0,
+      "p90": 904.0,
+      "p99": 2063.0,
+      "mean": 444.67,
+      "max": 22530.0,
+      "n": 147004
+    }
+  }
+}

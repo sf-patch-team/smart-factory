@@ -1,0 +1,56 @@
+{
+  "source": "BPI Challenge 2013 incidents (Volvo IT), 비공식 재배포본 기준. 집계 통계만 포함",
+  "cases": 7554,
+  "impact_first_event": {
+    "Medium": 0.5355,
+    "Low": 0.4296,
+    "High": 0.0346,
+    "Major": 0.0004
+  },
+  "steps": {
+    "Accepted": 0.6122,
+    "Completed": 0.2116,
+    "Queued": 0.1762,
+    "Unmatched": 0.0001
+  },
+  "top_transitions": {
+    "Accepted → Accepted": 0.3885,
+    "Queued → Accepted": 0.185,
+    "Accepted → Queued": 0.1638,
+    "Accepted → Completed": 0.1394,
+    "Completed → Completed": 0.099,
+    "Queued → Queued": 0.0134,
+    "Completed → Accepted": 0.008,
+    "Completed → Queued": 0.0019
+  },
+  "events_per_case": {
+    "p10": 3,
+    "p25": 4,
+    "p50": 6,
+    "p75": 11,
+    "p90": 17,
+    "p99": 39,
+    "n": 7554,
+    "max": 123
+  },
+  "groups_per_case": {
+    "p10": 1,
+    "p25": 1,
+    "p50": 2,
+    "p75": 2,
+    "p90": 3,
+    "p99": 5,
+    "n": 7554,
+    "max": 12
+  },
+  "case_duration_days": {
+    "p10": 0.0,
+    "p25": 0.28,
+    "p50": 7.55,
+    "p75": 12.41,
+    "p90": 22.56,
+    "p99": 116.72,
+    "n": 7554,
+    "max": 771.35
+  }
+}

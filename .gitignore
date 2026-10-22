@@ -22,3 +22,10 @@ scratch/
 # 자동 생성
 *.tsbuildinfo
 next-env.d.ts
+
+# 원본 데이터(저장소에 올리지 않는다, 통계 JSON만 올린다)
+*.xes
+*.xes.gz
+BPI-*/
+BPI-*.zip
+Detail *.csv
