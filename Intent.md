@@ -41,7 +41,11 @@
 | 인터뷰 | `docs/01-momtest-인터뷰.md` | H1~H8 |
 | ADR | 0001 매칭 사람 확인 · 0002 호환성 체크리스트 · 0003 KEV 기준 | 결정 |
 | 용어 | `GLOSSARY.md` | 용어 통일 |
-| IA·UJ·PRD·ERD·spec·plan | (작성 예정) | |
+| IA | `docs/IA.md` 화면 ID(AU·DB·RK·AS·RQ·AD) | 화면 22개 |
+| UJ | `docs/UJ.md` CUJ-1~5, Ex-01~10 | 흐름·오류 |
+| PRD | `docs/PRD.md` FR-01~24 | 요구사항 |
+| ERD | `docs/db/erd.md` 표 10개 | DB |
+| spec · plan | `spec.md` R-01~24·S-01~16 · `plan.md` 단계 0~9 | 초안, 승인 대기 |
 
 ### 결과 (개발 후 채움)
 - **구현:** · **설계와 달라진 점:** · **남은 일:**
