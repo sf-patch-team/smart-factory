@@ -1,3 +1,4 @@
+import type { AssetEvent } from "@/domain/history";
 import type { ScoreBreakdown } from "@/domain/scoring";
 import type { Asset, KevEntry, MatchStatus, RequestStatus, Role } from "@/domain/types";
 
@@ -86,4 +87,9 @@ export interface RequestRepository {
   listForOwner(ownerId: string): Promise<PatchRequestView[]>;
   listAll(status?: RequestStatus): Promise<PatchRequestView[]>;
   history(requestId: string): Promise<StatusHistoryRow[]>;
+}
+
+// [C 구현, Could] 자산 과거 이력(R-26). DB 표 승인 전에는 seed/assetHistory.ts로 대신한다.
+export interface AssetEventRepository {
+  listForAsset(assetId: string): Promise<AssetEvent[]>;
 }

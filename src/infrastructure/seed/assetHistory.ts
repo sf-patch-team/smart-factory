@@ -1,3 +1,4 @@
+import type { AssetEvent, ChangeEvent, ChangeRisk, EventImpact, IncidentEvent } from "@/domain/history";
 import type { Asset } from "@/domain/types";
 import stats2013 from "./data/bpi2013-stats.json";
 import stats2014 from "./data/bpi2014-stats.json";
@@ -5,32 +6,7 @@ import stats2014 from "./data/bpi2014-stats.json";
 // 가상 과거 이력(장애·변경). BPI 2013·2014의 **집계 통계**(분포)로 만든 새 데이터이며,
 // 원본 행·이름·번호는 쓰지 않는다. 출처와 가정은 docs/data-sources.md.
 
-export type EventImpact = "high" | "medium" | "low";
-export type ChangeRisk = "minor" | "business" | "major";
-
-export type IncidentEvent = {
-  kind: "incident";
-  assetId: string;
-  openedAt: string; // YYYY-MM-DD
-  resolvedAfterDays: number;
-  handleHours: number;
-  reassignments: number;
-  impact: EventImpact;
-};
-
-export type ChangeEvent = {
-  kind: "change";
-  assetId: string;
-  startedAt: string;
-  risk: ChangeRisk;
-  emergency: boolean;
-  cabNeeded: boolean;
-  plannedDowntimeMinutes: number; // 0이면 계획된 중단 없음
-  actualDurationMinutes: number;
-  hadRelatedIncident: boolean; // 연결된 장애가 있었다는 뜻이며 원인이라는 뜻은 아니다
-};
-
-export type AssetEvent = IncidentEvent | ChangeEvent;
+export type { AssetEvent, ChangeEvent, ChangeRisk, EventImpact, IncidentEvent } from "@/domain/history";
 export type AssetClass = "computer" | "network" | "application" | "device";
 
 type Quantiles = Record<string, number>;
