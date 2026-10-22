@@ -22,7 +22,6 @@
       "scripts/check-ownership.mjs",
       "tests/unit/a/",
       "docs/설계/a-",
-      "docs/작업로그/",
       "Intent.md",
       "README.md",
       "CLAUDE.md",
@@ -76,7 +75,22 @@
     "src/domain/types.ts"
   ],
   "anyone": [
-    "docs/작업로그/",
-    "docs/설계/"
-  ]
+    "docs/설계/",
+    "docs/IA.md",
+    "docs/UJ.md",
+    "docs/PRD.md",
+    "docs/00-",
+    "docs/01-",
+    "docs/adr/",
+    "docs/db/",
+    "docs/design.md",
+    "docs/팀-작업계획.md",
+    "docs/작업구조-분담.md",
+    "docs/노션-현황-정리.md",
+    "spec.md",
+    "plan.md",
+    "GLOSSARY.md",
+    "docs/작업로그/"
+  ],
+  "_문서": "기획 문서는 번호(R·FR·S)의 담당자가 자기 줄만 고친다(분담표 기준). 작업 로그는 사람별 파일이라 이름 끝의 -a/-b/-c가 내 것인지로 검사한다."
 }

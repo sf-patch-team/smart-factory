@@ -20,8 +20,19 @@ const ownerOf = (file) => Object.keys(config.owners).find((name) => startsWithAn
 
 const foreign = [];
 const shared = [];
+// 작업 로그는 사람별 파일(<날짜>-a.md)이다. 공통 로그(<날짜>.md)는 A만 고친다.
+function logOwner(file) {
+  const match = file.match(/^docs\/작업로그\/\d{4}-\d{2}-\d{2}(?:-([abc]))?\.md$/);
+  return match ? (match[1] ?? "a") : null;
+}
+
 for (const file of changed) {
-  if (startsWithAny(file, config.anyone) && !file.startsWith("docs/작업로그/") ) continue;
+  const logger = logOwner(file);
+  if (logger) {
+    if (logger !== role) foreign.push(`${file}  (소유: ${logger.toUpperCase()})`);
+    continue;
+  }
+  if (startsWithAny(file, config.anyone)) continue;
   if (startsWithAny(file, config.shared)) { shared.push(file); continue; }
   const owner = ownerOf(file);
   if (owner && owner !== role) foreign.push(`${file}  (소유: ${owner.toUpperCase()})`);
