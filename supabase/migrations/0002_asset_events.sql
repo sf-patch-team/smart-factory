@@ -1,5 +1,5 @@
 -- 자산 과거 이력(장애·변경) 표. R-26(Could), spec Q-08.
--- 준비만 했고 아직 어떤 DB에도 적용하지 않았다. 적용 전에 사용자 승인이 필요하다.
+-- 2026-10-22 사용자 승인 후 Supabase 프로젝트 smart-factory에 적용했다.
 -- 데이터는 BPI 2013·2014 통계로 만든 가상 이력이다(docs/data-sources.md). 쓰기는 서버(서비스 키)만 한다.
 
 create table asset_events (

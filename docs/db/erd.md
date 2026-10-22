@@ -174,7 +174,7 @@ submitted/approved/in_progress → on_hold(사유·재검토일 필수) → appr
 ## 7. 시드 데이터 (FR-21)
 가상 자산 115개(구역 9 · 라인별: 프레스·조립·도장·포장·물류·검사·수전·제어실·데이터센터·경계망, OT 91 · IT 24), 가상 사용자(담당자 3명·관리자 1명), 일부는 KEV와 맞고 일부는 맞지 않게 구성. 시험 모드용 KEV 샘플 `is_test=true`. 실제 회사·개인 정보 없음.
 
-## 8. 제안: asset_events (자산 과거 이력) — FR-26(Could), 승인 대기
+## 8. asset_events (자산 과거 이력) — FR-26(Could), 적용 완료
 | 열 | 형식 | 설명 |
 |---|---|---|
 | id | bigint PK | |
@@ -184,6 +184,6 @@ submitted/approved/in_progress → on_hold(사유·재검토일 필수) → appr
 | impact / resolved_after_days / handle_hours / reassignments | | 장애 항목 |
 | risk / emergency / cab_needed / planned_downtime_minutes / actual_duration_minutes / had_related_incident | | 변경 항목(`had_related_incident`는 원인이 아니라 연결 여부) |
 | is_synthetic | boolean | 항상 true(BPI 통계로 만든 가상 이력) |
-- 마이그레이션 `supabase/migrations/0002_asset_events.sql`을 **준비만 했고 적용하지 않았다**(사용자 승인 필요).
+- 마이그레이션 `supabase/migrations/0002_asset_events.sql`을 2026-10-22 사용자 승인 후 **적용했다**(데이터는 아직 0행).
 - 읽기: 담당자는 자기 자산, 관리자는 전체. 쓰기: 서버(서비스 키)만.
 - 승인 전에는 `src/infrastructure/seed/assetHistory.ts`가 같은 형식을 코드로 만들어 준다.
