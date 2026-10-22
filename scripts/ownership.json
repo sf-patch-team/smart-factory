@@ -1,0 +1,82 @@
+{
+  "_설명": "경로 앞부분이 일치하면 그 사람의 영역이다. 누구나 가져다 쓰는(import) 것은 자유지만 고치는 것은 소유자만 한다. shared는 제공자와 사용자 둘 다 리뷰한다.",
+  "owners": {
+    "a": [
+      "src/app/(auth)/",
+      "src/app/(app)/admin/",
+      "src/app/(app)/layout.tsx",
+      "src/app/layout.tsx",
+      "src/app/globals.css",
+      "src/components/common/",
+      "src/components/AppShell.tsx",
+      "src/components/DataStatusBar.tsx",
+      "src/components/StatusChip.tsx",
+      "src/components/PagePlaceholder.tsx",
+      "src/infrastructure/supabase/",
+      "src/infrastructure/container/auth.ts",
+      "src/infrastructure/container/audit.ts",
+      "src/infrastructure/container/index.ts",
+      "supabase/",
+      "scripts/seed.ts",
+      "scripts/ownership.json",
+      "scripts/check-ownership.mjs",
+      "tests/unit/a/",
+      "docs/설계/a-",
+      "docs/작업로그/",
+      "Intent.md",
+      "README.md",
+      "CLAUDE.md",
+      "package.json",
+      "package-lock.json",
+      "next.config.ts",
+      "tsconfig.json",
+      "vitest.config.mts",
+      "postcss.config.mjs",
+      ".env.example",
+      ".gitignore"
+    ],
+    "b": [
+      "src/app/(app)/page.tsx",
+      "src/app/(app)/risks/",
+      "src/components/risks/",
+      "src/components/RiskTable.tsx",
+      "src/application/demoRisks.ts",
+      "src/application/risks/",
+      "src/domain/scoring.ts",
+      "src/domain/matching.ts",
+      "src/domain/grouping.ts",
+      "src/infrastructure/kev/",
+      "src/infrastructure/container/kev.ts",
+      "src/infrastructure/container/matches.ts",
+      "tests/unit/b/",
+      "docs/설계/b-",
+      "docs/data-sources.md"
+    ],
+    "c": [
+      "src/app/(app)/assets/",
+      "src/app/(app)/requests/",
+      "src/components/assets/",
+      "src/components/requests/",
+      "src/application/assets/",
+      "src/application/requests/",
+      "src/domain/requestStatus.ts",
+      "src/domain/checklist.ts",
+      "src/domain/history.ts",
+      "src/infrastructure/seed/",
+      "src/infrastructure/container/assets.ts",
+      "src/infrastructure/container/requests.ts",
+      "scripts/bpi/",
+      "tests/unit/c/",
+      "docs/설계/c-",
+      "docs/qa/"
+    ]
+  },
+  "shared": [
+    "src/application/ports.ts",
+    "src/domain/types.ts"
+  ],
+  "anyone": [
+    "docs/작업로그/",
+    "docs/설계/"
+  ]
+}
