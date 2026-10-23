@@ -1,6 +1,6 @@
 # ERD: smart-factory
 
-> 연결: [PRD](../PRD.md) FR-xx · [IA](../IA.md) 화면 ID · [GLOSSARY](../../GLOSSARY.md) · ADR 0001~0003
+> 연결: [PRD](../PRD.md). 실제 DB 구조 변경 기록은 supabase/migrations/를 기준으로 확인한다.
 > DB: Supabase(Postgres). 표·열 이름은 영어, 설명은 한국어. 실제 DB에 적용하기 전에 사용자에게 먼저 묻는다.
 
 ## 1. 관계도
@@ -187,3 +187,7 @@ submitted/approved/in_progress → on_hold(사유·재검토일 필수) → appr
 - 마이그레이션 `supabase/migrations/0002_asset_events.sql`을 2026-10-22 사용자 승인 후 **적용했다**(데이터는 아직 0행).
 - 읽기: 담당자는 자기 자산, 관리자는 전체. 쓰기: 서버(서비스 키)만.
 - 승인 전에는 `src/infrastructure/seed/assetHistory.ts`가 같은 형식을 코드로 만들어 준다.
+
+## 2026-10-23 데이터셋 적재 상태
+
+새 제조공장 3개사 JSON은 아직 DB에 적재하지 않았다. 기존 시드와 별개이며 필드 매핑·UUID 연결·null 버전 처리 검토가 필요하다. 실제 원격 DB 현재 수량과 적용 상태는 이번 문서 정리에서 재검증하지 않았다.
