@@ -173,3 +173,19 @@ PLC_PORT = {"LS ELECTRIC": 2004, "Mitsubishi Electric": 5007, "Siemens": 102, "R
 OT_UPDATED_CHANCE = 0.25
 IT_RECENT_FROM = "2026-04-01"
 IT_RECENT_CHANCE = 0.8
+
+# ---------------- 성장 과정(세대) ----------------
+# 라인은 처음부터 다 만들지 않고 2~3개로 시작해 해마다 늘린다. 개설 연도와 세대 값은 모두 가정이다.
+FOUNDING_YEAR = {"VMA-P1": 2018, "VMB-P1": 2019, "VMC-P1": 2018, "VMC-P2": 2022}     # 사이트 최초 라인 개설 연도
+FOUNDING_DEFAULT = 2019
+LAST_LINE_YEAR = 2025
+LINE_CNC_ERA = {                    # 도입이 이른 라인은 Siemens 840D sl 비중이 높다(2024년 이후 개설 라인에는 넣지 않음)
+    "old": [(0.50, ("Siemens", "SINUMERIK 840D sl", None)), (0.35, ("FANUC", "Series 0i-MF Plus", None)), (0.15, ("Mitsubishi Electric", "M80", None))],
+    "new": [(0.30, ("Siemens", "SINUMERIK 840D sl", None)), (0.40, ("FANUC", "Series 0i-MF Plus", None)), (0.30, ("Mitsubishi Electric", "M80", None))],
+}
+LINE_SWITCH_ERA = {
+    "old": [(0.85, ("Moxa", "EDS-516A", None)), (0.10, ("Siemens", "SCALANCE XC208", None)), (0.05, ("Cisco", "IE-3300", None))],
+    "new": [(0.50, ("Moxa", "EDS-516A", None)), (0.25, ("Siemens", "SCALANCE XC208", None)), (0.25, ("Cisco", "IE-3300", None))],
+}
+OT_UPDATED_BY_WAVE = {"old": 0.35, "mid": 0.20, "new": 0.10}      # 오래된 라인일수록 점검 때 갱신한 설비가 많다
+GEN_QUALITY = {"old": 1.8, "mid": 1.0, "new": 0.4}                # 오래된 라인일수록 대장이 부실(확인 안 함·담당 미지정)

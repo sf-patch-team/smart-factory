@@ -17,6 +17,12 @@ def stats(d, exp):
     status = collections.Counter(m["status"] for x in cat for m in x["matches"])
     ports = collections.Counter(f["port"] for f in d["application_flows"])
     return {
+        "라인 개설 연도(최초~최근) / 세대 수": f'{min(l["commissionYear"] for l in d["lines"])}~{max(l["commissionYear"] for l in d["lines"])} / {len({l["generation"] for l in d["lines"]})}',
+        "세대별 Windows 11 비율(구/중/신)": "/".join(
+            f'{round(100 * sum(1 for x in a if x.get("lineWave") == w and x["product"] == "Windows 11") / max(1, sum(1 for x in a if x.get("lineWave") == w and x["assetType"] in ("HMI PC", "비전 검사 PC"))))}%'
+            for w in ("old", "mid", "new")),
+        "세대별 한 번도 확인 안 함 비율(구/중/신)": "/".join(
+            f'{round(100 * sum(1 for x in a if x.get("lineWave") == w and not x.get("lastVerifiedAt")) / max(1, sum(1 for x in a if x.get("lineWave") == w)))}%' for w in ("old", "mid", "new")),
         "라인 유형(가공/세척·검사/조립·포장)": "/".join(str(sum(1 for l in d["lines"] if l.get("lineType") == k)) for k in ("가공", "세척·검사", "조립·포장")),
         "라인당 자산 수(최소~최대)": f'{min(sum(1 for x in a if x["line"] == l["id"]) for l in d["lines"])}~{max(sum(1 for x in a if x["line"] == l["id"]) for l in d["lines"])}',
         "서로 다른 라인 구성 수": len({tuple(sorted(collections.Counter(x["assetType"] for x in a if x["line"] == l["id"]).items())) for l in d["lines"]}),

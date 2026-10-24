@@ -226,8 +226,11 @@ def apply_catalog(assets, catalog, research, rng, expected):
             line = next((l for l in pr["lines"] if l["line"] == a["version"]), None)
         if not line:
             continue
+        base_year = year
         year = max(year, line["ga"] or 0)
-        version = pick_by_date(line, year, rng, a.get("category", "IT"))
+        if year > base_year and a.get("installedYear"):
+            a["osReinstalledYear"] = year
+        version = pick_by_date(line, year, rng, a.get("category", "IT"), R.OT_UPDATED_BY_WAVE.get(a.get("lineWave")))
         if version is None:
             cands = line["candidates"]
             idx = len(cands) - 1 if rng.random() < 0.2 else int(len(cands) * (rng.random() ** (1.4 if year >= 2023 else 0.8)))
@@ -453,6 +456,78 @@ def _num(pattern, items, key):
     return max(nums) if nums else 0
 
 
+def plan_growth(lines, founding_year, last_year, rng, shares, ops_by_type):
+    if not lines:
+        return
+
+    n = len(lines)
+    f = min(rng.choice([2, 3]), n)
+
+    init_types = ["가공", "가공"] if f == 2 else ["가공", "가공", "세척·검사"]
+    init_types = init_types[:f]
+
+    m = n - f
+    rem_years = []
+    if m > 0:
+        for k in range(m):
+            y = founding_year + 1 + int(k * (last_year - founding_year) / m + rng.uniform(-0.3, 0.3))
+            y = max(founding_year + 1, min(last_year, y))
+            rem_years.append(y)
+        rem_years.sort()
+
+    all_years = [founding_year] * f + rem_years
+
+    target_counts = {}
+    allocated = 0
+    for i, (t, r) in enumerate(shares):
+        if i == len(shares) - 1:
+            cnt = n - allocated
+        else:
+            cnt = round(n * r)
+            allocated += cnt
+        target_counts[t] = cnt
+
+    rem_counts = {}
+    for t, _ in shares:
+        rem_counts[t] = target_counts.get(t, 0)
+    for t in init_types:
+        rem_counts[t] = max(0, rem_counts.get(t, 0) - 1)
+
+    pattern = ["가공", "세척·검사", "가공", "조립·포장"]
+    rem_types = []
+    for idx in range(m):
+        pref = pattern[idx % 4]
+        if rem_counts.get(pref, 0) > 0:
+            chosen = pref
+        else:
+            candidates = [(t, rem_counts.get(t, 0)) for t, _ in shares if rem_counts.get(t, 0) > 0]
+            if candidates:
+                chosen = max(candidates, key=lambda x: x[1])[0]
+            else:
+                chosen = "가공"
+        rem_types.append(chosen)
+        if rem_counts.get(chosen, 0) > 0:
+            rem_counts[chosen] -= 1
+
+    all_types = init_types + rem_types
+
+    generations = []
+    curr_gen = 0
+    for i in range(n):
+        if i < f:
+            generations.append(0)
+        else:
+            if all_years[i] != all_years[i - 1]:
+                curr_gen += 1
+            generations.append(curr_gen)
+
+    for i in range(n):
+        lines[i]["lineType"] = all_types[i]
+        lines[i]["operations"] = list(ops_by_type[all_types[i]])
+        lines[i]["commissionYear"] = all_years[i]
+        lines[i]["generation"] = generations[i]
+
+
 def restructure_lines(d):
     """라인을 가공 / 세척·검사 / 조립·포장 유형으로 나누고 유형마다 설비 종류와 수를 다르게 한다.
 
@@ -475,20 +550,13 @@ def restructure_lines(d):
     seg = {s["id"]: s for s in d["network_segments"]}
     stat = collections.Counter()
 
-    # 라인 유형 배정
+    # 라인 성장 계획(개설 연도·세대·유형)
     by_site = {}
     for l in d["lines"]:
         by_site.setdefault(l["siteId"], []).append(l)
-    for lines in by_site.values():
-        n = len(lines)
-        types = []
-        for name, share in R.LINE_TYPE_SHARE[:-1]:
-            types += [name] * round(n * share)
-        types += [R.LINE_TYPE_SHARE[-1][0]] * (n - len(types))
-        rng.shuffle(types)
-        for l, tp in zip(lines, types):
-            l["lineType"] = tp
-            l["operations"] = list(R.LINE_TYPES[tp]["ops"])
+    ops = {k: v["ops"] for k, v in R.LINE_TYPES.items()}
+    for site, lines in by_site.items():
+        plan_growth(lines, R.FOUNDING_YEAR.get(site, R.FOUNDING_DEFAULT), R.LAST_LINE_YEAR, rng, R.LINE_TYPE_SHARE, ops)
 
     removed = set()
     created = []
@@ -838,28 +906,55 @@ def apply_line_profiles(d, skip_ids, ctx):
     for a in d["canonical_assets"]:
         by_line.setdefault(a["line"], []).append(a)
     for lines in by_site.values():
-        for idx, line in enumerate(lines):
+        for line in lines:
             lr = random.Random(f"{R.SEED}-{d['code']}-{line['id']}")
-            frac = (idx + 1) / len(lines)
-            _, wave, years, os_pick = next(w for w in R.WAVES if frac <= w[0] + 1e-9)
+            year = line["commissionYear"]
+            generation = line["generation"]
+            
+            # 시기 구분 및 OS 설정
+            wave = "old" if year < 2022 else ("mid" if year <= 2023 else "new")
+            era = "old" if year < 2022 else "new"
+            hmi_os = R.LTSC if year < 2024 else (R.WIN11 if lr.random() < 0.7 else R.LTSC)
+            vision_os = R.WIN10 if year <= 2022 else (R.LTSC if year == 2023 else R.WIN11)
+
+            # CNC 및 스위치 후보 선정
+            cnc_weights = list(R.LINE_CNC_ERA[era])
+            if year >= 2024:
+                cnc_weights = [(p, v) for p, v in cnc_weights if v != ("Siemens", "SINUMERIK 840D sl", None)]
+
             plc = pick(lr, R.LINE_PLC)
-            prof = {"cnc": pick(lr, R.LINE_CNC), "robot": pick(lr, R.LINE_ROBOT), "plc": pick(lr, R.LS_PLC) if plc == "LS" else plc,
-                    "inverter": pick(lr, R.LINE_INVERTER), "switch": pick(lr, R.LINE_SWITCH), **os_pick}
+            prof = {
+                "cnc": pick(lr, cnc_weights),
+                "robot": pick(lr, R.LINE_ROBOT),
+                "plc": pick(lr, R.LS_PLC) if plc == "LS" else plc,
+                "inverter": pick(lr, R.LINE_INVERTER),
+                "switch": pick(lr, R.LINE_SWITCH_ERA[era]),
+                "hmi": hmi_os,
+                "vision": vision_os,
+            }
             addition = lr.random() < R.LINE_ADDITION_CHANCE
             added = False
             for a in by_line.get(line["id"], []):
                 if a["id"] in skip_ids:
                     continue
-                a["installedYear"] = lr.choice(years)
                 a["lineWave"] = wave
+                a["lineGeneration"] = generation
+                a["lineCommissionYear"] = year
+                a["installedYear"] = year
+
+                # 개선 공사(리트로핏) 반영
+                if lr.random() < 0.10 and year < 2025:
+                    a["installedYear"] = lr.randint(year + 1, 2025)
+                    a["retrofitYear"] = a["installedYear"]
+
                 key = R.TYPE_KEY.get(a["assetType"])
                 if not key:
                     continue
                 target = prof[key]
                 if addition and key == "cnc" and not added:
-                    target = pick(lr, [(p, v) for p, v in R.LINE_CNC if v != prof["cnc"]])
+                    target = pick(lr, [(p, v) for p, v in cnc_weights if v != prof["cnc"]])
                     added = True
-                    a["installedYear"] = max(years) + 1 if max(years) < 2025 else 2025
+                    a["installedYear"] = min(2025, year + lr.randint(1, 3))
                     stat["새로 추가된 설비"] += 1
                 if retarget(a, target, *ctx, "synthetic_assumption(line_profile)"):
                     stat["라인 프로필 적용"] += 1
@@ -880,6 +975,7 @@ def diversify_fleet(d, rng, skip_ids):
         sw.setdefault(s["assetId"], []).append(s)
     ctx = (rows, flagged, raw, sw)
     stat = collections.Counter(apply_line_profiles(d, skip_ids, ctx))
+    quality = lambda a: R.GEN_QUALITY.get(a.get("lineWave"), 1.0)
     for a in assets:
         if a["id"] in skip_ids:
             continue
@@ -896,11 +992,11 @@ def diversify_fleet(d, rng, skip_ids):
         if a["assetType"] in R.OS_TYPES and rng.random() < R.UNKNOWN_OS_CHANCE:
             if retarget(a, ("Microsoft", "Windows", None), *ctx, "synthetic_assumption(version_unknown)"):
                 stat["버전 미상 PC"] += 1
-        if a.get("lastVerifiedAt") and not _blocked(rows, flagged, aid, ("확인일",)) and rng.random() < R.NEVER_VERIFIED_CHANCE:
+        if a.get("lastVerifiedAt") and not _blocked(rows, flagged, aid, ("확인일",)) and rng.random() < R.NEVER_VERIFIED_CHANCE * quality(a):
             _set_payload(raw, rows, aid, "확인일", a["lastVerifiedAt"], "")
             a["lastVerifiedAt"] = None
             stat["확인한 적 없음"] += 1
-        if a.get("ownerId") and not _blocked(rows, flagged, aid, ("담당",)) and rng.random() < R.NO_OWNER_CHANCE:
+        if a.get("ownerId") and not _blocked(rows, flagged, aid, ("담당",)) and rng.random() < R.NO_OWNER_CHANCE * quality(a):
             _set_payload(raw, rows, aid, "담당", a["ownerId"], "")
             a["ownerId"] = None
             stat["담당 미지정"] += 1
@@ -924,6 +1020,9 @@ def add_server_software(d, rng, skip_ids):
         sw.setdefault(s["assetId"], []).append(s)
     counts = collections.Counter({k: len(v) for k, v in sw.items()})
     stat = collections.Counter()
+    founding = {}
+    for l in d["lines"]:
+        founding[l["siteId"]] = min(founding.get(l["siteId"], 9999), l["commissionYear"])
 
     def install(a, product, role):
         counts[a["id"]] += 1
@@ -948,14 +1047,15 @@ def add_server_software(d, rng, skip_ids):
             apps = [app] if app else []
         else:
             continue
-        a["installedYear"] = rng.choice([2018, 2019, 2020, 2021, 2022, 2023, 2024])
+        first = founding.get(a["siteId"], R.FOUNDING_DEFAULT)
+        a["installedYear"] = first if rng.random() < 0.7 else rng.randint(min(first + 2, R.LAST_LINE_YEAR), R.LAST_LINE_YEAR)
         install(a, os_choice, "os")
         for app in apps:
             install(a, app, "app")
     return dict(stat)
 
 
-def pick_by_date(line, year, rng, category):
+def pick_by_date(line, year, rng, category, updated_chance=None):
     """빌드 날짜가 있는 계열: OT는 도입 시점 빌드를 대부분 유지(약 25%만 점검 때 갱신), 사무(IT)는 최근 빌드 중심."""
     dates = line.get("candidateDates")
     if not dates:
@@ -964,7 +1064,7 @@ def pick_by_date(line, year, rng, category):
     if category == "OT":
         target = f"{year}-{rng.randint(1, 12):02d}-15"
         base = max((b for b in ordered if dates[b] <= target), key=lambda b: dates[b], default=ordered[0])
-        if rng.random() < R.OT_UPDATED_CHANCE:
+        if rng.random() < (R.OT_UPDATED_CHANCE if updated_chance is None else updated_chance):
             later = [b for b in ordered if dates[b] >= dates[base]]
             return rng.choice(later)
         return base
@@ -1071,6 +1171,19 @@ def raw_matches_truth(d):
     return True
 
 
+def growth_ok(d):
+    by_site = {}
+    for l in d["lines"]:
+        by_site.setdefault(l["siteId"], []).append(l)
+    for lines in by_site.values():
+        years = [l["commissionYear"] for l in lines]
+        founding = [l for l in lines if l["generation"] == 0]
+        if years != sorted(years) or not 2 <= len(founding) <= 3 or years[-1] > R.LAST_LINE_YEAR:
+            return False
+    year_of = {l["id"]: l["commissionYear"] for l in d["lines"]}
+    return all(a["installedYear"] >= year_of[a["line"]] for a in d["canonical_assets"] if a["line"] in year_of and a.get("lineWave"))
+
+
 def line_types_ok(d):
     cnc = collections.Counter(a["line"] for a in d["canonical_assets"] if a["assetType"] == "CNC 컨트롤러")
     return all((cnc[l["id"]] >= 6) if l["lineType"] == "가공" else (cnc[l["id"]] == 0) for l in d["lines"])
@@ -1103,6 +1216,7 @@ def validate(d):
         "MES 예외→LOT/WO": all(e["lotId"] in lots and e["expectedWorkOrderId"] in wos for e in d["raw_mes_exceptions"]),
         "대장 제조사·제품 일치(오류 표시 없는 행)": raw_matches_truth(d),
         "라인 유형별 구성(세척·조립에 CNC 없음, 가공 CNC 6대 이상)": line_types_ok(d),
+        "라인 성장(최초 2~3개 라인, 개설 연도 비감소, 설치 연도가 개설 연도 이후)": growth_ok(d),
         "라인당 CNC 제조사 2종 이하": line_vendor_ok(d),
         "기간 하루 이상": max(dt.datetime.fromisoformat(o["simulatedTimestamp"]) for o in d["machine_observations"]) - base > dt.timedelta(hours=24),
     }
