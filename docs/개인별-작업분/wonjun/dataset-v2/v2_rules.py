@@ -61,3 +61,15 @@ VENDOR_FLOWS = {
     "Siemens": {"port": 102, "purpose": "가상 PLC/CNC 데이터 읽기(ISO-on-TCP 계열 예시)", "note": "포트 102는 Siemens 계열 통신에 흔히 쓰이는 예시. 실제 장비 지원·설정 미검증"},
     "Mitsubishi Electric": {"port": 5007, "purpose": "가상 PLC 데이터 읽기(SLMP 계열 예시)", "note": "5007은 설정 가능한 예시 포트. 실제 장비 설정 미검증"},
 }
+
+# 비판에서 빠졌다고 지적된 설비 자산(사이트마다 추가). 제조사·제품은 가상 이름이며 펌웨어·버전은 모델링하지 않는다.
+EXTRA_ASSETS = [
+    # (assetType, 개수, category, segment 접미, owner 접미, 제품명, criticality, 제약, exposure, rollback)
+    ("3차원 측정기 PC", 1, "OT", "SCADA", "OT", "SIM-CMM-PC", "mid", ["maintenance_window"], "internal", True),
+    ("공구 프리셋 PC", 1, "OT", "SCADA", "OT", "SIM-TOOL-PRESET", "low", [], "internal", True),
+    ("절삭유·칩 처리 PLC", 1, "OT", "SCADA", "OT", "SIM-COOLANT-PLC", "mid", ["no_downtime"], "internal", False),
+    ("컴프레서 제어 PLC", 1, "OT", "SCADA", "OT", "SIM-COMPRESSOR-PLC", "mid", ["no_downtime"], "internal", False),
+    ("원격 유지보수 게이트웨이", 1, "OT", "DMZ", "OT", "SIM-REMOTE-GW", "high", ["vendor_approval", "maintenance_window"], "remote", True),
+    ("산업용 무선 AP", 2, "IT", "OFFICE", "IT", "SIM-INDUSTRIAL-AP", "mid", ["maintenance_window"], "internal", True),
+]
+EXTRA_VENDOR = "가상 설비 공급사"

@@ -233,6 +233,40 @@ def add_cross_file_conflicts(d, rng):
 
 
 # ---------- 요약과 검사 ----------
+def add_extra_assets(d, rng):
+    """빠진 설비 자산을 사이트마다 추가한다. 수기 대장에는 없는 자산으로 두어 대장 누락 사례가 된다."""
+    assets = d["canonical_assets"]
+    next_id = max(int(a["id"].rsplit("A", 1)[1]) for a in assets) + 1
+    used = {a["ip"] for a in assets if a.get("ip")}
+    seg_by_id = {s["id"]: s for s in d["network_segments"]}
+    added = []
+    for site in sorted({a["siteId"] for a in assets}):
+        code = d["owners"][0]["id"].split("-")[0]
+        for kind, count, cat, seg, owner, product, crit, cons, exposure, rb in R.EXTRA_ASSETS:
+            segment = seg_by_id[f"{site}-{seg}"]
+            prefix = segment["cidr"].rsplit(".", 1)[0]
+            for n in range(1, count + 1):
+                host = 100
+                while f"{prefix}.{host}" in used:
+                    host += 1
+                ip = f"{prefix}.{host}"; used.add(ip)
+                aid = f"{code}-A{next_id:05d}"; next_id += 1
+                assets.append({
+                    "id": aid, "companyId": code, "siteId": site, "name": f"{site} {kind} {n}", "assetType": kind,
+                    "vendor": R.EXTRA_VENDOR, "product": product, "version": None, "category": cat,
+                    "criticality": crit, "zone": segment["name"], "line": "공용", "affectedEquipment": f"{site} {kind} {n}",
+                    "networkSegmentId": segment["id"], "ip": ip, "ownerId": f"{code}-{owner}", "lifecycle": "active",
+                    "lastVerifiedAt": None, "patchConstraints": list(cons), "rollbackPossible": rb,
+                    "versionEvidence": "not_modeled", "exactBuildKnown": False, "serial": f"SIM-{aid}",
+                    "provenance": "synthetic_design_v2", "exposure": exposure, "edr": None,
+                    "rebootWindow": rng.choice(R.REBOOT_OT if cat == "OT" else R.REBOOT_IT),
+                    "registerStatus": "not_in_register",
+                    "fieldsV2Provenance": "synthetic_assumption(new asset type added from critique; not in manual register)",
+                })
+                added.append(aid)
+    return added
+
+
 def diversify_flows(d, rng):
     """제조사 고유 통신 흐름을 섞는다. 포트는 흔히 쓰는 예시이며 실제 설정·지원 여부는 미검증이다."""
     assets = {a["id"]: a for a in d["canonical_assets"]}
@@ -248,13 +282,15 @@ def diversify_flows(d, rng):
     return changed
 
 
-def update_summary(d, as_of, hetero_ids, research_hits):
+def update_summary(d, as_of, hetero_ids, research_hits, extra_ids):
     s = d["summary"]; q = d["quality_truth"]["issues"]
+    s["assets"] = len(d["canonical_assets"])
+    s["assetTypes"] = dict(collections.Counter(x["assetType"] for x in d["canonical_assets"]))
     s["rawRows"] = len(d["raw_asset_register"]); s["issues"] = len(q)
     s["issueTypes"] = dict(sorted(collections.Counter(i["issueType"] for i in q).items()))
     d["schemaVersion"] = "2.0-draft"
     d["v2"] = {"generator": "generate_v2.py", "seed": R.SEED, "asOfProgress": as_of, "heterogeneityAssets": hetero_ids,
-               "researchedAssets": research_hits, "note": "원본 대비 파생 데이터. 변형 값은 시험용 가정이며 실제 회사 자료가 아니다."}
+               "researchedAssets": research_hits, "addedAssetIds": extra_ids, "note": "원본 대비 파생 데이터. 변형 값은 시험용 가정이며 실제 회사 자료가 아니다."}
 
 
 def validate(d):
@@ -287,11 +323,12 @@ def build(code, src, out, research):
     add_exposure_edr_reboot(d["canonical_assets"], d["lines"], rng)
     hetero_ids = apply_heterogeneity(d, rng)
     hits = apply_research(d["canonical_assets"], d["software_installations"], research, rng)
+    extra_ids = add_extra_assets(d, rng)
     diversify_flows(d, rng)
     fix_lines(d)
     as_of = rebuild_mes(d, rng)
     vary_reported(d, rng); reassign_sources(d, rng); add_cross_file_conflicts(d, rng); renumber(d)
-    update_summary(d, as_of, hetero_ids, hits)
+    update_summary(d, as_of, hetero_ids, hits, extra_ids)
     checks = validate(d); checks["AI4I 원본값 보존"] = original_obs == [o["original"] for o in d["machine_observations"]]
     (out / f"{code.lower()}_factory_v2.json").write_text(json.dumps(d, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     return checks, hits
