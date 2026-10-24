@@ -1,0 +1,1146 @@
+{
+  "retrievedOn": "2026-10-24",
+  "purpose": "실제 제품·버전·공개 보안 공지를 모아 둔 카탈로그. 가상 자산이 이 카탈로그의 실제 제품과 버전을 가리키면 '그 버전을 쓴다고 가정했을 때' 해당되는지 계산한다. 가상 회사의 실제 취약 사실이 아니라 시나리오 데이터다.",
+  "sourceTags": "KEV=CISA KEV 파일을 직접 내려받아 대조 / MSRC=Microsoft 업데이트 가이드 API 원문 / VENDOR=제조사 공지 원문 / SUMMARY=페이지 요약으로 읽은 값(재확인 필요) / 2ND=제3자 자료",
+  "products": [
+    {
+      "key": "fortios",
+      "vendor": "Fortinet",
+      "product": "FortiOS",
+      "lines": [
+        {
+          "line": "6.4",
+          "ga": 2020,
+          "candidates": [
+            "6.4.10",
+            "6.4.12",
+            "6.4.14",
+            "6.4.15"
+          ]
+        },
+        {
+          "line": "7.0",
+          "ga": 2021,
+          "candidates": [
+            "7.0.8",
+            "7.0.11",
+            "7.0.13",
+            "7.0.16",
+            "7.0.17"
+          ]
+        },
+        {
+          "line": "7.2",
+          "ga": 2022,
+          "candidates": [
+            "7.2.2",
+            "7.2.4",
+            "7.2.6",
+            "7.2.7",
+            "7.2.12",
+            "7.2.13"
+          ]
+        }
+      ],
+      "candidateNote": "후보 버전은 공지가 영향 범위의 끝·수정 버전으로 적은 실제 버전 번호다. 출시 연도는 계열(line)의 출시 연도로 대신했으며 대략적이다.",
+      "advisories": [
+        {
+          "cve": "CVE-2022-42475",
+          "title": "SSL-VPN 힙 버퍼 오버플로",
+          "kev": true,
+          "kevAdded": "2022-12-13",
+          "affected": [
+            "6.4",
+            "7.0",
+            "7.2"
+          ],
+          "fixed": {
+            "6.4": [
+              "6.4.11"
+            ],
+            "7.0": [
+              "7.0.9"
+            ],
+            "7.2": [
+              "7.2.3"
+            ]
+          },
+          "url": "https://fortiguard.fortinet.com/psirt/FG-IR-22-398",
+          "source": "KEV + SUMMARY"
+        },
+        {
+          "cve": "CVE-2023-27997",
+          "title": "SSL-VPN 힙 버퍼 오버플로",
+          "kev": true,
+          "kevAdded": "2023-06-13",
+          "affected": [
+            "6.4",
+            "7.0",
+            "7.2"
+          ],
+          "fixed": {
+            "6.4": [
+              "6.4.13"
+            ],
+            "7.0": [
+              "7.0.12"
+            ],
+            "7.2": [
+              "7.2.5"
+            ]
+          },
+          "url": "https://fortiguard.fortinet.com/psirt/FG-IR-23-097",
+          "source": "KEV + SUMMARY"
+        },
+        {
+          "cve": "CVE-2024-21762",
+          "title": "SSL VPN 범위 밖 쓰기",
+          "kev": true,
+          "kevAdded": "2024-02-09",
+          "affected": [
+            "6.4",
+            "7.0",
+            "7.2"
+          ],
+          "fixed": {
+            "6.4": [
+              "6.4.15"
+            ],
+            "7.0": [
+              "7.0.14"
+            ],
+            "7.2": [
+              "7.2.7"
+            ]
+          },
+          "url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-015",
+          "source": "KEV + SUMMARY"
+        },
+        {
+          "cve": "CVE-2024-55591",
+          "title": "웹소켓 인증 우회(최고 관리자 권한)",
+          "kev": true,
+          "kevAdded": "2025-01-14",
+          "affected": [
+            "7.0"
+          ],
+          "fixed": {
+            "7.0": [
+              "7.0.17"
+            ]
+          },
+          "url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-535",
+          "source": "KEV + SUMMARY"
+        }
+      ]
+    },
+    {
+      "key": "panos",
+      "vendor": "Palo Alto Networks",
+      "product": "PAN-OS",
+      "lines": [
+        {
+          "line": "10.1",
+          "ga": 2021,
+          "candidates": [
+            "10.1.9",
+            "10.1.11",
+            "10.1.14",
+            "10.1.14-h6",
+            "10.1.14-h9"
+          ]
+        },
+        {
+          "line": "10.2",
+          "ga": 2022,
+          "candidates": [
+            "10.2.4",
+            "10.2.7",
+            "10.2.9",
+            "10.2.9-h1",
+            "10.2.12",
+            "10.2.12-h2",
+            "10.2.13",
+            "10.2.13-h3",
+            "10.2.18-h12"
+          ]
+        }
+      ],
+      "candidateNote": "후보는 공지가 영향 범위·수정 버전으로 적은 실제 번호다. 핫픽스는 -h번호로 표기.",
+      "advisories": [
+        {
+          "cve": "CVE-2024-3400",
+          "title": "GlobalProtect 파일 생성 → 명령 주입",
+          "kev": true,
+          "kevAdded": "2024-04-12",
+          "affected": [
+            "10.2"
+          ],
+          "fixed": {
+            "10.2": [
+              "10.2.9-h1"
+            ]
+          },
+          "url": "https://security.paloaltonetworks.com/CVE-2024-3400",
+          "source": "KEV + VENDOR(JSON)"
+        },
+        {
+          "cve": "CVE-2024-0012",
+          "title": "관리 웹 인터페이스 인증 우회",
+          "kev": true,
+          "kevAdded": "2024-11-18",
+          "affected": [
+            "10.2"
+          ],
+          "fixed": {
+            "10.2": [
+              "10.2.12-h2"
+            ]
+          },
+          "url": "https://security.paloaltonetworks.com/CVE-2024-0012",
+          "source": "KEV + VENDOR(JSON)"
+        },
+        {
+          "cve": "CVE-2024-9474",
+          "title": "관리 웹 인터페이스 권한 상승",
+          "kev": true,
+          "kevAdded": "2024-11-18",
+          "affected": [
+            "10.1",
+            "10.2"
+          ],
+          "fixed": {
+            "10.1": [
+              "10.1.14-h6"
+            ],
+            "10.2": [
+              "10.2.12-h2"
+            ]
+          },
+          "url": "https://security.paloaltonetworks.com/CVE-2024-9474",
+          "source": "KEV + VENDOR(JSON)"
+        },
+        {
+          "cve": "CVE-2025-0108",
+          "title": "관리 웹 인터페이스 인증 우회",
+          "kev": true,
+          "kevAdded": "2025-02-18",
+          "affected": [
+            "10.1",
+            "10.2"
+          ],
+          "fixed": {
+            "10.1": [
+              "10.1.14-h9"
+            ],
+            "10.2": [
+              "10.2.13-h3"
+            ]
+          },
+          "url": "https://security.paloaltonetworks.com/CVE-2025-0108",
+          "source": "KEV + VENDOR(JSON)"
+        }
+      ]
+    },
+    {
+      "key": "iosxe",
+      "vendor": "Cisco",
+      "product": "Catalyst 9300",
+      "lines": [
+        {
+          "line": "16.12",
+          "ga": 2019,
+          "candidates": [
+            "16.12.4",
+            "16.12.10a"
+          ]
+        },
+        {
+          "line": "17.3",
+          "ga": 2020,
+          "candidates": [
+            "17.3.4",
+            "17.3.8",
+            "17.3.8a"
+          ]
+        },
+        {
+          "line": "17.6",
+          "ga": 2021,
+          "candidates": [
+            "17.6.5",
+            "17.6.6a"
+          ]
+        },
+        {
+          "line": "17.9",
+          "ga": 2022,
+          "candidates": [
+            "17.9.3",
+            "17.9.4",
+            "17.9.4a"
+          ]
+        },
+        {
+          "line": "17.12",
+          "ga": 2023,
+          "candidates": [
+            "17.12.5",
+            "17.12.6"
+          ]
+        },
+        {
+          "line": "17.15",
+          "ga": 2024,
+          "candidates": [
+            "17.15.4",
+            "17.15.6"
+          ]
+        }
+      ],
+      "candidateNote": "후보 중 5·6·8a 등 수정 번호와 권장 릴리스 번호는 공지·권장 목록에 실제로 나온 값이다. 그 사이 번호(16.12.4, 17.3.4, 17.3.8, 17.6.5, 17.9.3)는 영향 구간을 보이려고 쓴 값이며 자체 출처 확인은 못 했다.",
+      "advisories": [
+        {
+          "cve": "CVE-2023-20198",
+          "title": "웹 UI 권한 상승",
+          "kev": true,
+          "kevAdded": "2023-10-16",
+          "affected": [
+            "17.3",
+            "17.6",
+            "17.9"
+          ],
+          "fixed": {
+            "17.3": [
+              "17.3.8a"
+            ],
+            "17.6": [
+              "17.6.6a"
+            ],
+            "17.9": [
+              "17.9.4a"
+            ]
+          },
+          "note": "공지에서 Catalyst 9300이 명시되지 않았다. IOS XE 소프트웨어 기준이며 웹 UI가 켜진 경우만 해당",
+          "url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-iosxe-webui-privesc-j22SaA4z",
+          "source": "KEV + VENDOR"
+        },
+        {
+          "cve": "CVE-2025-20352",
+          "title": "SNMP 스택 오버플로",
+          "kev": true,
+          "kevAdded": "2025-09-29",
+          "affected": [
+            "16.12",
+            "17.3",
+            "17.6",
+            "17.9",
+            "17.12",
+            "17.15"
+          ],
+          "fixed": {},
+          "note": "수정 버전 표는 확인 못 함(제조사 소프트웨어 점검기에서만 확인 가능). 판정은 '확인 필요'",
+          "url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-snmp-x4LPhte",
+          "source": "KEV + VENDOR"
+        }
+      ]
+    },
+    {
+      "key": "win10_22h2",
+      "vendor": "Microsoft",
+      "product": "Windows 10 Enterprise",
+      "lines": [
+        {
+          "line": "22H2",
+          "ga": 2022,
+          "candidates": [
+            "19045.4780",
+            "19045.5737",
+            "19045.5965",
+            "19045.7184",
+            "19045.7807"
+          ]
+        }
+      ],
+      "candidateNote": "후보는 월간 누적 업데이트의 실제 빌드 번호다.",
+      "advisories": [
+        {
+          "cve": "CVE-2024-38106",
+          "title": "커널 권한 상승",
+          "kev": true,
+          "kevAdded": "2024-08-13",
+          "affected": [
+            "22H2"
+          ],
+          "fixed": {
+            "22H2": [
+              "19045.4780"
+            ]
+          },
+          "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2024-38106",
+          "source": "KEV + MSRC"
+        },
+        {
+          "cve": "CVE-2025-29824",
+          "title": "공통 로그 파일 시스템 드라이버 권한 상승",
+          "kev": true,
+          "kevAdded": "2025-04-08",
+          "affected": [
+            "22H2"
+          ],
+          "fixed": {
+            "22H2": [
+              "19045.5737"
+            ]
+          },
+          "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-29824",
+          "source": "KEV + MSRC"
+        },
+        {
+          "cve": "CVE-2025-33073",
+          "title": "SMB 클라이언트 권한 상승",
+          "kev": true,
+          "kevAdded": "2025-10-20",
+          "affected": [
+            "22H2"
+          ],
+          "fixed": {
+            "22H2": [
+              "19045.5965"
+            ]
+          },
+          "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-33073",
+          "source": "KEV + MSRC"
+        }
+      ]
+    },
+    {
+      "key": "win10_ltsc2021",
+      "vendor": "Microsoft",
+      "product": "Windows 10 IoT Enterprise LTSC",
+      "lines": [
+        {
+          "line": "2021",
+          "ga": 2021,
+          "candidates": [
+            "19044.4780",
+            "19044.5737",
+            "19044.5965",
+            "19044.7184",
+            "19044.7807"
+          ]
+        }
+      ],
+      "candidateNote": "LTSC 2021은 Windows 10 21H2와 같은 빌드(19044)를 쓰는 것으로 보고 21H2 행의 수정 빌드를 적용했다(추정, Microsoft가 LTSC 행을 따로 두지 않음).",
+      "advisories": [
+        {
+          "cve": "CVE-2024-38106",
+          "title": "커널 권한 상승",
+          "kev": true,
+          "kevAdded": "2024-08-13",
+          "affected": [
+            "2021"
+          ],
+          "fixed": {
+            "2021": [
+              "19044.4780"
+            ]
+          },
+          "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2024-38106",
+          "source": "KEV + MSRC(추정 매핑)"
+        },
+        {
+          "cve": "CVE-2025-29824",
+          "title": "공통 로그 파일 시스템 드라이버 권한 상승",
+          "kev": true,
+          "kevAdded": "2025-04-08",
+          "affected": [
+            "2021"
+          ],
+          "fixed": {
+            "2021": [
+              "19044.5737"
+            ]
+          },
+          "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-29824",
+          "source": "KEV + MSRC(추정 매핑)"
+        },
+        {
+          "cve": "CVE-2025-33073",
+          "title": "SMB 클라이언트 권한 상승",
+          "kev": true,
+          "kevAdded": "2025-10-20",
+          "affected": [
+            "2021"
+          ],
+          "fixed": {
+            "2021": [
+              "19044.5965"
+            ]
+          },
+          "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-33073",
+          "source": "KEV + MSRC(추정 매핑)"
+        }
+      ]
+    },
+    {
+      "key": "win11_23h2",
+      "vendor": "Microsoft",
+      "product": "Windows 11",
+      "lines": [
+        {
+          "line": "23H2",
+          "ga": 2023,
+          "candidates": [
+            "22631.4037",
+            "22631.5189",
+            "22631.5472",
+            "22631.6936",
+            "22631.7652"
+          ]
+        }
+      ],
+      "candidateNote": "후보는 월간 누적 업데이트의 실제 빌드 번호다.",
+      "advisories": [
+        {
+          "cve": "CVE-2024-38106",
+          "title": "커널 권한 상승",
+          "kev": true,
+          "kevAdded": "2024-08-13",
+          "affected": [
+            "23H2"
+          ],
+          "fixed": {
+            "23H2": [
+              "22631.4037"
+            ]
+          },
+          "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2024-38106",
+          "source": "KEV + MSRC"
+        },
+        {
+          "cve": "CVE-2025-29824",
+          "title": "공통 로그 파일 시스템 드라이버 권한 상승",
+          "kev": true,
+          "kevAdded": "2025-04-08",
+          "affected": [
+            "23H2"
+          ],
+          "fixed": {
+            "23H2": [
+              "22631.5189"
+            ]
+          },
+          "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-29824",
+          "source": "KEV + MSRC"
+        },
+        {
+          "cve": "CVE-2025-33073",
+          "title": "SMB 클라이언트 권한 상승",
+          "kev": true,
+          "kevAdded": "2025-10-20",
+          "affected": [
+            "23H2"
+          ],
+          "fixed": {
+            "23H2": [
+              "22631.5472"
+            ]
+          },
+          "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-33073",
+          "source": "KEV + MSRC"
+        }
+      ]
+    },
+    {
+      "key": "winsrv2019",
+      "vendor": "Microsoft",
+      "product": "Windows Server 2019",
+      "lines": [
+        {
+          "line": "2019",
+          "ga": 2018,
+          "candidates": [
+            "17763.6189",
+            "17763.7136",
+            "17763.7434",
+            "17763.7922",
+            "17763.9376"
+          ]
+        }
+      ],
+      "candidateNote": "후보는 월간 누적 업데이트의 실제 빌드 번호다.",
+      "advisories": [
+        {
+          "cve": "CVE-2024-38106",
+          "title": "커널 권한 상승",
+          "kev": true,
+          "kevAdded": "2024-08-13",
+          "affected": [
+            "2019"
+          ],
+          "fixed": {
+            "2019": [
+              "17763.6189"
+            ]
+          },
+          "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2024-38106",
+          "source": "KEV + MSRC"
+        },
+        {
+          "cve": "CVE-2025-29824",
+          "title": "공통 로그 파일 시스템 드라이버 권한 상승",
+          "kev": true,
+          "kevAdded": "2025-04-08",
+          "affected": [
+            "2019"
+          ],
+          "fixed": {
+            "2019": [
+              "17763.7136"
+            ]
+          },
+          "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-29824",
+          "source": "KEV + MSRC"
+        },
+        {
+          "cve": "CVE-2025-33073",
+          "title": "SMB 클라이언트 권한 상승",
+          "kev": true,
+          "kevAdded": "2025-10-20",
+          "affected": [
+            "2019"
+          ],
+          "fixed": {
+            "2019": [
+              "17763.7434"
+            ]
+          },
+          "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-33073",
+          "source": "KEV + MSRC"
+        },
+        {
+          "cve": "CVE-2025-59287",
+          "title": "WSUS 원격 코드 실행(WSUS 역할이 있는 서버만)",
+          "kev": true,
+          "kevAdded": "2025-10-24",
+          "affected": [
+            "2019"
+          ],
+          "fixed": {
+            "2019": [
+              "17763.7922"
+            ]
+          },
+          "note": "WSUS 역할 여부는 자산에 모델링하지 않아 '해당 가능'으로만 본다",
+          "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-59287",
+          "source": "KEV + MSRC"
+        }
+      ]
+    },
+    {
+      "key": "winsrv2022",
+      "vendor": "Microsoft",
+      "product": "Windows Server 2022",
+      "lines": [
+        {
+          "line": "2022",
+          "ga": 2021,
+          "candidates": [
+            "20348.2655",
+            "20348.3453",
+            "20348.3807",
+            "20348.4297",
+            "20348.5761"
+          ]
+        }
+      ],
+      "candidateNote": "후보는 월간 누적 업데이트의 실제 빌드 번호다.",
+      "advisories": [
+        {
+          "cve": "CVE-2024-38106",
+          "title": "커널 권한 상승",
+          "kev": true,
+          "kevAdded": "2024-08-13",
+          "affected": [
+            "2022"
+          ],
+          "fixed": {
+            "2022": [
+              "20348.2655"
+            ]
+          },
+          "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2024-38106",
+          "source": "KEV + MSRC"
+        },
+        {
+          "cve": "CVE-2025-29824",
+          "title": "공통 로그 파일 시스템 드라이버 권한 상승",
+          "kev": true,
+          "kevAdded": "2025-04-08",
+          "affected": [
+            "2022"
+          ],
+          "fixed": {
+            "2022": [
+              "20348.3453"
+            ]
+          },
+          "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-29824",
+          "source": "KEV + MSRC"
+        },
+        {
+          "cve": "CVE-2025-33073",
+          "title": "SMB 클라이언트 권한 상승",
+          "kev": true,
+          "kevAdded": "2025-10-20",
+          "affected": [
+            "2022"
+          ],
+          "fixed": {
+            "2022": [
+              "20348.3807"
+            ]
+          },
+          "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-33073",
+          "source": "KEV + MSRC"
+        },
+        {
+          "cve": "CVE-2025-59287",
+          "title": "WSUS 원격 코드 실행(WSUS 역할이 있는 서버만)",
+          "kev": true,
+          "kevAdded": "2025-10-24",
+          "affected": [
+            "2022"
+          ],
+          "fixed": {
+            "2022": [
+              "20348.4297"
+            ]
+          },
+          "note": "WSUS 역할 여부는 자산에 모델링하지 않아 '해당 가능'으로만 본다",
+          "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-59287",
+          "source": "KEV + MSRC"
+        }
+      ]
+    },
+    {
+      "key": "esxi",
+      "vendor": "VMware",
+      "product": "ESXi",
+      "lines": [
+        {
+          "line": "6.7",
+          "ga": 2018,
+          "candidates": [
+            "6.7 U3 (빌드 14320388)",
+            "6.7 P08 (빌드 20497097)"
+          ]
+        },
+        {
+          "line": "7.0",
+          "ga": 2020,
+          "candidates": [
+            "7.0 U3q (빌드 23794027)",
+            "7.0 U3r (빌드 24411414)",
+            "7.0 U3s (빌드 24585291)",
+            "7.0 U3w (빌드 24784741)"
+          ]
+        }
+      ],
+      "candidateNote": "후보는 Broadcom 빌드표의 실제 빌드 번호다. 비교는 빌드 숫자로 한다.",
+      "buildKey": true,
+      "advisories": [
+        {
+          "cve": "CVE-2025-22224",
+          "title": "VMCI 힙 오버플로(가상 머신 탈출)",
+          "kev": true,
+          "kevAdded": "2025-03-04",
+          "affected": [
+            "7.0"
+          ],
+          "fixed": {
+            "7.0": [
+              "24585291"
+            ]
+          },
+          "note": "6.7은 영향 표에 없음(영향 여부 확인 필요)",
+          "url": "https://support.broadcom.com/web/ecx/support-content-notification/-/external/content/SecurityAdvisories/0/25390",
+          "source": "KEV + SUMMARY"
+        },
+        {
+          "cve": "CVE-2020-3992",
+          "title": "OpenSLP 해제 후 사용",
+          "kev": true,
+          "kevAdded": "2021-11-03",
+          "affected": [
+            "6.7"
+          ],
+          "fixed": {},
+          "note": "수정은 패치 ESXi670-202011301-SG(7.0은 ESXi70U1a-17119627). 6.7 빌드 번호는 확인 못 해 판정은 '확인 필요'",
+          "url": "https://support.broadcom.com/web/ecx/support-content-notification/-/external/content/SecurityAdvisories/0/23590",
+          "source": "KEV + SUMMARY"
+        }
+      ]
+    },
+    {
+      "key": "veeam12",
+      "vendor": "Veeam",
+      "product": "Backup & Replication",
+      "lines": [
+        {
+          "line": "12",
+          "ga": 2023,
+          "candidates": [
+            "12.0.0.1420",
+            "12.1.2.172",
+            "12.2.0.334",
+            "12.3.0.310",
+            "12.3.2.3617",
+            "12.3.2.4854"
+          ]
+        }
+      ],
+      "candidateNote": "후보는 Veeam 빌드표의 실제 빌드 번호다(12.1.2.172는 공지의 영향 범위 끝).",
+      "advisories": [
+        {
+          "cve": "CVE-2023-27532",
+          "title": "Cloud Connect 인증 누락",
+          "kev": true,
+          "kevAdded": "2023-08-22",
+          "affected": [
+            "12"
+          ],
+          "fixed": {
+            "12": [
+              "12.0.0.1420"
+            ]
+          },
+          "url": "https://www.veeam.com/kb4424",
+          "source": "KEV + SUMMARY"
+        },
+        {
+          "cve": "CVE-2024-40711",
+          "title": "역직렬화 원격 코드 실행",
+          "kev": true,
+          "kevAdded": "2024-10-17",
+          "affected": [
+            "12"
+          ],
+          "fixed": {
+            "12": [
+              "12.2.0.334"
+            ]
+          },
+          "url": "https://www.veeam.com/kb4649",
+          "source": "KEV + SUMMARY"
+        }
+      ]
+    },
+    {
+      "key": "s7_1500",
+      "vendor": "Siemens",
+      "product": "SIMATIC S7-1500",
+      "firmware": true,
+      "lines": [
+        {
+          "line": "V2.9+",
+          "ga": null,
+          "candidates": [
+            "V2.9.2",
+            "V2.9.4",
+            "V2.9.7",
+            "V3.1.0",
+            "V3.1.5"
+          ]
+        }
+      ],
+      "candidateNote": "후보는 공지·제품 목록에 실제로 나온 번호다. 출시 연도는 확인 못 함(제조사 지원 포털 로그인 필요). V2.9 이전 번호는 근거가 없어 넣지 않음. 공지는 'S7-1500 CPU 계열' 단위이며 CPU 모델별 구분 확인 필요",
+      "advisories": [
+        {
+          "cve": "CVE-2020-15782",
+          "title": "메모리 보호 우회",
+          "kev": false,
+          "kevAdded": null,
+          "affected": [
+            "V2.9+"
+          ],
+          "fixed": {
+            "V2.9+": [
+              "V2.9.2"
+            ]
+          },
+          "url": "https://cert-portal.siemens.com/productcert/html/ssa-434534.html",
+          "source": "NVD + SUMMARY",
+          "note": "영향: V2.9.2 미만"
+        },
+        {
+          "cve": "CVE-2022-38465",
+          "title": "키 보호 약함",
+          "kev": false,
+          "kevAdded": null,
+          "affected": [
+            "V2.9+"
+          ],
+          "fixed": {
+            "V2.9+": [
+              "V2.9.2"
+            ]
+          },
+          "url": "https://cert-portal.siemens.com/productcert/html/ssa-568427.html",
+          "source": "NVD + SUMMARY",
+          "note": "영향: V2.9.2 미만"
+        },
+        {
+          "cve": "CVE-2021-37185",
+          "title": "서비스 거부(포트 102)",
+          "kev": false,
+          "kevAdded": null,
+          "affected": [
+            "V2.9+"
+          ],
+          "fixed": {
+            "V2.9+": [
+              "V2.9.4"
+            ]
+          },
+          "url": "https://cert-portal.siemens.com/productcert/html/ssa-838121.html",
+          "source": "NVD + SUMMARY",
+          "note": "영향: V2.9.2 이상 V2.9.4 미만. 공지의 CVE–행 대응은 확인 못 함",
+          "affectedFrom": "V2.9.2"
+        }
+      ]
+    },
+    {
+      "key": "sinumerik",
+      "vendor": "Siemens",
+      "product": "SINUMERIK 840D sl",
+      "firmware": true,
+      "lines": [
+        {
+          "line": "V4",
+          "ga": null,
+          "candidates": [
+            "V4.8 SP2",
+            "V4.94 HF1",
+            "V4.95 SP4",
+            "V4.95 SP5"
+          ]
+        }
+      ],
+      "candidateNote": "후보는 카탈로그·공지에 나온 번호(V4.95 SP5는 수정 버전). 출시 연도는 확인 못 함",
+      "advisories": [
+        {
+          "cve": "CVE-2025-40743",
+          "title": "VNC 비밀번호 검사 오류",
+          "kev": false,
+          "kevAdded": null,
+          "affected": [
+            "V4"
+          ],
+          "fixed": {
+            "V4": [
+              "V4.95 SP5"
+            ]
+          },
+          "url": "https://cert-portal.siemens.com/productcert/html/ssa-177847.html",
+          "source": "NVD + SUMMARY",
+          "note": "영향: V4.95 SP5 미만"
+        },
+        {
+          "cve": "CVE-2024-41171",
+          "title": "권한 상승(수정 계획 없음)",
+          "kev": false,
+          "kevAdded": null,
+          "affected": [
+            "V4"
+          ],
+          "fixed": {},
+          "url": "https://cert-portal.siemens.com/productcert/html/ssa-342438.html",
+          "source": "SUMMARY",
+          "note": "V4 전 버전 영향, 제조사는 수정 계획 없음",
+          "noFix": true
+        }
+      ]
+    },
+    {
+      "key": "iqr",
+      "vendor": "Mitsubishi Electric",
+      "product": "MELSEC iQ-R R04CPU",
+      "firmware": true,
+      "lines": [
+        {
+          "line": "fw",
+          "ga": null,
+          "candidates": [
+            "49",
+            "52",
+            "65",
+            "66",
+            "69"
+          ]
+        }
+      ],
+      "candidateNote": "펌웨어는 정수 번호. 49·52·65·66은 CISA·NVD 공지에 나온 번호이고 69는 2차 자료 요약이다. 출시 연도는 확인 못 함. 공지는 'R04(EN)CPU' 단위",
+      "advisories": [
+        {
+          "cve": "CVE-2022-33324",
+          "title": "이더넷 통신 서비스 거부",
+          "kev": false,
+          "kevAdded": null,
+          "affected": [
+            "fw"
+          ],
+          "fixed": {
+            "fw": [
+              "66"
+            ]
+          },
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-22-356-03",
+          "source": "NVD + SUMMARY",
+          "note": "영향: 65 이하"
+        },
+        {
+          "cve": "CVE-2023-7033",
+          "title": "TCP SYN 폭주 서비스 거부(수정 계획 없음)",
+          "kev": false,
+          "kevAdded": null,
+          "affected": [
+            "fw"
+          ],
+          "fixed": {},
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-24-058-01",
+          "source": "SUMMARY",
+          "note": "모든 버전 영향, 제조사는 수정 계획 없음. 우회: 방화벽·VPN",
+          "noFix": true
+        }
+      ]
+    },
+    {
+      "key": "fanuc",
+      "vendor": "FANUC",
+      "product": "R-30iB Plus",
+      "firmware": true,
+      "lines": [
+        {
+          "line": "V9",
+          "ga": null,
+          "candidates": [
+            "V9.10",
+            "V9.13",
+            "V9.16",
+            "V9.30",
+            "V9.36",
+            "V9.40"
+          ]
+        }
+      ],
+      "candidateNote": "후보는 CISA 공지의 영향 버전 목록 전부. V9.40 이후 번호는 확인 못 함",
+      "advisories": [
+        {
+          "cve": "CVE-2021-32996",
+          "title": "정수 변환 오류로 충돌·재시작",
+          "kev": false,
+          "kevAdded": null,
+          "affected": [
+            "V9"
+          ],
+          "fixed": {},
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-21-243-02",
+          "source": "NVD + SUMMARY",
+          "note": "수정 버전 없음. 우회: 접근 제어(FSAC)·IP 제한",
+          "noFix": true
+        },
+        {
+          "cve": "CVE-2021-32998",
+          "title": "범위 밖 쓰기·원격 코드 실행",
+          "kev": false,
+          "kevAdded": null,
+          "affected": [
+            "V9"
+          ],
+          "fixed": {},
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-21-243-02",
+          "source": "NVD + SUMMARY",
+          "note": "수정 버전 없음. 복구에 INIT START·백업 복원 필요",
+          "noFix": true
+        }
+      ]
+    },
+    {
+      "key": "eds516a",
+      "vendor": "Moxa",
+      "product": "EDS-516A",
+      "firmware": true,
+      "lines": [
+        {
+          "line": "v3",
+          "ga": null,
+          "candidates": [
+            "3.8",
+            "3.10",
+            "3.11",
+            "3.11.2"
+          ]
+        }
+      ],
+      "candidateNote": "3.11 이하가 영향, 3.11.2가 보안 패치(공지 요약). 3.8·3.10 번호는 제조사 릴리스 노트(2차 확인)에서 나온 값",
+      "advisories": [
+        {
+          "cve": "CVE-2024-9137",
+          "title": "인증 누락(설정 내려받기·올리기)",
+          "kev": false,
+          "kevAdded": null,
+          "affected": [
+            "v3"
+          ],
+          "fixed": {
+            "v3": [
+              "3.11.2"
+            ]
+          },
+          "url": "https://www.moxa.com/en/support/product-support/security-advisory/mpsa-241156-cve-2024-9137-missing-authentication-vulnerability-in-ethernet-switches",
+          "source": "NVD + SUMMARY"
+        },
+        {
+          "cve": "CVE-2024-7695",
+          "title": "범위 밖 쓰기 서비스 거부",
+          "kev": false,
+          "kevAdded": null,
+          "affected": [
+            "v3"
+          ],
+          "fixed": {
+            "v3": [
+              "3.11.2"
+            ]
+          },
+          "url": "https://www.moxa.com/en/support/product-support/security-advisory/mpsa-240163-cve-2024-7695-out-of-bounds-write-vulnerability-in-multiple-eds,-ics,-iks,-and-sds-switches",
+          "source": "NVD + SUMMARY",
+          "note": "수정 버전은 다른 공지(MPSA-240931)에서 확인"
+        },
+        {
+          "cve": "CVE-2024-9404",
+          "title": "moxa_cmd 서비스 거부",
+          "kev": false,
+          "kevAdded": null,
+          "affected": [
+            "v3"
+          ],
+          "fixed": {
+            "v3": [
+              "3.11.2"
+            ]
+          },
+          "url": "https://www.moxa.com/en/support/product-support/security-advisory/mpsa-240931-cve-2024-9404-denial-of-service-vulnerability-identified-in-multiple-eds,-ics,-iks,-and-sds-switches",
+          "source": "NVD + SUMMARY"
+        }
+      ]
+    }
+  ],
+  "notInCatalog": {
+    "FR-A800": "공지가 FR-A800-E 등 변형 단위이고 펌웨어 번호 근거가 없어 제외",
+    "KEYENCE SR-2000": "공개 보안 공지·펌웨어 번호를 찾지 못함",
+    "원칙": "이 카탈로그의 제어기 CVE는 모두 CISA KEV에 없다(2026-10-23 파일 기준). '실제 악용됨'으로 표시하지 않는다"
+  }
+}

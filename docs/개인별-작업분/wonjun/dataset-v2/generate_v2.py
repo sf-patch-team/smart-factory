@@ -122,6 +122,85 @@ def apply_research(assets, software, research, rng):
     return hits
 
 
+# ---------- 제품 카탈로그(실제 제품·버전·공지)를 가상 자산에 연결 ----------
+CATALOG_KEYS = {
+    ("Microsoft", "Windows 10 Enterprise", "22H2"): "win10_22h2", ("Microsoft", "Windows 10 IoT Enterprise LTSC", "2021"): "win10_ltsc2021",
+    ("Microsoft", "Windows 11", "23H2"): "win11_23h2", ("Microsoft", "Windows Server", "2019"): "winsrv2019",
+    ("Microsoft", "Windows Server", "2022"): "winsrv2022", ("VMware", "ESXi", "7.0"): "esxi", ("VMware", "ESXi", "6.7"): "esxi",
+    ("Veeam", "Backup & Replication", "12"): "veeam12", ("Fortinet", "FortiOS", "7.2"): "fortios",
+    ("Palo Alto Networks", "PAN-OS", "10.2"): "panos", ("Cisco", "Catalyst 9300", None): "iosxe",
+    ("Siemens", "SIMATIC S7-1500", None): "s7_1500", ("Siemens", "SINUMERIK 840D sl", None): "sinumerik",
+    ("Mitsubishi Electric", "MELSEC iQ-R R04CPU", None): "iqr", ("FANUC", "R-30iB Plus", None): "fanuc", ("Moxa", "EDS-516A", None): "eds516a",
+}
+
+
+def version_key(text):
+    """버전 문자열을 비교 가능한 숫자 튜플로 바꾼다. 17.9.4a, 10.2.9-h1, 19045.4780, '빌드 N'을 다룬다."""
+    m = re.search(r"빌드 (\d+)", text)
+    if m:
+        return (int(m.group(1)),)
+    nums = [int(x) for x in re.findall(r"\d+", text.split("-h")[0])]
+    letter = re.search(r"\d([a-z])$", text)
+    hotfix = re.search(r"-h(\d+)$", text)
+    return tuple(nums) + ((ord(letter.group(1)) - 96,) if letter else (0,) if "." in text and nums else ()) + ((int(hotfix.group(1)),) if hotfix else ())
+
+
+def judge(advisory, line, version):
+    """영향 여부를 판정한다: affected_scenario / affected_no_fix / fixed / not_listed / unknown."""
+    if line not in advisory["affected"]:
+        return "not_listed"
+    v = version_key(version)
+    if advisory.get("affectedFrom") and v < version_key(advisory["affectedFrom"]):
+        return "not_listed"
+    if advisory.get("noFix"):
+        return "affected_no_fix"
+    fixes = advisory["fixed"].get(line)
+    if not fixes:
+        return "unknown"
+    return "fixed" if v >= min(version_key(f) for f in fixes) else "affected_scenario"
+
+
+def apply_catalog(assets, catalog, rng):
+    if not catalog:
+        return 0
+    products = {p["key"]: p for p in catalog["products"]}
+    done = 0
+    for a in assets:
+        key = CATALOG_KEYS.get((a["vendor"], a["product"], a["version"]))
+        if not key:
+            continue
+        pr = products[key]
+        year = rng.choice([2018, 2019, 2020, 2021, 2021, 2022, 2022, 2023, 2023, 2024, 2025])
+        if a.get("version") is None:
+            options = [l for l in pr["lines"] if (l["ga"] or 0) <= year] or pr["lines"][:1]
+            line = options[int(len(options) * (rng.random() ** 0.8))]
+        else:
+            line = next((l for l in pr["lines"] if l["line"] == a["version"]), None)
+        if not line:
+            continue
+        year = max(year, line["ga"] or 0)
+        cands = line["candidates"]
+        idx = len(cands) - 1 if rng.random() < 0.35 else int(len(cands) * (rng.random() ** (1.4 if year >= 2023 else 0.8)))
+        version = cands[min(idx, len(cands) - 1)]
+        a["installedYear"] = year
+        a["catalogKey"] = key
+        a["catalogVersion"] = version
+        a["catalogLine"] = line["line"]
+        a["advisoryMatches"] = [
+            {"cve": adv["cve"], "status": judge(adv, line["line"], version), "kev": adv["kev"], "kevAdded": adv["kevAdded"], "url": adv["url"]}
+            for adv in pr["advisories"]
+        ]
+        if key.startswith("win"):
+            a["osBuild"] = version
+        if pr.get("firmware"):
+            a["firmwareVersion"] = version
+            a["versionEvidence"] = "catalog_public_version_assigned"
+        a["patchLevel"] = {"label": version, "detail": "카탈로그 후보 중 배정", "date": None, "source": "product_catalog.json", "confidence": "카탈로그 출처 참고"}
+        a["patchLevelNote"] = "공개된 실제 버전 번호를 도입 연도와 갱신 상황을 가정해 가상 자산에 배정한 값이며 실제 장비의 값이 아니다"
+        done += 1
+    return done
+
+
 # ---------- 라인·MES ----------
 def fix_lines(d):
     by_line = {}
@@ -282,7 +361,7 @@ def diversify_flows(d, rng):
     return changed
 
 
-def update_summary(d, as_of, hetero_ids, research_hits, extra_ids):
+def update_summary(d, as_of, hetero_ids, research_hits, extra_ids, catalog_hits=0):
     s = d["summary"]; q = d["quality_truth"]["issues"]
     s["assets"] = len(d["canonical_assets"])
     s["assetTypes"] = dict(collections.Counter(x["assetType"] for x in d["canonical_assets"]))
@@ -290,7 +369,7 @@ def update_summary(d, as_of, hetero_ids, research_hits, extra_ids):
     s["issueTypes"] = dict(sorted(collections.Counter(i["issueType"] for i in q).items()))
     d["schemaVersion"] = "2.0-draft"
     d["v2"] = {"generator": "generate_v2.py", "seed": R.SEED, "asOfProgress": as_of, "heterogeneityAssets": hetero_ids,
-               "researchedAssets": research_hits, "addedAssetIds": extra_ids, "note": "원본 대비 파생 데이터. 변형 값은 시험용 가정이며 실제 회사 자료가 아니다."}
+               "researchedAssets": research_hits, "catalogAssets": catalog_hits, "addedAssetIds": extra_ids, "note": "원본 대비 파생 데이터. 변형 값은 시험용 가정이며 실제 회사 자료가 아니다."}
 
 
 def validate(d):
@@ -315,7 +394,7 @@ def validate(d):
     return checks
 
 
-def build(code, src, out, research):
+def build(code, src, out, research, catalog=None):
     d = json.loads((src / f"{code.lower()}_factory.json").read_text(encoding="utf-8"))
     original_obs = copy.deepcopy([o["original"] for o in d["machine_observations"]])
     rng = random.Random(f"{R.SEED}-{code}")
@@ -325,22 +404,24 @@ def build(code, src, out, research):
     hits = apply_research(d["canonical_assets"], d["software_installations"], research, rng)
     extra_ids = add_extra_assets(d, rng)
     diversify_flows(d, rng)
+    catalog_hits = apply_catalog(d["canonical_assets"], catalog, rng)
     fix_lines(d)
     as_of = rebuild_mes(d, rng)
     vary_reported(d, rng); reassign_sources(d, rng); add_cross_file_conflicts(d, rng); renumber(d)
-    update_summary(d, as_of, hetero_ids, hits, extra_ids)
+    update_summary(d, as_of, hetero_ids, hits, extra_ids, catalog_hits)
     checks = validate(d); checks["AI4I 원본값 보존"] = original_obs == [o["original"] for o in d["machine_observations"]]
     (out / f"{code.lower()}_factory_v2.json").write_text(json.dumps(d, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     return checks, hits
 
 
-def main(src, out, research_path=None):
+def main(src, out, research_path=None, catalog_path=None):
     src, out = pathlib.Path(src), pathlib.Path(out); out.mkdir(parents=True, exist_ok=True)
     research = json.loads(pathlib.Path(research_path).read_text(encoding="utf-8")) if research_path and pathlib.Path(research_path).exists() else None
+    catalog = json.loads(pathlib.Path(catalog_path).read_text(encoding="utf-8")) if catalog_path and pathlib.Path(catalog_path).exists() else None
     for code in ("VMA", "VMB", "VMC"):
-        checks, hits = build(code, src, out, research)
+        checks, hits = build(code, src, out, research, catalog)
         print(code, "조사값 적용 자산", hits, "|", "통과" if all(checks.values()) else "실패", {k: v for k, v in checks.items() if not v} or "")
 
 
 if __name__ == "__main__":
-    main(*sys.argv[1:4])
+    main(*sys.argv[1:5])
