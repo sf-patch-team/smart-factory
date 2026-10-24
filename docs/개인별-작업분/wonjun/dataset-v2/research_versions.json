@@ -415,7 +415,7 @@
         "version": "SP1"
       },
       "supportEndDate": "2020-10-13",
-      "supportEndNote": "연장 지원 종료. OEM 경유 ESU 3년차가 2023-10-10에 끝나 현재는 모든 지원 종료. 최신 빌드·KB는 확인 못 함",
+      "supportEndNote": "연장 지원 종료. OEM 경유 ESU 3년차가 2023-10-10에 끝나 현재는 모든 지원 종료. 최신 빌드·KB는 확인 못 함 · ESU 3년차는 2023-10-10까지(Microsoft 수명주기 표, 계약이 있는 경우)",
       "supportEndSource": "https://learn.microsoft.com/en-us/lifecycle/products/windows-embedded-standard-7",
       "supportEndConfidence": "공식 확인",
       "patchLevels": []
@@ -961,6 +961,18 @@
       "supportEndSource": "https://docs.inductiveautomation.com/long-term-support",
       "supportEndConfidence": "공식 확인",
       "supportEndNote": "제한 지원 종료(장기 지원 버전 아님)",
+      "patchLevels": []
+    },
+    {
+      "match": {
+        "vendor": "Microsoft",
+        "product": "Windows XP",
+        "version": "SP3"
+      },
+      "supportEndDate": "2014-04-08",
+      "supportEndSource": "https://learn.microsoft.com/en-us/lifecycle/products/windows-xp",
+      "supportEndConfidence": "공식 확인",
+      "supportEndNote": "연장 지원 종료(표의 4/9/2014는 UTC 표기라 태평양 시간 기준 하루 앞)",
       "patchLevels": []
     }
   ]

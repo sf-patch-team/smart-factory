@@ -75,14 +75,19 @@ def apply_heterogeneity(d, rng):
     row_by_asset = {}
     for rid, aid in d["quality_truth"]["row_to_asset"].items():
         row_by_asset.setdefault(aid, []).append(rid)
+    year_of = {l["id"]: l.get("commissionYear", 0) for l in d["lines"]}
     cand = [a for a in d["canonical_assets"] if a["assetType"] == spec["assetType"]
-            and not any(r.replace("-DUP", "") in bad for r in row_by_asset.get(a["id"], []))]
+            and not any(r.replace("-DUP", "") in bad for r in row_by_asset.get(a["id"], []))
+            and (spec["assetType"] != "HMI PC" or year_of.get(a["line"], 0) <= 2017)]
     chosen = rng.sample(cand, min(spec["count"], len(cand)))
     raw = {r["id"]: r for r in d["raw_asset_register"]}
     for a in chosen:
         old = (a["vendor"], a["product"], a["version"])
         a["vendor"], a["product"], a["version"] = spec["vendor"], spec["product"], spec["version"]
         a["heterogeneityV2"] = spec["key"]
+        if spec["assetType"] == "HMI PC":
+            a["installedYear"] = min(2017, max(2011, year_of.get(a["line"], 2011)))
+            a["lineWave"] = "old"
         for s in d["software_installations"]:
             if s["assetId"] == a["id"] and (s["vendor"], s["product"], s["version"]) == old:
                 s["vendor"], s["product"], s["version"] = a["vendor"], a["product"], a["version"]
@@ -456,12 +461,12 @@ def _num(pattern, items, key):
     return max(nums) if nums else 0
 
 
-def plan_growth(lines, founding_year, last_year, rng, shares, ops_by_type):
+def plan_growth(lines, founding_year, last_year, rng, shares, ops_by_type, years=None):
     if not lines:
         return
 
     n = len(lines)
-    f = min(rng.choice([2, 3]), n)
+    f = min(years.count(years[0]) if years else rng.choice([2, 3]), n)
 
     init_types = ["가공", "가공"] if f == 2 else ["가공", "가공", "세척·검사"]
     init_types = init_types[:f]
@@ -475,7 +480,7 @@ def plan_growth(lines, founding_year, last_year, rng, shares, ops_by_type):
             rem_years.append(y)
         rem_years.sort()
 
-    all_years = [founding_year] * f + rem_years
+    all_years = sorted(years)[:n] if years else [founding_year] * f + rem_years
 
     target_counts = {}
     allocated = 0
@@ -556,7 +561,7 @@ def restructure_lines(d):
         by_site.setdefault(l["siteId"], []).append(l)
     ops = {k: v["ops"] for k, v in R.LINE_TYPES.items()}
     for site, lines in by_site.items():
-        plan_growth(lines, R.FOUNDING_YEAR.get(site, R.FOUNDING_DEFAULT), R.LAST_LINE_YEAR, rng, R.LINE_TYPE_SHARE, ops)
+        plan_growth(lines, R.FOUNDING_YEAR.get(site, R.FOUNDING_DEFAULT), R.LAST_LINE_YEAR, rng, R.LINE_TYPE_SHARE, ops, R.LINE_YEARS.get(site))
 
     removed = set()
     created = []
@@ -910,14 +915,10 @@ def apply_line_profiles(d, skip_ids, ctx):
             lr = random.Random(f"{R.SEED}-{d['code']}-{line['id']}")
             year = line["commissionYear"]
             generation = line["generation"]
-            
-            # 시기 구분 및 OS 설정
+
             wave = "old" if year < 2022 else ("mid" if year <= 2023 else "new")
             era = "old" if year < 2022 else "new"
-            hmi_os = R.LTSC if year < 2024 else (R.WIN11 if lr.random() < 0.7 else R.LTSC)
-            vision_os = R.WIN10 if year <= 2022 else (R.LTSC if year == 2023 else R.WIN11)
 
-            # CNC 및 스위치 후보 선정
             cnc_weights = list(R.LINE_CNC_ERA[era])
             if year >= 2024:
                 cnc_weights = [(p, v) for p, v in cnc_weights if v != ("Siemens", "SINUMERIK 840D sl", None)]
@@ -929,36 +930,100 @@ def apply_line_profiles(d, skip_ids, ctx):
                 "plc": pick(lr, R.LS_PLC) if plc == "LS" else plc,
                 "inverter": pick(lr, R.LINE_INVERTER),
                 "switch": pick(lr, R.LINE_SWITCH_ERA[era]),
-                "hmi": hmi_os,
-                "vision": vision_os,
             }
-            addition = lr.random() < R.LINE_ADDITION_CHANCE
+            legacy_prof = {
+                "cnc": pick(lr, R.LEGACY_CNC),
+                "plc": pick(lr, R.LEGACY_PLC),
+                "robot": pick(lr, R.LEGACY_ROBOT),
+                "inverter": pick(lr, R.LEGACY_INVERTER),
+                "switch": pick(lr, R.LEGACY_SWITCH),
+            }
+
+            addition = lr.random() < R.LINE_ADDITION_CHANCE and year >= R.LEGACY_BEFORE
             added = False
             for a in by_line.get(line["id"], []):
                 if a["id"] in skip_ids:
                     continue
+                a["originalYear"] = year
                 a["lineWave"] = wave
                 a["lineGeneration"] = generation
                 a["lineCommissionYear"] = year
                 a["installedYear"] = year
 
-                # 개선 공사(리트로핏) 반영
                 if lr.random() < 0.10 and year < 2025:
                     a["installedYear"] = lr.randint(year + 1, 2025)
                     a["retrofitYear"] = a["installedYear"]
 
                 key = R.TYPE_KEY.get(a["assetType"])
-                if not key:
-                    continue
-                target = prof[key]
+                is_addition = False
+
                 if addition and key == "cnc" and not added:
                     target = pick(lr, [(p, v) for p, v in cnc_weights if v != prof["cnc"]])
                     added = True
+                    is_addition = True
                     a["installedYear"] = min(2025, year + lr.randint(1, 3))
                     stat["새로 추가된 설비"] += 1
+
+                if not is_addition:
+                    spec = R.REPLACE_CYCLE.get(a["assetType"])
+                    if spec:
+                        count = 0
+                        while R.NOW_YEAR - a["installedYear"] >= spec[0] and lr.random() < spec[1]:
+                            a["installedYear"] = min(R.LAST_LINE_YEAR, a["installedYear"] + spec[0] + lr.randint(-1, 2))
+                            count += 1
+                        if count > 0:
+                            a["replacedCount"] = count
+                            stat["교체된 설비"] += 1
+                        elif R.NOW_YEAR - a["installedYear"] >= spec[0]:
+                            stat["10년 넘게 안 바뀐 설비"] += 1
+
+                yi = a["installedYear"]
+                a["lineEra"] = "legacy" if yi < R.LEGACY_BEFORE else "current"
+
+                if not key:
+                    continue
+
+                if not is_addition:
+                    if key in ("hmi", "vision"):
+                        legacy_os = R.legacy_os(yi)
+                        if legacy_os is not None:
+                            target = legacy_os
+                        elif key == "hmi":
+                            target = R.LTSC if yi < 2024 else (R.WIN11 if lr.random() < 0.7 else R.LTSC)
+                        else:
+                            target = R.WIN10 if yi <= 2022 else (R.LTSC if yi == 2023 else R.WIN11)
+                    else:
+                        if yi < R.EARLY_BEFORE:
+                            target = R.early_product(key, legacy_prof[key][0])
+                        elif yi < R.LEGACY_BEFORE:
+                            target = legacy_prof[key]
+                        else:
+                            if year < R.LEGACY_BEFORE:
+                                target = R.LEGACY_UPGRADE.get(legacy_prof[key], prof[key])
+                            else:
+                                target = prof[key]
+                        if target == ("Siemens", "SINUMERIK 840D sl", None) and yi >= 2024:
+                            target = ("FANUC", "Series 0i-MF Plus", None)
+
                 if retarget(a, target, *ctx, "synthetic_assumption(line_profile)"):
                     stat["라인 프로필 적용"] += 1
     return dict(stat)
+
+
+def apply_mes_year(d, skip_ids):
+    """MES·수집 계층 장비(엣지 수집 PC, 안돈, 바코드 리더)는 MES 도입 연도 이후에 설치된다. 이전 라인에는 뒤늦게 붙인 것으로 본다."""
+    rng = random.Random(f"{R.SEED}-{d['code']}-mes")
+    mes = R.MES_YEAR[d["code"]]
+    n = 0
+    for a in d["canonical_assets"]:
+        if a["id"] in skip_ids or a["line"] == "공용" or a["assetType"] not in R.MES_TYPES or not a.get("installedYear"):
+            continue
+        floor = max(mes, 2022) if a["assetType"] == "엣지 수집 PC" else mes     # 엣지 PC의 Ubuntu 22.04는 2022년 출시
+        if a["installedYear"] < floor:
+            a["installedYear"] = min(R.LAST_LINE_YEAR, floor + rng.randint(0, 2))
+            a["mesRetrofitYear"] = a["installedYear"]
+            n += 1
+    return {"MES 도입 때 뒤늦게 설치": n}
 
 
 def diversify_fleet(d, rng, skip_ids):
@@ -975,6 +1040,7 @@ def diversify_fleet(d, rng, skip_ids):
         sw.setdefault(s["assetId"], []).append(s)
     ctx = (rows, flagged, raw, sw)
     stat = collections.Counter(apply_line_profiles(d, skip_ids, ctx))
+    stat.update(apply_mes_year(d, skip_ids))
     quality = lambda a: R.GEN_QUALITY.get(a.get("lineWave"), 1.0)
     for a in assets:
         if a["id"] in skip_ids:
@@ -1047,8 +1113,12 @@ def add_server_software(d, rng, skip_ids):
             apps = [app] if app else []
         else:
             continue
-        first = founding.get(a["siteId"], R.FOUNDING_DEFAULT)
-        a["installedYear"] = first if rng.random() < 0.7 else rng.randint(min(first + 2, R.LAST_LINE_YEAR), R.LAST_LINE_YEAR)
+        if kind in R.MES_TYPES:
+            a["installedYear"] = min(R.LAST_LINE_YEAR, R.MES_YEAR[d["code"]] + rng.randint(0, 2))
+        else:
+            first = founding.get(a["siteId"], R.FOUNDING_DEFAULT)
+            a["installedYear"] = first if first >= R.INFRA_REFRESH_FROM else rng.randint(R.INFRA_REFRESH_FROM, 2024)
+        a["installedYear"] = max(a["installedYear"], R.OS_GA.get(os_choice[2], 0))
         install(a, os_choice, "os")
         for app in apps:
             install(a, app, "app")
@@ -1194,7 +1264,7 @@ def line_vendor_ok(d):
     for a in d["canonical_assets"]:
         if a["assetType"] == "CNC 컨트롤러":
             kinds.setdefault(a["line"], set()).add(a["product"])
-    return all(len(v) <= 2 for v in kinds.values())
+    return all(len(v) <= 4 for v in kinds.values())
 
 
 def validate(d):
@@ -1217,7 +1287,7 @@ def validate(d):
         "대장 제조사·제품 일치(오류 표시 없는 행)": raw_matches_truth(d),
         "라인 유형별 구성(세척·조립에 CNC 없음, 가공 CNC 6대 이상)": line_types_ok(d),
         "라인 성장(최초 2~3개 라인, 개설 연도 비감소, 설치 연도가 개설 연도 이후)": growth_ok(d),
-        "라인당 CNC 제조사 2종 이하": line_vendor_ok(d),
+        "라인당 CNC 제품 4종 이하(구형·후속·모델 미상·추가)": line_vendor_ok(d),
         "기간 하루 이상": max(dt.datetime.fromisoformat(o["simulatedTimestamp"]) for o in d["machine_observations"]) - base > dt.timedelta(hours=24),
     }
     return checks

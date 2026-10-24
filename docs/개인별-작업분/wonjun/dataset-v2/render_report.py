@@ -23,6 +23,11 @@ def stats(d, exp):
             for w in ("old", "mid", "new")),
         "세대별 한 번도 확인 안 함 비율(구/중/신)": "/".join(
             f'{round(100 * sum(1 for x in a if x.get("lineWave") == w and not x.get("lastVerifiedAt")) / max(1, sum(1 for x in a if x.get("lineWave") == w)))}%' for w in ("old", "mid", "new")),
+        "라인 개설 연도 분포(~1999 / 2000s / 2010s / 2020s)": "/".join(str(sum(1 for l in d["lines"] if lo <= l["commissionYear"] <= hi)) for lo, hi in ((0, 1999), (2000, 2009), (2010, 2019), (2020, 2099))),
+        "구형 제품(2016 이전 도입) 자산": sum(1 for x in a if x.get("lineEra") == "legacy"),
+        "교체된 자산(라인 설비)": sum(1 for x in a if x.get("replacedCount")),
+        "10년 넘게 운영 중(교체 안 함)": sum(1 for x in a if x.get("lineCommissionYear") and 2026 - x["installedYear"] >= 10 and not x.get("replacedCount")),
+        "MES 도입 때 뒤늦게 설치한 자산": sum(1 for x in a if x.get("mesRetrofitYear")),
         "라인 유형(가공/세척·검사/조립·포장)": "/".join(str(sum(1 for l in d["lines"] if l.get("lineType") == k)) for k in ("가공", "세척·검사", "조립·포장")),
         "라인당 자산 수(최소~최대)": f'{min(sum(1 for x in a if x["line"] == l["id"]) for l in d["lines"])}~{max(sum(1 for x in a if x["line"] == l["id"]) for l in d["lines"])}',
         "서로 다른 라인 구성 수": len({tuple(sorted(collections.Counter(x["assetType"] for x in a if x["line"] == l["id"]).items())) for l in d["lines"]}),

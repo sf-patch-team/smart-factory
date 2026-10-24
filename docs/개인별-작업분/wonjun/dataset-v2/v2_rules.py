@@ -189,3 +189,60 @@ LINE_SWITCH_ERA = {
 }
 OT_UPDATED_BY_WAVE = {"old": 0.35, "mid": 0.20, "new": 0.10}      # 오래된 라인일수록 점검 때 갱신한 설비가 많다
 GEN_QUALITY = {"old": 1.8, "mid": 1.0, "new": 0.4}                # 오래된 라인일수록 대장이 부실(확인 안 함·담당 미지정)
+
+# ---------------- 참고 기업 연혁에 맞춘 개설 연도(가정) ----------------
+# 연혁(공개 자료)의 공장 준공·이전·제품 수주 시점 근처에 라인이 늘었다고 가정한 연도다. 실제 라인 수·설비 도입 연도가 아니다.
+LINE_YEARS = {
+    "VMA-P1": [1995, 1995, 1997, 2004, 2007, 2011, 2014, 2016, 2019, 2019, 2022, 2024],            # 대동기어: 1995 공장 이전, 1997 조립라인, 2007·2014·2016 기어 개발, 2019 제2공장, 2022 EV 기어
+    "VMB-P1": [1995, 1995, 1999, 2003, 2008, 2014, 2015, 2016, 2019, 2020, 2022, 2022, 2023, 2024, 2025, 2025],   # 서진오토모티브: 1994~95 시화 신공장, 2014 AT 부품, 2019~22 EV 감속기
+    "VMC-P1": [1996, 1996, 1999, 2004, 2008, 2011, 2013, 2016, 2019, 2022, 2024, 2025],             # 디아이씨 두동공장(1996 가공라인)
+    "VMC-P2": [1992, 1992, 1996, 2000, 2004, 2008, 2012, 2016, 2019, 2021, 2023, 2025],             # 디아이씨 두서공장(1992)
+}
+NOW_YEAR = 2026
+LEGACY_BEFORE = 2016          # 이 연도 전에 도입한 제어기는 구형 제품(버전·공지 판정 없음)
+# 장비 교체 주기(가정): (주기 연도, 주기가 지났을 때 교체할 확률). 확률이 1보다 작으므로 안 바뀌는 장비가 많다.
+REPLACE_CYCLE = {
+    "CNC 컨트롤러": (10, 0.35), "PLC": (10, 0.35), "로봇 컨트롤러": (10, 0.35), "인버터": (10, 0.40), "산업용 스위치": (10, 0.45),
+    "HMI PC": (7, 0.60), "비전 검사 PC": (7, 0.60), "엣지 수집 PC": (6, 0.60), "안돈 단말": (7, 0.50), "바코드 리더": (8, 0.40),
+}
+# MES 도입(재구축) 연도(가정): MES·수집 계층 장비는 이 연도 이후에 설치된다. 이전 라인에는 도입 때 뒤늦게 붙인 것으로 본다.
+# VMA는 참고 기업 연혁에 MES 구축완료(2005)가 있어 재구축으로 가정했고, VMB·VMC는 공개 연혁에서 확인하지 못해 최근 도입으로 가정했다.
+MES_YEAR = {"VMA": 2020, "VMB": 2021, "VMC": 2022}
+MES_TYPES = ("엣지 수집 PC", "안돈 단말", "바코드 리더", "MES 앱 서버", "MES DB 서버", "OPC 수집 서버", "공정 이력 서버")
+INFRA_REFRESH_FROM = 2016     # 기반 서버·네트워크는 이 연도 이후로 교체된 것으로 본다(그 전 연도면 이 구간에서 뽑음)
+OS_GA = {"2016": 2016, "2019": 2018, "2022": 2021, "8": 2019}      # 서버 OS 출시 연도(윈도 서버, RHEL 8)
+
+# 구형(2016년 이전 도입) 제품. 이름은 일반 지식 기반이며 이 자료에서 검증하지 않았고 버전·공지 판정이 없다.
+LEGACY_CNC = [(0.35, ("Siemens", "SINUMERIK 840D", None)), (0.45, ("FANUC", "Series 0i-MD", None)), (0.20, ("Mitsubishi Electric", "M70", None))]
+LEGACY_PLC = [(0.45, ("LS ELECTRIC", "MASTER-K", None)), (0.35, ("Mitsubishi Electric", "MELSEC-Q Series", None)), (0.20, ("Siemens", "SIMATIC S7-300", None))]
+LEGACY_ROBOT = [(0.75, ("FANUC", "R-30iA", None)), (0.25, ("Yaskawa", "DX100", None))]
+LEGACY_INVERTER = [(0.5, ("Mitsubishi Electric", "FR-A700", None)), (0.5, ("LS ELECTRIC", "iG5A", None))]
+LEGACY_SWITCH = [(0.6, ("Cisco", "Catalyst 2960", None)), (0.4, ("Cisco", "Catalyst 3750", None))]
+LEGACY_UPGRADE = {      # 구형 제품을 교체할 때 같은 제조사의 후속 제품으로 바꾼다
+    ("Siemens", "SINUMERIK 840D", None): ("Siemens", "SINUMERIK 840D sl", None), ("FANUC", "Series 0i-MD", None): ("FANUC", "Series 0i-MF Plus", None),
+    ("Mitsubishi Electric", "M70", None): ("Mitsubishi Electric", "M80", None), ("LS ELECTRIC", "MASTER-K", None): ("LS ELECTRIC", "XGK-CPUU", None),
+    ("Mitsubishi Electric", "MELSEC-Q Series", None): ("Mitsubishi Electric", "MELSEC iQ-R R04CPU", None),
+    ("Siemens", "SIMATIC S7-300", None): ("Siemens", "SIMATIC S7-1500", None), ("FANUC", "R-30iA", None): ("FANUC", "R-30iB Plus", None),
+    ("Yaskawa", "DX100", None): ("Yaskawa", "YRC1000", None), ("Mitsubishi Electric", "FR-A700", None): ("Mitsubishi Electric", "FR-A800", None),
+    ("LS ELECTRIC", "iG5A", None): ("LS ELECTRIC", "LSLV-H100", None), ("Cisco", "Catalyst 2960", None): ("Cisco", "IE-3300", None),
+    ("Cisco", "Catalyst 3750", None): ("Cisco", "IE-3300", None),
+}
+
+
+EARLY_BEFORE = 2008           # 이 연도 전에 도입한 제어기는 모델을 알 수 없는 구형으로 둔다(당시 제품명을 검증하지 못했기 때문)
+EARLY_LABEL = {"cnc": "구형 CNC 컨트롤러(모델 미상)", "plc": "구형 PLC(모델 미상)", "robot": "구형 로봇 컨트롤러(모델 미상)",
+               "inverter": "구형 인버터(모델 미상)", "switch": "구형 네트워크 스위치(모델 미상)"}
+
+
+def early_product(key, vendor):
+    """제조사는 라인의 구형 프로필을 따르되 모델은 모른다고 적는다."""
+    return (vendor, EARLY_LABEL[key], None)
+
+
+def legacy_os(year):
+    """2018년 전에 도입한 HMI·비전 PC의 OS. 2001년 전은 구형(버전 미상), 2011년 전은 Windows XP, 이후는 Windows Embedded Standard 7."""
+    if year < 2001:
+        return ("Microsoft", "Windows (구형, 버전 미상)", None)
+    if year < 2011:
+        return ("Microsoft", "Windows XP", "SP3")
+    return ("Microsoft", "Windows Embedded Standard 7", "SP1") if year < 2018 else None
