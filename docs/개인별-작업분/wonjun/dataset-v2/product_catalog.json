@@ -66,7 +66,13 @@
             ]
           },
           "url": "https://fortiguard.fortinet.com/psirt/FG-IR-22-398",
-          "source": "KEV + SUMMARY"
+          "source": "KEV + SUMMARY",
+          "cvss": {
+            "score": 9.8,
+            "version": "3.1",
+            "basis": "SUMMARY"
+          },
+          "precondition": "SSL-VPN 기능을 켠 경우"
         },
         {
           "cve": "CVE-2023-27997",
@@ -90,7 +96,13 @@
             ]
           },
           "url": "https://fortiguard.fortinet.com/psirt/FG-IR-23-097",
-          "source": "KEV + SUMMARY"
+          "source": "KEV + SUMMARY",
+          "cvss": {
+            "score": 9.8,
+            "version": "3.1",
+            "basis": "SUMMARY"
+          },
+          "precondition": "SSL-VPN 기능을 켠 경우"
         },
         {
           "cve": "CVE-2024-21762",
@@ -114,7 +126,13 @@
             ]
           },
           "url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-015",
-          "source": "KEV + SUMMARY"
+          "source": "KEV + SUMMARY",
+          "cvss": {
+            "score": 9.8,
+            "version": "3.1",
+            "basis": "SUMMARY"
+          },
+          "precondition": "SSL VPN 기능을 켠 경우"
         },
         {
           "cve": "CVE-2024-55591",
@@ -130,7 +148,12 @@
             ]
           },
           "url": "https://fortiguard.fortinet.com/psirt/FG-IR-24-535",
-          "source": "KEV + SUMMARY"
+          "source": "KEV + SUMMARY",
+          "cvss": {
+            "score": 9.8,
+            "version": "3.1",
+            "basis": "SUMMARY"
+          }
         }
       ]
     },
@@ -182,7 +205,13 @@
             ]
           },
           "url": "https://security.paloaltonetworks.com/CVE-2024-3400",
-          "source": "KEV + VENDOR(JSON)"
+          "source": "KEV + VENDOR(JSON)",
+          "cvss": {
+            "score": 10.0,
+            "version": "4.0",
+            "basis": "VENDOR"
+          },
+          "precondition": "GlobalProtect 게이트웨이·포털을 쓰는 경우"
         },
         {
           "cve": "CVE-2024-0012",
@@ -198,7 +227,13 @@
             ]
           },
           "url": "https://security.paloaltonetworks.com/CVE-2024-0012",
-          "source": "KEV + VENDOR(JSON)"
+          "source": "KEV + VENDOR(JSON)",
+          "cvss": {
+            "score": 9.3,
+            "version": "4.0",
+            "basis": "VENDOR"
+          },
+          "precondition": "관리 웹 인터페이스가 신뢰할 수 없는 망에 열린 경우"
         },
         {
           "cve": "CVE-2024-9474",
@@ -218,7 +253,13 @@
             ]
           },
           "url": "https://security.paloaltonetworks.com/CVE-2024-9474",
-          "source": "KEV + VENDOR(JSON)"
+          "source": "KEV + VENDOR(JSON)",
+          "cvss": {
+            "score": 6.9,
+            "version": "4.0",
+            "basis": "VENDOR"
+          },
+          "precondition": "관리 웹 인터페이스가 신뢰할 수 없는 망에 열린 경우"
         },
         {
           "cve": "CVE-2025-0108",
@@ -238,7 +279,13 @@
             ]
           },
           "url": "https://security.paloaltonetworks.com/CVE-2025-0108",
-          "source": "KEV + VENDOR(JSON)"
+          "source": "KEV + VENDOR(JSON)",
+          "cvss": {
+            "score": 8.8,
+            "version": "4.0",
+            "basis": "VENDOR"
+          },
+          "precondition": "관리 웹 인터페이스가 신뢰할 수 없는 망에 열린 경우"
         }
       ]
     },
@@ -251,7 +298,6 @@
           "line": "16.12",
           "ga": 2019,
           "candidates": [
-            "16.12.4",
             "16.12.10a"
           ]
         },
@@ -259,8 +305,6 @@
           "line": "17.3",
           "ga": 2020,
           "candidates": [
-            "17.3.4",
-            "17.3.8",
             "17.3.8a"
           ]
         },
@@ -276,7 +320,6 @@
           "line": "17.9",
           "ga": 2022,
           "candidates": [
-            "17.9.3",
             "17.9.4",
             "17.9.4a"
           ]
@@ -298,7 +341,7 @@
           ]
         }
       ],
-      "candidateNote": "후보 중 5·6·8a 등 수정 번호와 권장 릴리스 번호는 공지·권장 목록에 실제로 나온 값이다. 그 사이 번호(16.12.4, 17.3.4, 17.3.8, 17.6.5, 17.9.3)는 영향 구간을 보이려고 쓴 값이며 자체 출처 확인은 못 했다.",
+      "candidateNote": "후보는 공지 수정 표(17.3.8a·17.6.6a·17.9.4a·16.12.10a)와 SMU 기준 버전(17.6.5·17.9.4), 권장 릴리스 목록(17.12.x·17.15.x)에 실제 나온 번호만 쓴다. 공지가 16.12 수정판을 Catalyst 3650·3850 한정으로 적어 16.12 계열은 9300 영향 목록에서 제외(not_listed)",
       "advisories": [
         {
           "cve": "CVE-2023-20198",
@@ -323,7 +366,13 @@
           },
           "note": "공지에서 Catalyst 9300이 명시되지 않았다. IOS XE 소프트웨어 기준이며 웹 UI가 켜진 경우만 해당",
           "url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-iosxe-webui-privesc-j22SaA4z",
-          "source": "KEV + VENDOR"
+          "source": "KEV + VENDOR",
+          "cvss": {
+            "score": 10.0,
+            "version": "3.1",
+            "basis": "VENDOR"
+          },
+          "precondition": "웹 UI 기능을 켠 경우(공지 원문)"
         },
         {
           "cve": "CVE-2025-20352",
@@ -341,9 +390,15 @@
           "fixed": {},
           "note": "수정 버전 표는 확인 못 함(제조사 소프트웨어 점검기에서만 확인 가능). 판정은 '확인 필요'",
           "url": "https://sec.cloudapps.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-snmp-x4LPhte",
-          "source": "KEV + VENDOR"
+          "source": "KEV + VENDOR",
+          "cvss": {
+            "score": 7.7,
+            "version": "3.1",
+            "basis": "VENDOR"
+          }
         }
-      ]
+      ],
+      "firmware": true
     },
     {
       "key": "win10_22h2",
@@ -378,7 +433,12 @@
             ]
           },
           "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2024-38106",
-          "source": "KEV + MSRC"
+          "source": "KEV + MSRC",
+          "cvss": {
+            "score": 7.0,
+            "version": "3.1",
+            "basis": "MSRC"
+          }
         },
         {
           "cve": "CVE-2025-29824",
@@ -394,7 +454,12 @@
             ]
           },
           "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-29824",
-          "source": "KEV + MSRC"
+          "source": "KEV + MSRC",
+          "cvss": {
+            "score": 7.8,
+            "version": "3.1",
+            "basis": "MSRC"
+          }
         },
         {
           "cve": "CVE-2025-33073",
@@ -410,7 +475,12 @@
             ]
           },
           "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-33073",
-          "source": "KEV + MSRC"
+          "source": "KEV + MSRC",
+          "cvss": {
+            "score": 8.8,
+            "version": "3.1",
+            "basis": "MSRC"
+          }
         }
       ]
     },
@@ -447,7 +517,12 @@
             ]
           },
           "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2024-38106",
-          "source": "KEV + MSRC(추정 매핑)"
+          "source": "KEV + MSRC(추정 매핑)",
+          "cvss": {
+            "score": 7.0,
+            "version": "3.1",
+            "basis": "MSRC"
+          }
         },
         {
           "cve": "CVE-2025-29824",
@@ -463,7 +538,12 @@
             ]
           },
           "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-29824",
-          "source": "KEV + MSRC(추정 매핑)"
+          "source": "KEV + MSRC(추정 매핑)",
+          "cvss": {
+            "score": 7.8,
+            "version": "3.1",
+            "basis": "MSRC"
+          }
         },
         {
           "cve": "CVE-2025-33073",
@@ -479,7 +559,12 @@
             ]
           },
           "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-33073",
-          "source": "KEV + MSRC(추정 매핑)"
+          "source": "KEV + MSRC(추정 매핑)",
+          "cvss": {
+            "score": 8.8,
+            "version": "3.1",
+            "basis": "MSRC"
+          }
         }
       ]
     },
@@ -516,7 +601,12 @@
             ]
           },
           "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2024-38106",
-          "source": "KEV + MSRC"
+          "source": "KEV + MSRC",
+          "cvss": {
+            "score": 7.0,
+            "version": "3.1",
+            "basis": "MSRC"
+          }
         },
         {
           "cve": "CVE-2025-29824",
@@ -532,7 +622,12 @@
             ]
           },
           "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-29824",
-          "source": "KEV + MSRC"
+          "source": "KEV + MSRC",
+          "cvss": {
+            "score": 7.8,
+            "version": "3.1",
+            "basis": "MSRC"
+          }
         },
         {
           "cve": "CVE-2025-33073",
@@ -548,7 +643,12 @@
             ]
           },
           "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-33073",
-          "source": "KEV + MSRC"
+          "source": "KEV + MSRC",
+          "cvss": {
+            "score": 8.8,
+            "version": "3.1",
+            "basis": "MSRC"
+          }
         }
       ]
     },
@@ -585,7 +685,12 @@
             ]
           },
           "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2024-38106",
-          "source": "KEV + MSRC"
+          "source": "KEV + MSRC",
+          "cvss": {
+            "score": 7.0,
+            "version": "3.1",
+            "basis": "MSRC"
+          }
         },
         {
           "cve": "CVE-2025-29824",
@@ -601,7 +706,12 @@
             ]
           },
           "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-29824",
-          "source": "KEV + MSRC"
+          "source": "KEV + MSRC",
+          "cvss": {
+            "score": 7.8,
+            "version": "3.1",
+            "basis": "MSRC"
+          }
         },
         {
           "cve": "CVE-2025-33073",
@@ -617,7 +727,12 @@
             ]
           },
           "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-33073",
-          "source": "KEV + MSRC"
+          "source": "KEV + MSRC",
+          "cvss": {
+            "score": 8.8,
+            "version": "3.1",
+            "basis": "MSRC"
+          }
         },
         {
           "cve": "CVE-2025-59287",
@@ -632,9 +747,14 @@
               "17763.7922"
             ]
           },
-          "note": "WSUS 역할 여부는 자산에 모델링하지 않아 '해당 가능'으로만 본다",
           "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-59287",
-          "source": "KEV + MSRC"
+          "source": "KEV + MSRC",
+          "cvss": {
+            "score": 9.8,
+            "version": "3.1",
+            "basis": "MSRC"
+          },
+          "precondition": "WSUS 서버 역할이 설치된 경우"
         }
       ]
     },
@@ -671,7 +791,12 @@
             ]
           },
           "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2024-38106",
-          "source": "KEV + MSRC"
+          "source": "KEV + MSRC",
+          "cvss": {
+            "score": 7.0,
+            "version": "3.1",
+            "basis": "MSRC"
+          }
         },
         {
           "cve": "CVE-2025-29824",
@@ -687,7 +812,12 @@
             ]
           },
           "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-29824",
-          "source": "KEV + MSRC"
+          "source": "KEV + MSRC",
+          "cvss": {
+            "score": 7.8,
+            "version": "3.1",
+            "basis": "MSRC"
+          }
         },
         {
           "cve": "CVE-2025-33073",
@@ -703,7 +833,12 @@
             ]
           },
           "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-33073",
-          "source": "KEV + MSRC"
+          "source": "KEV + MSRC",
+          "cvss": {
+            "score": 8.8,
+            "version": "3.1",
+            "basis": "MSRC"
+          }
         },
         {
           "cve": "CVE-2025-59287",
@@ -718,9 +853,14 @@
               "20348.4297"
             ]
           },
-          "note": "WSUS 역할 여부는 자산에 모델링하지 않아 '해당 가능'으로만 본다",
           "url": "https://msrc.microsoft.com/update-guide/vulnerability/CVE-2025-59287",
-          "source": "KEV + MSRC"
+          "source": "KEV + MSRC",
+          "cvss": {
+            "score": 9.8,
+            "version": "3.1",
+            "basis": "MSRC"
+          },
+          "precondition": "WSUS 서버 역할이 설치된 경우"
         }
       ]
     },
@@ -766,7 +906,12 @@
           },
           "note": "6.7은 영향 표에 없음(영향 여부 확인 필요)",
           "url": "https://support.broadcom.com/web/ecx/support-content-notification/-/external/content/SecurityAdvisories/0/25390",
-          "source": "KEV + SUMMARY"
+          "source": "KEV + SUMMARY",
+          "cvss": {
+            "score": 9.3,
+            "version": "3.1",
+            "basis": "KEV-feed/SUMMARY"
+          }
         },
         {
           "cve": "CVE-2020-3992",
@@ -779,7 +924,12 @@
           "fixed": {},
           "note": "수정은 패치 ESXi670-202011301-SG(7.0은 ESXi70U1a-17119627). 6.7 빌드 번호는 확인 못 해 판정은 '확인 필요'",
           "url": "https://support.broadcom.com/web/ecx/support-content-notification/-/external/content/SecurityAdvisories/0/23590",
-          "source": "KEV + SUMMARY"
+          "source": "KEV + SUMMARY",
+          "cvss": {
+            "score": 9.8,
+            "version": "3.1",
+            "basis": "SUMMARY"
+          }
         }
       ]
     },
@@ -817,7 +967,12 @@
             ]
           },
           "url": "https://www.veeam.com/kb4424",
-          "source": "KEV + SUMMARY"
+          "source": "KEV + SUMMARY",
+          "cvss": {
+            "score": 7.5,
+            "version": "3.1",
+            "basis": "SUMMARY"
+          }
         },
         {
           "cve": "CVE-2024-40711",
@@ -833,7 +988,12 @@
             ]
           },
           "url": "https://www.veeam.com/kb4649",
-          "source": "KEV + SUMMARY"
+          "source": "KEV + SUMMARY",
+          "cvss": {
+            "score": 9.8,
+            "version": "3.1",
+            "basis": "SUMMARY"
+          }
         }
       ]
     },
@@ -872,7 +1032,12 @@
           },
           "url": "https://cert-portal.siemens.com/productcert/html/ssa-434534.html",
           "source": "NVD + SUMMARY",
-          "note": "영향: V2.9.2 미만"
+          "note": "영향: V2.9.2 미만",
+          "cvss": {
+            "score": 9.8,
+            "version": "3.1",
+            "basis": "NVD(제조사 페이지는 8.1)"
+          }
         },
         {
           "cve": "CVE-2022-38465",
@@ -889,7 +1054,12 @@
           },
           "url": "https://cert-portal.siemens.com/productcert/html/ssa-568427.html",
           "source": "NVD + SUMMARY",
-          "note": "영향: V2.9.2 미만"
+          "note": "영향: V2.9.2 미만",
+          "cvss": {
+            "score": 9.3,
+            "version": "3.1",
+            "basis": "VENDOR(NVD는 7.8)"
+          }
         },
         {
           "cve": "CVE-2021-37185",
@@ -907,7 +1077,12 @@
           "url": "https://cert-portal.siemens.com/productcert/html/ssa-838121.html",
           "source": "NVD + SUMMARY",
           "note": "영향: V2.9.2 이상 V2.9.4 미만. 공지의 CVE–행 대응은 확인 못 함",
-          "affectedFrom": "V2.9.2"
+          "affectedFrom": "V2.9.2",
+          "cvss": {
+            "score": 7.5,
+            "version": "3.1",
+            "basis": "NVD"
+          }
         }
       ]
     },
@@ -945,7 +1120,12 @@
           },
           "url": "https://cert-portal.siemens.com/productcert/html/ssa-177847.html",
           "source": "NVD + SUMMARY",
-          "note": "영향: V4.95 SP5 미만"
+          "note": "영향: V4.95 SP5 미만",
+          "cvss": {
+            "score": 8.3,
+            "version": "3.1",
+            "basis": "NVD"
+          }
         },
         {
           "cve": "CVE-2024-41171",
@@ -959,7 +1139,12 @@
           "url": "https://cert-portal.siemens.com/productcert/html/ssa-342438.html",
           "source": "SUMMARY",
           "note": "V4 전 버전 영향, 제조사는 수정 계획 없음",
-          "noFix": true
+          "noFix": true,
+          "cvss": {
+            "score": 8.8,
+            "version": "3.1",
+            "basis": "SUMMARY"
+          }
         }
       ]
     },
@@ -998,7 +1183,12 @@
           },
           "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-22-356-03",
           "source": "NVD + SUMMARY",
-          "note": "영향: 65 이하"
+          "note": "영향: 65 이하",
+          "cvss": {
+            "score": 7.5,
+            "version": "3.1",
+            "basis": "NVD"
+          }
         },
         {
           "cve": "CVE-2023-7033",
@@ -1012,7 +1202,12 @@
           "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-24-058-01",
           "source": "SUMMARY",
           "note": "모든 버전 영향, 제조사는 수정 계획 없음. 우회: 방화벽·VPN",
-          "noFix": true
+          "noFix": true,
+          "cvss": {
+            "score": 5.3,
+            "version": "3.1",
+            "basis": "NVD"
+          }
         }
       ]
     },
@@ -1049,7 +1244,12 @@
           "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-21-243-02",
           "source": "NVD + SUMMARY",
           "note": "수정 버전 없음. 우회: 접근 제어(FSAC)·IP 제한",
-          "noFix": true
+          "noFix": true,
+          "cvss": {
+            "score": 7.5,
+            "version": "3.1",
+            "basis": "NVD(CISA는 7.4)"
+          }
         },
         {
           "cve": "CVE-2021-32998",
@@ -1063,7 +1263,12 @@
           "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-21-243-02",
           "source": "NVD + SUMMARY",
           "note": "수정 버전 없음. 복구에 INIT START·백업 복원 필요",
-          "noFix": true
+          "noFix": true,
+          "cvss": {
+            "score": 7.4,
+            "version": "3.1",
+            "basis": "NVD"
+          }
         }
       ]
     },
@@ -1100,7 +1305,12 @@
             ]
           },
           "url": "https://www.moxa.com/en/support/product-support/security-advisory/mpsa-241156-cve-2024-9137-missing-authentication-vulnerability-in-ethernet-switches",
-          "source": "NVD + SUMMARY"
+          "source": "NVD + SUMMARY",
+          "cvss": {
+            "score": 9.4,
+            "version": "3.1",
+            "basis": "NVD"
+          }
         },
         {
           "cve": "CVE-2024-7695",
@@ -1117,7 +1327,12 @@
           },
           "url": "https://www.moxa.com/en/support/product-support/security-advisory/mpsa-240163-cve-2024-7695-out-of-bounds-write-vulnerability-in-multiple-eds,-ics,-iks,-and-sds-switches",
           "source": "NVD + SUMMARY",
-          "note": "수정 버전은 다른 공지(MPSA-240931)에서 확인"
+          "note": "수정 버전은 다른 공지(MPSA-240931)에서 확인",
+          "cvss": {
+            "score": 7.5,
+            "version": "3.1",
+            "basis": "NVD"
+          }
         },
         {
           "cve": "CVE-2024-9404",
@@ -1133,7 +1348,12 @@
             ]
           },
           "url": "https://www.moxa.com/en/support/product-support/security-advisory/mpsa-240931-cve-2024-9404-denial-of-service-vulnerability-identified-in-multiple-eds,-ics,-iks,-and-sds-switches",
-          "source": "NVD + SUMMARY"
+          "source": "NVD + SUMMARY",
+          "cvss": {
+            "score": 7.5,
+            "version": "3.1",
+            "basis": "NVD"
+          }
         }
       ]
     }

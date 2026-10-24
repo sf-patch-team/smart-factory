@@ -73,3 +73,6 @@ EXTRA_ASSETS = [
     ("산업용 무선 AP", 2, "IT", "OFFICE", "IT", "SIM-INDUSTRIAL-AP", "mid", ["maintenance_window"], "internal", True),
 ]
 EXTRA_VENDOR = "가상 설비 공급사"
+
+EPSS_DATE = "2026-10-22"          # EPSS는 시험용 값이며 이 날짜는 가정이다
+AS_OF_MONTH = "2026-10"

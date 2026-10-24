@@ -104,6 +104,8 @@ def apply_research(assets, software, research, rng):
         hits += 1
         if e.get("supportEndDate") or e.get("supportEndSource"):
             a["supportEnd"] = {k: e.get(k2) for k, k2 in (("date", "supportEndDate"), ("source", "supportEndSource"), ("confidence", "supportEndConfidence"), ("note", "supportEndNote"))}
+        if e.get("discontinuedOn"):
+            a["discontinuedOn"] = {"date": e["discontinuedOn"], "source": e.get("discontinuedSource"), "confidence": e.get("discontinuedConfidence"), "note": e.get("discontinuedNote")}
         if e.get("noPublicVersion"):
             a["versionEvidence"] = "public_version_not_found"
         levels = e.get("patchLevels") or []
@@ -160,10 +162,43 @@ def judge(advisory, line, version):
     return "fixed" if v >= min(version_key(f) for f in fixes) else "affected_scenario"
 
 
-def apply_catalog(assets, catalog, rng):
+def synthetic_epss(cve, kev):
+    """EPSS 값은 실제 값을 가져올 수 없어 시험용 값으로 만든다(synthetic 표시). KEV 등재 건은 높게 둔다."""
+    r = random.Random(f"{R.SEED}-epss-{cve}")
+    score = r.uniform(0.30, 0.95) if kev else r.uniform(0.001, 0.20)
+    return {"score": round(score, 4), "date": R.EPSS_DATE, "synthetic": True}
+
+
+def source_confidence(source):
+    if "VENDOR" in source or "MSRC" in source:
+        return "high"
+    return "low" if source.strip() == "SUMMARY" else "medium"
+
+
+def match_advisory(adv, line, version):
+    status = judge(adv, line, version)
+    if status == "affected_scenario" and adv.get("precondition"):
+        status = "affected_conditional"
+    m = {"cve": adv["cve"], "status": status, "kev": adv["kev"], "kevAdded": adv["kevAdded"], "url": adv["url"],
+         "cvss": adv["cvss"], "epss": synthetic_epss(adv["cve"], adv["kev"]), "confidence": source_confidence(adv["source"]),
+         "scenario": True}
+    if adv.get("precondition"):
+        m["precondition"] = adv["precondition"]
+    if adv.get("note"):
+        m["note"] = adv["note"]
+    return m
+
+
+def support_end_year(asset):
+    date = (asset.get("supportEnd") or {}).get("date")
+    return int(date[:4]) if date else None
+
+
+def apply_catalog(assets, catalog, research, rng):
     if not catalog:
         return 0
     products = {p["key"]: p for p in catalog["products"]}
+    research_levels = {lv["label"]: lv for e in (research or {}).get("entries", []) for lv in e.get("patchLevels", [])}
     done = 0
     for a in assets:
         key = CATALOG_KEYS.get((a["vendor"], a["product"], a["version"]))
@@ -171,6 +206,9 @@ def apply_catalog(assets, catalog, rng):
             continue
         pr = products[key]
         year = rng.choice([2018, 2019, 2020, 2021, 2021, 2022, 2022, 2023, 2023, 2024, 2025])
+        end_year = support_end_year(a)
+        if end_year:
+            year = min(year, end_year)
         if a.get("version") is None:
             options = [l for l in pr["lines"] if (l["ga"] or 0) <= year] or pr["lines"][:1]
             line = options[int(len(options) * (rng.random() ** 0.8))]
@@ -186,17 +224,26 @@ def apply_catalog(assets, catalog, rng):
         a["catalogKey"] = key
         a["catalogVersion"] = version
         a["catalogLine"] = line["line"]
-        a["advisoryMatches"] = [
-            {"cve": adv["cve"], "status": judge(adv, line["line"], version), "kev": adv["kev"], "kevAdded": adv["kevAdded"], "url": adv["url"]}
-            for adv in pr["advisories"]
-        ]
+        a["advisoryMatches"] = [] if a.get("lifecycle") == "retired" else [match_advisory(adv, line["line"], version) for adv in pr["advisories"]]
+        if a.get("lifecycle") == "retired":
+            a["advisoryNote"] = "retired 자산은 경고 대상에서 제외"
         if key.startswith("win"):
             a["osBuild"] = version
         if pr.get("firmware"):
             a["firmwareVersion"] = version
-            a["versionEvidence"] = "catalog_public_version_assigned"
-        a["patchLevel"] = {"label": version, "detail": "카탈로그 후보 중 배정", "date": None, "source": "product_catalog.json", "confidence": "카탈로그 출처 참고"}
+        a["versionEvidence"] = "catalog_public_version_assigned"
+        prev = research_levels.get(version, {})
+        a["patchLevel"] = {"label": version, "detail": prev.get("detail") or "카탈로그 후보 중 배정", "date": prev.get("date"),
+                           "source": prev.get("source") or "product_catalog.json", "confidence": prev.get("confidence") or "카탈로그 후보(번호만)"}
         a["patchLevelNote"] = "공개된 실제 버전 번호를 도입 연도와 갱신 상황을 가정해 가상 자산에 배정한 값이며 실제 장비의 값이 아니다"
+        if end_year and (a["supportEnd"].get("date") or "")[:7] < R.AS_OF_MONTH:
+            a["supportStatus"] = "ended"
+            a["supportStatusNote"] = "지원 종료 뒤 빌드는 ESU 등 별도 계약이 있는지 확인 필요(모델링하지 않음)"
+        a["scenario"] = True
+        a["scenarioNotice"] = "가상 회사 자산. 실제 제품·버전과 공지를 이용한 가정 시나리오이며 실제 회사·장비의 취약 사실이 아니다"
+        a["fieldProvenance"] = {"installedYear": "synthetic_assumption", "catalogVersion": "public_version_assigned_by_assumption",
+                                "advisoryMatches": "computed_scenario_from_public_advisories", "epss": "synthetic",
+                                "supportEnd": "public_source_see_supportEnd.confidence"}
         done += 1
     return done
 
@@ -404,7 +451,7 @@ def build(code, src, out, research, catalog=None):
     hits = apply_research(d["canonical_assets"], d["software_installations"], research, rng)
     extra_ids = add_extra_assets(d, rng)
     diversify_flows(d, rng)
-    catalog_hits = apply_catalog(d["canonical_assets"], catalog, rng)
+    catalog_hits = apply_catalog(d["canonical_assets"], catalog, research, rng)
     fix_lines(d)
     as_of = rebuild_mes(d, rng)
     vary_reported(d, rng); reassign_sources(d, rng); add_cross_file_conflicts(d, rng); renumber(d)

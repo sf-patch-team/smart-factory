@@ -821,10 +821,6 @@
         "version": null
       },
       "target": "firmwareVersion",
-      "supportEndDate": "2024-10-01",
-      "supportEndNote": "제품 단종 시행일(유통사 글, 2차 자료). 단종이 곧 지원 종료는 아니며 예비 부품은 이후 일정 기간 공급",
-      "supportEndSource": "https://www.eichler-service.com/en/magazine/sinumerik-840d-sl-product-discontinuation-as-of-01-10-2024",
-      "supportEndConfidence": "2차 자료",
       "patchLevels": [
         {
           "label": "V4.8 SP2",
@@ -847,7 +843,11 @@
           "source": "https://mall.industry.siemens.com/mall/en/us/Catalog/Product/6FC58511XG452YA8",
           "confidence": "2차 자료"
         }
-      ]
+      ],
+      "discontinuedOn": "2024-10-01",
+      "discontinuedSource": "https://www.eichler-service.com/en/magazine/sinumerik-840d-sl-product-discontinuation-as-of-01-10-2024",
+      "discontinuedConfidence": "2차 자료",
+      "discontinuedNote": "제품 단종 시행일(유통사 글, 2차 자료). 단종이 곧 지원 종료는 아니며 예비 부품은 이후 일정 기간 공급"
     },
     {
       "match": {
