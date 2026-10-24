@@ -1,224 +1,883 @@
 {
   "retrievedOn": "2026-10-24",
-  "caution": "공개 자료에서 조사한 값이다. 조사 도구가 페이지를 요약해 주는 방식이라 핵심 번호는 코드에 고정하기 전에 한 번 더 대조해야 한다. 값은 가상 자산에 배분한 대략적 패치 수준이며 실제 장비의 값이 아니다. confidence: 공식 확인 / 2차 자료 / 확인 못 함",
+  "caution": "공개 자료에서 조사한 값이다. 조사 도구가 페이지를 요약해 주는 방식이라 핵심 번호는 코드에 고정하기 전에 한 번 더 대조해야 한다. 값은 가상 자산에 배분한 대략적 패치 수준이며 실제 장비의 값이 아니다. confidence: 공식 확인 / 2차 자료 / 확인 못 함 2026-10-24 재대조: 월간 빌드·KB·ESXi·Veeam·Cisco·PAN-OS·FANUC·Mitsubishi 값은 원문과 일치, 아래 수정 반영. 수명주기 날짜는 미국 태평양 시간 기준 표기이며 수명주기 표에는 하루 뒤(UTC 표시)로 보이는 경우가 있다.",
   "entries": [
     {
-      "match": {"vendor": "Microsoft", "product": "Windows 10 IoT Enterprise LTSC", "version": "2021"},
-      "supportEndDate": "2032-01-14", "supportEndNote": "주류 지원 2027-01-13, 연장 지원 2032-01-14(수명주기 페이지는 PT 기준 시각)",
-      "supportEndSource": "https://learn.microsoft.com/en-us/lifecycle/products/windows-10-iot-enterprise-ltsc-2021", "supportEndConfidence": "공식 확인",
+      "match": {
+        "vendor": "Microsoft",
+        "product": "Windows 10 IoT Enterprise LTSC",
+        "version": "2021"
+      },
+      "supportEndDate": "2032-01-14",
+      "supportEndNote": "주류 지원 2027-01-13, 연장 지원 2032-01-14(수명주기 페이지는 PT 기준 시각)",
+      "supportEndSource": "https://learn.microsoft.com/en-us/lifecycle/products/windows-10-iot-enterprise-ltsc-2021",
+      "supportEndConfidence": "공식 확인",
       "patchLevels": [
-        {"label": "19044.7184", "detail": "KB5082200", "date": "2026-04-14", "source": "https://learn.microsoft.com/en-us/windows/release-health/release-information", "confidence": "공식 확인"},
-        {"label": "19044.7291", "detail": "KB5087544", "date": "2026-05-12", "source": "https://learn.microsoft.com/en-us/windows/release-health/release-information", "confidence": "공식 확인"},
-        {"label": "19044.7417", "detail": "KB5094127", "date": "2026-06-09", "source": "https://learn.microsoft.com/en-us/windows/release-health/release-information", "confidence": "공식 확인"},
-        {"label": "19044.7548", "detail": "KB5099539", "date": "2026-07-14", "source": "https://learn.microsoft.com/en-us/windows/release-health/release-information", "confidence": "공식 확인"},
-        {"label": "19044.7663", "detail": "KB5120249", "date": "2026-08-11", "source": "https://learn.microsoft.com/en-us/windows/release-health/release-information", "confidence": "공식 확인"},
-        {"label": "19044.7725", "detail": "KB5122878", "date": "2026-09-08", "source": "https://learn.microsoft.com/en-us/windows/release-health/release-information", "confidence": "공식 확인"},
-        {"label": "19044.7807", "detail": "KB5126657", "date": "2026-10-13", "source": "https://learn.microsoft.com/en-us/windows/release-health/release-information", "confidence": "공식 확인"}
+        {
+          "label": "19044.7184",
+          "detail": "KB5082200",
+          "date": "2026-04-14",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/release-information",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "19044.7291",
+          "detail": "KB5087544",
+          "date": "2026-05-12",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/release-information",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "19044.7417",
+          "detail": "KB5094127",
+          "date": "2026-06-09",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/release-information",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "19044.7548",
+          "detail": "KB5099539",
+          "date": "2026-07-14",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/release-information",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "19044.7663",
+          "detail": "KB5120249",
+          "date": "2026-08-11",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/release-information",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "19044.7725",
+          "detail": "KB5122878",
+          "date": "2026-09-08",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/release-information",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "19044.7807",
+          "detail": "KB5126657",
+          "date": "2026-10-13",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/release-information",
+          "confidence": "공식 확인"
+        }
       ]
     },
     {
-      "match": {"vendor": "Microsoft", "product": "Windows 10 Enterprise", "version": "22H2"},
-      "supportEndDate": "2025-10-14", "supportEndNote": "지원 종료. 종료 후 2026년 빌드가 같은 표에 올라 있는 이유(ESU 등)는 확인 못 함",
-      "supportEndSource": "https://learn.microsoft.com/en-us/lifecycle/products/windows-10-enterprise-and-education", "supportEndConfidence": "공식 확인",
+      "match": {
+        "vendor": "Microsoft",
+        "product": "Windows 10 Enterprise",
+        "version": "22H2"
+      },
+      "supportEndDate": "2025-10-14",
+      "supportEndNote": "지원 종료. 종료 후 2026년 빌드가 같은 표에 올라 있는 이유(ESU 등)는 확인 못 함 · 수명주기 표는 하루 뒤로 표시",
+      "supportEndSource": "https://learn.microsoft.com/en-us/lifecycle/products/windows-10-enterprise-and-education",
+      "supportEndConfidence": "공식 확인",
       "patchLevels": [
-        {"label": "19045.7184", "detail": "KB5082200", "date": "2026-04-14", "source": "https://learn.microsoft.com/en-us/windows/release-health/release-information", "confidence": "공식 확인"},
-        {"label": "19045.7291", "detail": "KB5087544", "date": "2026-05-12", "source": "https://learn.microsoft.com/en-us/windows/release-health/release-information", "confidence": "공식 확인"},
-        {"label": "19045.7417", "detail": "KB5094127", "date": "2026-06-09", "source": "https://learn.microsoft.com/en-us/windows/release-health/release-information", "confidence": "공식 확인"},
-        {"label": "19045.7548", "detail": "KB5099539", "date": "2026-07-14", "source": "https://learn.microsoft.com/en-us/windows/release-health/release-information", "confidence": "공식 확인"},
-        {"label": "19045.7663", "detail": "KB5120249", "date": "2026-08-11", "source": "https://learn.microsoft.com/en-us/windows/release-health/release-information", "confidence": "공식 확인"},
-        {"label": "19045.7725", "detail": "KB5122878", "date": "2026-09-08", "source": "https://learn.microsoft.com/en-us/windows/release-health/release-information", "confidence": "공식 확인"},
-        {"label": "19045.7807", "detail": "KB5126657", "date": "2026-10-13", "source": "https://learn.microsoft.com/en-us/windows/release-health/release-information", "confidence": "공식 확인"}
+        {
+          "label": "19045.7184",
+          "detail": "KB5082200",
+          "date": "2026-04-14",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/release-information",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "19045.7291",
+          "detail": "KB5087544",
+          "date": "2026-05-12",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/release-information",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "19045.7417",
+          "detail": "KB5094127",
+          "date": "2026-06-09",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/release-information",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "19045.7548",
+          "detail": "KB5099539",
+          "date": "2026-07-14",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/release-information",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "19045.7663",
+          "detail": "KB5120249",
+          "date": "2026-08-11",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/release-information",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "19045.7725",
+          "detail": "KB5122878",
+          "date": "2026-09-08",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/release-information",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "19045.7807",
+          "detail": "KB5126657",
+          "date": "2026-10-13",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/release-information",
+          "confidence": "공식 확인"
+        }
       ]
     },
     {
-      "match": {"vendor": "Microsoft", "product": "Windows 11", "version": "23H2"},
-      "supportEndDate": "2026-11-10", "supportEndNote": "표의 'End of updates'. Enterprise·Education 기준인지 Home·Pro 기준인지 구분해 읽지 못함(확인 필요)",
-      "supportEndSource": "https://learn.microsoft.com/en-us/windows/release-health/windows11-release-information", "supportEndConfidence": "공식 확인",
+      "match": {
+        "vendor": "Microsoft",
+        "product": "Windows 11",
+        "version": "23H2"
+      },
+      "supportEndDate": "2026-11-10",
+      "supportEndNote": "Enterprise·Education·IoT Enterprise 기준 종료일(재대조 확인). Home·Pro는 이미 종료",
+      "supportEndSource": "https://learn.microsoft.com/en-us/windows/release-health/windows11-release-information",
+      "supportEndConfidence": "공식 확인",
       "patchLevels": [
-        {"label": "22631.6936", "detail": "KB5082052", "date": "2026-04-14", "source": "https://learn.microsoft.com/en-us/windows/release-health/windows11-release-information", "confidence": "공식 확인"},
-        {"label": "22631.7079", "detail": "KB5087420", "date": "2026-05-12", "source": "https://learn.microsoft.com/en-us/windows/release-health/windows11-release-information", "confidence": "공식 확인"},
-        {"label": "22631.7219", "detail": "KB5093998", "date": "2026-06-09", "source": "https://learn.microsoft.com/en-us/windows/release-health/windows11-release-information", "confidence": "공식 확인"},
-        {"label": "22631.7376", "detail": "KB5099414", "date": "2026-07-14", "source": "https://learn.microsoft.com/en-us/windows/release-health/windows11-release-information", "confidence": "공식 확인"},
-        {"label": "22631.7517", "detail": "KB5120240", "date": "2026-08-11", "source": "https://learn.microsoft.com/en-us/windows/release-health/windows11-release-information", "confidence": "공식 확인"},
-        {"label": "22631.7582", "detail": "KB5122880", "date": "2026-09-08", "source": "https://learn.microsoft.com/en-us/windows/release-health/windows11-release-information", "confidence": "공식 확인"},
-        {"label": "22631.7652", "detail": "KB5126653", "date": "2026-10-13", "source": "https://learn.microsoft.com/en-us/windows/release-health/windows11-release-information", "confidence": "공식 확인"}
+        {
+          "label": "22631.6936",
+          "detail": "KB5082052",
+          "date": "2026-04-14",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/windows11-release-information",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "22631.7079",
+          "detail": "KB5087420",
+          "date": "2026-05-12",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/windows11-release-information",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "22631.7219",
+          "detail": "KB5093998",
+          "date": "2026-06-09",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/windows11-release-information",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "22631.7376",
+          "detail": "KB5099414",
+          "date": "2026-07-14",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/windows11-release-information",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "22631.7517",
+          "detail": "KB5120240",
+          "date": "2026-08-11",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/windows11-release-information",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "22631.7582",
+          "detail": "KB5122880",
+          "date": "2026-09-08",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/windows11-release-information",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "22631.7652",
+          "detail": "KB5126653",
+          "date": "2026-10-13",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/windows11-release-information",
+          "confidence": "공식 확인"
+        }
       ]
     },
     {
-      "match": {"vendor": "Microsoft", "product": "Windows Server", "version": "2019"},
-      "supportEndDate": "2029-01-09", "supportEndNote": "주류 지원 2024-01-09 종료, 연장 지원 2029-01-09(PT 기준)",
-      "supportEndSource": "https://learn.microsoft.com/en-us/lifecycle/products/windows-server-2019", "supportEndConfidence": "공식 확인",
+      "match": {
+        "vendor": "Microsoft",
+        "product": "Windows Server",
+        "version": "2019"
+      },
+      "supportEndDate": "2029-01-09",
+      "supportEndNote": "주류 지원 2024-01-09 종료, 연장 지원 2029-01-09(PT 기준)",
+      "supportEndSource": "https://learn.microsoft.com/en-us/lifecycle/products/windows-server-2019",
+      "supportEndConfidence": "공식 확인",
       "patchLevels": [
-        {"label": "17763.8644", "detail": "KB5082123", "date": "2026-04-14", "source": "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info", "confidence": "공식 확인"},
-        {"label": "17763.8755", "detail": "KB5087538", "date": "2026-05-12", "source": "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info", "confidence": "공식 확인"},
-        {"label": "17763.8880", "detail": "KB5094123", "date": "2026-06-09", "source": "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info", "confidence": "공식 확인"},
-        {"label": "17763.9020", "detail": "KB5099538", "date": "2026-07-14", "source": "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info", "confidence": "공식 확인"},
-        {"label": "17763.9121", "detail": "KB5120238", "date": "2026-08-11", "source": "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info", "confidence": "공식 확인"},
-        {"label": "17763.9245", "detail": "KB5122876", "date": "2026-09-08", "source": "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info", "confidence": "공식 확인"},
-        {"label": "17763.9376", "detail": "KB5126651", "date": "2026-10-13", "source": "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info", "confidence": "공식 확인"}
+        {
+          "label": "17763.8644",
+          "detail": "KB5082123",
+          "date": "2026-04-14",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "17763.8755",
+          "detail": "KB5087538",
+          "date": "2026-05-12",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "17763.8880",
+          "detail": "KB5094123",
+          "date": "2026-06-09",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "17763.9020",
+          "detail": "KB5099538",
+          "date": "2026-07-14",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "17763.9121",
+          "detail": "KB5120238",
+          "date": "2026-08-11",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "17763.9245",
+          "detail": "KB5122876",
+          "date": "2026-09-08",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "17763.9376",
+          "detail": "KB5126651",
+          "date": "2026-10-13",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info",
+          "confidence": "공식 확인"
+        }
       ]
     },
     {
-      "match": {"vendor": "Microsoft", "product": "Windows Server", "version": "2022"},
-      "supportEndDate": "2031-10-14", "supportEndNote": "주류 지원 2026-10-13 종료(2026-10-24 기준 연장 지원 단계), 연장 지원 2031-10-14(PT 기준)",
-      "supportEndSource": "https://learn.microsoft.com/en-us/lifecycle/products/windows-server-2022", "supportEndConfidence": "공식 확인",
+      "match": {
+        "vendor": "Microsoft",
+        "product": "Windows Server",
+        "version": "2022"
+      },
+      "supportEndDate": "2031-10-14",
+      "supportEndNote": "주류 지원 2026-10-13 종료(2026-10-24 기준 연장 지원 단계), 연장 지원 2031-10-14(PT 기준)",
+      "supportEndSource": "https://learn.microsoft.com/en-us/lifecycle/products/windows-server-2022",
+      "supportEndConfidence": "공식 확인",
       "patchLevels": [
-        {"label": "20348.5020", "detail": "KB5082142", "date": "2026-04-14", "source": "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info", "confidence": "공식 확인"},
-        {"label": "20348.5139", "detail": "KB5087545", "date": "2026-05-12", "source": "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info", "confidence": "공식 확인"},
-        {"label": "20348.5256", "detail": "KB5094128", "date": "2026-06-09", "source": "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info", "confidence": "공식 확인"},
-        {"label": "20348.5386", "detail": "KB5099540", "date": "2026-07-14", "source": "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info", "confidence": "공식 확인"},
-        {"label": "20348.5499", "detail": "KB5120242", "date": "2026-08-11", "source": "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info", "confidence": "공식 확인"},
-        {"label": "20348.5622", "detail": "KB5122882", "date": "2026-09-08", "source": "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info", "confidence": "공식 확인"},
-        {"label": "20348.5761", "detail": "KB5126655", "date": "2026-10-13", "source": "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info", "confidence": "공식 확인"}
+        {
+          "label": "20348.5020",
+          "detail": "KB5082142",
+          "date": "2026-04-14",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "20348.5139",
+          "detail": "KB5087545",
+          "date": "2026-05-12",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "20348.5256",
+          "detail": "KB5094128",
+          "date": "2026-06-09",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "20348.5386",
+          "detail": "KB5099540",
+          "date": "2026-07-14",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "20348.5499",
+          "detail": "KB5120242",
+          "date": "2026-08-11",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "20348.5622",
+          "detail": "KB5122882",
+          "date": "2026-09-08",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "20348.5761",
+          "detail": "KB5126655",
+          "date": "2026-10-13",
+          "source": "https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info",
+          "confidence": "공식 확인"
+        }
       ]
     },
     {
-      "match": {"vendor": "Microsoft", "product": "SQL Server", "version": "2019"},
-      "supportEndDate": "2030-01-08", "supportEndNote": "주류 지원 2025-02-28 종료, 연장 지원 2030-01-08(PT 기준). 마지막 누적 업데이트는 CU32이며 이후는 보안 전용(GDR)",
-      "supportEndSource": "https://learn.microsoft.com/en-us/lifecycle/products/sql-server-2019", "supportEndConfidence": "공식 확인",
+      "match": {
+        "vendor": "Microsoft",
+        "product": "SQL Server",
+        "version": "2019"
+      },
+      "supportEndDate": "2030-01-08",
+      "supportEndNote": "주류 지원 2025-02-28 종료, 연장 지원 2030-01-08(PT 기준). 마지막 누적 업데이트는 CU32이며 이후는 보안 전용(GDR)",
+      "supportEndSource": "https://learn.microsoft.com/en-us/lifecycle/products/sql-server-2019",
+      "supportEndConfidence": "공식 확인",
       "patchLevels": [
-        {"label": "15.0.4385.2", "detail": "CU28 KB5039747", "date": "2024-08-01", "source": "https://support.microsoft.com/servicing/sql/sql-server-2019/kb4518398-build-versions", "confidence": "공식 확인(요약본으로 읽음)"},
-        {"label": "15.0.4405.4", "detail": "CU29 KB5046365", "date": "2024-10-31", "source": "https://support.microsoft.com/servicing/sql/sql-server-2019/kb4518398-build-versions", "confidence": "공식 확인(요약본으로 읽음)"},
-        {"label": "15.0.4415.2", "detail": "CU30 KB5049235", "date": "2024-12-12", "source": "https://support.microsoft.com/servicing/sql/sql-server-2019/kb4518398-build-versions", "confidence": "공식 확인(요약본으로 읽음)"},
-        {"label": "15.0.4420.2", "detail": "CU31 KB5049296", "date": "2025-02-13", "source": "https://support.microsoft.com/servicing/sql/sql-server-2019/kb4518398-build-versions", "confidence": "공식 확인(요약본으로 읽음)"},
-        {"label": "15.0.4430.1", "detail": "CU32 KB5054833", "date": "2025-02-27", "source": "https://support.microsoft.com/servicing/sql/sql-server-2019/kb4518398-build-versions", "confidence": "공식 확인(요약본으로 읽음)"}
+        {
+          "label": "15.0.4385.2",
+          "detail": "CU28 KB5039747",
+          "date": "2024-08-01",
+          "source": "https://support.microsoft.com/servicing/sql/sql-server-2019/kb4518398-build-versions",
+          "confidence": "공식 확인(요약본으로 읽음)"
+        },
+        {
+          "label": "15.0.4405.4",
+          "detail": "CU29 KB5046365",
+          "date": "2024-10-31",
+          "source": "https://support.microsoft.com/servicing/sql/sql-server-2019/kb4518398-build-versions",
+          "confidence": "공식 확인(요약본으로 읽음)"
+        },
+        {
+          "label": "15.0.4415.2",
+          "detail": "CU30 KB5049235",
+          "date": "2024-12-12",
+          "source": "https://support.microsoft.com/servicing/sql/sql-server-2019/kb4518398-build-versions",
+          "confidence": "공식 확인(요약본으로 읽음)"
+        },
+        {
+          "label": "15.0.4420.2",
+          "detail": "CU31 KB5049296",
+          "date": "2025-02-13",
+          "source": "https://support.microsoft.com/servicing/sql/sql-server-2019/kb4518398-build-versions",
+          "confidence": "공식 확인(요약본으로 읽음)"
+        },
+        {
+          "label": "15.0.4430.1",
+          "detail": "CU32 KB5054833",
+          "date": "2025-02-27",
+          "source": "https://support.microsoft.com/servicing/sql/sql-server-2019/kb4518398-build-versions",
+          "confidence": "공식 확인(요약본으로 읽음)"
+        }
       ]
     },
     {
-      "match": {"vendor": "Canonical", "product": "Ubuntu Server", "version": "22.04 LTS"},
-      "supportEndDate": "2027-05", "supportEndNote": "표준 보안 지원 종료(월까지만 표기). 확장 보안(ESM·Ubuntu Pro)은 2032-05",
-      "supportEndSource": "https://ubuntu.com/about/release-cycle", "supportEndConfidence": "공식 확인",
+      "match": {
+        "vendor": "Canonical",
+        "product": "Ubuntu Server",
+        "version": "22.04 LTS"
+      },
+      "supportEndDate": "2027-05",
+      "supportEndNote": "표준 보안 지원 종료(월까지만 표기). 확장 보안(ESM·Ubuntu Pro)은 2032-05",
+      "supportEndSource": "https://ubuntu.com/about/release-cycle",
+      "supportEndConfidence": "공식 확인",
       "patchLevels": [
-        {"label": "22.04.1", "detail": "포인트 릴리스", "date": "2022-08-11", "source": "https://ubuntu.com/project/docs/release-team/list-of-releases/", "confidence": "공식 확인"},
-        {"label": "22.04.2", "detail": "포인트 릴리스", "date": "2023-02-23", "source": "https://ubuntu.com/project/docs/release-team/list-of-releases/", "confidence": "공식 확인"},
-        {"label": "22.04.3", "detail": "포인트 릴리스", "date": "2023-08-10", "source": "https://ubuntu.com/project/docs/release-team/list-of-releases/", "confidence": "공식 확인"},
-        {"label": "22.04.4", "detail": "포인트 릴리스", "date": "2024-02-22", "source": "https://ubuntu.com/project/docs/release-team/list-of-releases/", "confidence": "공식 확인"},
-        {"label": "22.04.5", "detail": "마지막 포인트 릴리스", "date": "2024-09-12", "source": "https://ubuntu.com/project/docs/release-team/list-of-releases/", "confidence": "공식 확인"}
+        {
+          "label": "22.04.1",
+          "detail": "포인트 릴리스",
+          "date": "2022-08-11",
+          "source": "https://ubuntu.com/project/docs/release-team/list-of-releases/",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "22.04.2",
+          "detail": "포인트 릴리스",
+          "date": "2023-02-23",
+          "source": "https://ubuntu.com/project/docs/release-team/list-of-releases/",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "22.04.3",
+          "detail": "포인트 릴리스",
+          "date": "2023-08-10",
+          "source": "https://ubuntu.com/project/docs/release-team/list-of-releases/",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "22.04.4",
+          "detail": "포인트 릴리스",
+          "date": "2024-02-22",
+          "source": "https://ubuntu.com/project/docs/release-team/list-of-releases/",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "22.04.5",
+          "detail": "마지막 포인트 릴리스",
+          "date": "2024-09-12",
+          "source": "https://ubuntu.com/project/docs/release-team/list-of-releases/",
+          "confidence": "공식 확인"
+        }
       ]
     },
     {
-      "match": {"vendor": "Microsoft", "product": "Windows Embedded Standard 7", "version": "SP1"},
-      "supportEndDate": "2020-10-13", "supportEndNote": "연장 지원 종료. OEM 경유 ESU 3년차가 2023-10-10에 끝나 현재는 모든 지원 종료. 최신 빌드·KB는 확인 못 함",
-      "supportEndSource": "https://learn.microsoft.com/en-us/lifecycle/products/windows-embedded-standard-7", "supportEndConfidence": "공식 확인",
+      "match": {
+        "vendor": "Microsoft",
+        "product": "Windows Embedded Standard 7",
+        "version": "SP1"
+      },
+      "supportEndDate": "2020-10-13",
+      "supportEndNote": "연장 지원 종료. OEM 경유 ESU 3년차가 2023-10-10에 끝나 현재는 모든 지원 종료. 최신 빌드·KB는 확인 못 함",
+      "supportEndSource": "https://learn.microsoft.com/en-us/lifecycle/products/windows-embedded-standard-7",
+      "supportEndConfidence": "공식 확인",
       "patchLevels": []
     },
     {
-      "match": {"vendor": "VMware", "product": "ESXi", "version": "7.0"},
-      "supportEndDate": "2025-10-02", "supportEndNote": "일반 지원 종료(EoGS). 기술 가이던스 종료 2027-04-02는 검색 요약에서만 확인(불확실)",
-      "supportEndSource": "https://knowledge.broadcom.com/external/article/415405/end-of-general-support-for-vsphere.html", "supportEndConfidence": "공식 확인",
+      "match": {
+        "vendor": "VMware",
+        "product": "ESXi",
+        "version": "7.0"
+      },
+      "supportEndDate": "2025-10-02",
+      "supportEndNote": "일반 지원 종료(EoGS). 기술 가이던스 종료 2027-04-02는 검색 요약에서만 확인(불확실)",
+      "supportEndSource": "https://knowledge.broadcom.com/external/article/415405/end-of-general-support-for-vsphere.html",
+      "supportEndConfidence": "공식 확인",
       "patchLevels": [
-        {"label": "7.0 U3q (빌드 23794027)", "detail": "7.0.3 P09", "date": "2024-05-21", "source": "https://knowledge.broadcom.com/external/article/316595/build-numbers-and-versions-of-vmware-esxi.html", "confidence": "공식 확인"},
-        {"label": "7.0 U3r (빌드 24411414)", "detail": "7.0.3 EP12", "date": "2024-12-12", "source": "https://knowledge.broadcom.com/external/article/316595/build-numbers-and-versions-of-vmware-esxi.html", "confidence": "공식 확인"},
-        {"label": "7.0 U3s (빌드 24585291)", "detail": "7.0.3 EP13", "date": "2025-03-04", "source": "https://knowledge.broadcom.com/external/article/316595/build-numbers-and-versions-of-vmware-esxi.html", "confidence": "공식 확인"},
-        {"label": "7.0 U3v (빌드 24723872)", "detail": "7.0.3 P10", "date": "2025-05-20", "source": "https://knowledge.broadcom.com/external/article/316595/build-numbers-and-versions-of-vmware-esxi.html", "confidence": "공식 확인"},
-        {"label": "7.0 U3w (빌드 24784741)", "detail": "7.0.3 EP14", "date": "2025-07-15", "source": "https://knowledge.broadcom.com/external/article/316595/build-numbers-and-versions-of-vmware-esxi.html", "confidence": "공식 확인"}
+        {
+          "label": "7.0 U3q (빌드 23794027)",
+          "detail": "패치 이름 미확인",
+          "date": "2024-05-21",
+          "source": "https://knowledge.broadcom.com/external/article/316595/build-numbers-and-versions-of-vmware-esxi.html",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "7.0 U3r (빌드 24411414)",
+          "detail": "패치 이름 미확인",
+          "date": "2024-12-12",
+          "source": "https://knowledge.broadcom.com/external/article/316595/build-numbers-and-versions-of-vmware-esxi.html",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "7.0 U3s (빌드 24585291)",
+          "detail": "패치 이름 미확인",
+          "date": "2025-03-04",
+          "source": "https://knowledge.broadcom.com/external/article/316595/build-numbers-and-versions-of-vmware-esxi.html",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "7.0 U3v (빌드 24723872)",
+          "detail": "패치 이름 미확인",
+          "date": "2025-05-20",
+          "source": "https://knowledge.broadcom.com/external/article/316595/build-numbers-and-versions-of-vmware-esxi.html",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "7.0 U3w (빌드 24784741)",
+          "detail": "패치 이름 미확인",
+          "date": "2025-07-15",
+          "source": "https://knowledge.broadcom.com/external/article/316595/build-numbers-and-versions-of-vmware-esxi.html",
+          "confidence": "공식 확인"
+        }
       ]
     },
     {
-      "match": {"vendor": "VMware", "product": "ESXi", "version": "6.7"},
-      "supportEndDate": "2022-10-15", "supportEndNote": "일반 지원 종료. Broadcom 공식 페이지에서는 확인 못 함(2차 자료)",
-      "supportEndSource": "https://endoflife.date/api/vmware-esxi.json", "supportEndConfidence": "2차 자료",
+      "match": {
+        "vendor": "VMware",
+        "product": "ESXi",
+        "version": "6.7"
+      },
+      "supportEndDate": "2022-10-15",
+      "supportEndNote": "일반 지원 종료. Broadcom 공식 페이지에서는 확인 못 함(2차 자료)",
+      "supportEndSource": "https://endoflife.date/api/vmware-esxi.json",
+      "supportEndConfidence": "2차 자료",
       "patchLevels": [
-        {"label": "6.7 U3 (빌드 14320388)", "detail": "6.7 U3", "date": "2019-08-20", "source": "https://knowledge.broadcom.com/external/article/316595/build-numbers-and-versions-of-vmware-esxi.html", "confidence": "공식 확인"},
-        {"label": "6.7 P08 (빌드 20497097)", "detail": "ESXi670-202210001", "date": "2022-10-06", "source": "https://knowledge.broadcom.com/external/article/316595/build-numbers-and-versions-of-vmware-esxi.html", "confidence": "공식 확인"}
+        {
+          "label": "6.7 U3 (빌드 14320388)",
+          "detail": "6.7 U3",
+          "date": "2019-08-20",
+          "source": "https://knowledge.broadcom.com/external/article/316595/build-numbers-and-versions-of-vmware-esxi.html",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "6.7 P08 (빌드 20497097)",
+          "detail": "ESXi670-202210001",
+          "date": "2022-10-06",
+          "source": "https://knowledge.broadcom.com/external/article/316595/build-numbers-and-versions-of-vmware-esxi.html",
+          "confidence": "공식 확인"
+        }
       ]
     },
     {
-      "match": {"vendor": "Veeam", "product": "Backup & Replication", "version": "12"},
-      "supportEndDate": null, "supportEndNote": "공식 지원 정책·종료일은 확인 못 함. 같은 빌드표에 V13 계열이 이미 나와 12는 최신 계열이 아님",
-      "supportEndSource": "https://www.veeam.com/kb2680", "supportEndConfidence": "확인 못 함",
+      "match": {
+        "vendor": "Veeam",
+        "product": "Backup & Replication",
+        "version": "12"
+      },
+      "supportEndDate": null,
+      "supportEndNote": "공식 지원 정책·종료일은 확인 못 함. 같은 빌드표에 V13 계열이 이미 나와 12는 최신 계열이 아님",
+      "supportEndSource": "https://www.veeam.com/kb2680",
+      "supportEndConfidence": "확인 못 함",
       "patchLevels": [
-        {"label": "12.2.0.334", "detail": "12.2", "date": "2024-08-28", "source": "https://www.veeam.com/kb2680", "confidence": "공식 확인"},
-        {"label": "12.3.0.310", "detail": "12.3", "date": "2024-12-03", "source": "https://www.veeam.com/kb2680", "confidence": "공식 확인"},
-        {"label": "12.3.1.1139", "detail": "12.3.1", "date": "2025-03-19", "source": "https://www.veeam.com/kb2680", "confidence": "공식 확인"},
-        {"label": "12.3.2.3617", "detail": "12.3.2", "date": "2025-06-17", "source": "https://www.veeam.com/kb2680", "confidence": "공식 확인"},
-        {"label": "12.3.2.4854", "detail": "12.3.2 P3", "date": "2026-06-09", "source": "https://www.veeam.com/kb2680", "confidence": "공식 확인"}
+        {
+          "label": "12.2.0.334",
+          "detail": "12.2",
+          "date": "2024-08-28",
+          "source": "https://www.veeam.com/kb2680",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "12.3.0.310",
+          "detail": "12.3",
+          "date": "2024-12-03",
+          "source": "https://www.veeam.com/kb2680",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "12.3.1.1139",
+          "detail": "12.3.1",
+          "date": "2025-03-19",
+          "source": "https://www.veeam.com/kb2680",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "12.3.2.3617",
+          "detail": "12.3.2",
+          "date": "2025-06-17",
+          "source": "https://www.veeam.com/kb2680",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "12.3.2.4854",
+          "detail": "12.3.2 P3",
+          "date": "2026-06-09",
+          "source": "https://www.veeam.com/kb2680",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "12.3.2.P4",
+          "detail": "12.3.2 P4",
+          "date": "2026-09-29",
+          "source": "https://www.veeam.com/kb2680",
+          "confidence": "공식 확인(재대조)"
+        }
       ]
     },
     {
-      "match": {"vendor": "Fortinet", "product": "FortiOS", "version": "7.2"},
-      "supportEndDate": "2026-09-30", "supportEndNote": "End of Support(2차 자료). End of Engineering Support는 2025-03-31. Fortinet 공식 수명주기 페이지에서는 확인 못 함",
-      "supportEndSource": "https://endoflife.date/api/fortios.json", "supportEndConfidence": "2차 자료",
+      "match": {
+        "vendor": "Fortinet",
+        "product": "FortiOS",
+        "version": "7.2"
+      },
+      "supportEndDate": "2026-09-30",
+      "supportEndNote": "End of Support(2차 자료). End of Engineering Support는 2025-03-31. Fortinet 공식 수명주기 페이지에서는 확인 못 함",
+      "supportEndSource": "https://endoflife.date/api/fortios.json",
+      "supportEndConfidence": "2차 자료",
       "patchLevels": [
-        {"label": "7.2.12", "detail": "빌드 1761(문서 소개문 기준, 재대조 필요)", "date": null, "source": "https://docs.fortinet.com/document/fortigate/7.2.12/fortios-release-notes", "confidence": "공식 확인(번호만, 날짜 확인 못 함)"},
-        {"label": "7.2.13", "detail": "빌드 1762(문서 소개문 기준, 재대조 필요)", "date": null, "source": "https://docs.fortinet.com/document/fortigate/7.2.13/fortios-release-notes/788228", "confidence": "공식 확인(번호만, 날짜 확인 못 함)"},
-        {"label": "7.2.14", "detail": "공식 목록상 최신, 빌드 확인 못 함", "date": null, "source": "https://docs.fortinet.com/product/fortigate/7.2", "confidence": "공식 확인(번호만, 날짜 확인 못 함)"}
+        {
+          "label": "7.2.12",
+          "detail": "빌드 1761(문서 소개문 기준, 재대조 필요)",
+          "date": null,
+          "source": "https://docs.fortinet.com/document/fortigate/7.2.12/fortios-release-notes",
+          "confidence": "공식 확인(번호만, 날짜 확인 못 함)"
+        },
+        {
+          "label": "7.2.13",
+          "detail": "빌드 1762(문서 소개문 기준, 재대조 필요)",
+          "date": null,
+          "source": "https://docs.fortinet.com/document/fortigate/7.2.13/fortios-release-notes/788228",
+          "confidence": "공식 확인(번호만, 날짜 확인 못 함)"
+        },
+        {
+          "label": "7.2.14",
+          "detail": "공식 목록상 최신, 빌드 확인 못 함",
+          "date": null,
+          "source": "https://docs.fortinet.com/product/fortigate/7.2",
+          "confidence": "공식 확인(번호만, 날짜 확인 못 함)"
+        }
       ]
     },
     {
-      "match": {"vendor": "Palo Alto Networks", "product": "PAN-OS", "version": "10.2"},
-      "supportEndDate": "2027-03-31", "supportEndNote": "표준 End-of-Life는 2025-08-27, Extended Support+는 2027-03-31",
-      "supportEndSource": "https://www.paloaltonetworks.com/services/support/end-of-life-announcements/end-of-life-summary", "supportEndConfidence": "공식 확인",
+      "match": {
+        "vendor": "Palo Alto Networks",
+        "product": "PAN-OS",
+        "version": "10.2"
+      },
+      "supportEndDate": "2027-03-31",
+      "supportEndNote": "표준 End-of-Life는 2025-08-27, Extended Support+는 2027-03-31",
+      "supportEndSource": "https://www.paloaltonetworks.com/services/support/end-of-life-announcements/end-of-life-summary",
+      "supportEndConfidence": "공식 확인",
       "patchLevels": [
-        {"label": "10.2.18-h1", "detail": "핫픽스", "date": null, "source": "https://endoflife.date/api/panos.json", "confidence": "2차 자료"},
-        {"label": "10.2.18-h8", "detail": "핫픽스", "date": null, "source": "https://endoflife.date/api/panos.json", "confidence": "2차 자료"},
-        {"label": "10.2.18-h12", "detail": "최신으로 언급됨", "date": "2026-10-11", "source": "https://endoflife.date/api/panos.json", "confidence": "2차 자료"}
+        {
+          "label": "10.2.18-h1",
+          "detail": "핫픽스",
+          "date": null,
+          "source": "https://endoflife.date/api/panos.json",
+          "confidence": "2차 자료"
+        },
+        {
+          "label": "10.2.18-h8",
+          "detail": "핫픽스",
+          "date": null,
+          "source": "https://endoflife.date/api/panos.json",
+          "confidence": "2차 자료"
+        },
+        {
+          "label": "10.2.18-h12",
+          "detail": "최신으로 언급됨",
+          "date": "2026-10-11",
+          "source": "https://endoflife.date/api/panos.json",
+          "confidence": "2차 자료"
+        }
       ]
     },
     {
-      "match": {"vendor": "Cisco", "product": "Catalyst 9300", "version": null}, "target": "firmwareVersion",
-      "supportEndDate": null, "supportEndNote": "하드웨어 판매·지원 종료 공지는 찾지 못함(없다는 뜻이 아니라 확인 못 함)",
-      "supportEndSource": null, "supportEndConfidence": "확인 못 함",
+      "match": {
+        "vendor": "Cisco",
+        "product": "Catalyst 9300",
+        "version": null
+      },
+      "target": "firmwareVersion",
+      "supportEndDate": null,
+      "supportEndNote": "하드웨어 판매·지원 종료 공지는 찾지 못함(없다는 뜻이 아니라 확인 못 함)",
+      "supportEndSource": null,
+      "supportEndConfidence": "확인 못 함",
       "patchLevels": [
-        {"label": "IOS XE 17.12.5", "detail": "권장 릴리스", "date": "2025-05-06", "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/221498-recommended-releases-for-catalyst-9200-9.html", "confidence": "공식 확인(권장 릴리스 개정 이력 날짜)"},
-        {"label": "IOS XE 17.12.6", "detail": "권장 릴리스", "date": "2025-11-26", "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/221498-recommended-releases-for-catalyst-9200-9.html", "confidence": "공식 확인(권장 릴리스 개정 이력 날짜)"},
-        {"label": "IOS XE 17.15.4", "detail": "권장 릴리스", "date": "2025-11-26", "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/221498-recommended-releases-for-catalyst-9200-9.html", "confidence": "공식 확인(권장 릴리스 개정 이력 날짜)"},
-        {"label": "IOS XE 17.15.5", "detail": "권장 릴리스", "date": "2026-04-16", "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/221498-recommended-releases-for-catalyst-9200-9.html", "confidence": "공식 확인(권장 릴리스 개정 이력 날짜)"},
-        {"label": "IOS XE 17.15.6", "detail": "권장 릴리스", "date": "2026-08-25", "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/221498-recommended-releases-for-catalyst-9200-9.html", "confidence": "공식 확인(권장 릴리스 개정 이력 날짜)"}
+        {
+          "label": "IOS XE 17.12.5",
+          "detail": "권장 릴리스",
+          "date": "2025-05-06",
+          "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/221498-recommended-releases-for-catalyst-9200-9.html",
+          "confidence": "공식 확인(권장 릴리스 개정 이력 날짜)"
+        },
+        {
+          "label": "IOS XE 17.12.6",
+          "detail": "권장 릴리스",
+          "date": "2025-11-26",
+          "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/221498-recommended-releases-for-catalyst-9200-9.html",
+          "confidence": "공식 확인(권장 릴리스 개정 이력 날짜)"
+        },
+        {
+          "label": "IOS XE 17.15.4",
+          "detail": "권장 릴리스",
+          "date": "2025-11-26",
+          "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/221498-recommended-releases-for-catalyst-9200-9.html",
+          "confidence": "공식 확인(권장 릴리스 개정 이력 날짜)"
+        },
+        {
+          "label": "IOS XE 17.15.5",
+          "detail": "권장 릴리스",
+          "date": "2026-04-16",
+          "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/221498-recommended-releases-for-catalyst-9200-9.html",
+          "confidence": "공식 확인(권장 릴리스 개정 이력 날짜)"
+        },
+        {
+          "label": "IOS XE 17.15.6",
+          "detail": "권장 릴리스",
+          "date": "2026-08-25",
+          "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/221498-recommended-releases-for-catalyst-9200-9.html",
+          "confidence": "공식 확인(권장 릴리스 개정 이력 날짜)"
+        },
+        {
+          "label": "IOS XE 17.18.4",
+          "detail": "권장 릴리스",
+          "date": "2026-09-04",
+          "source": "https://www.cisco.com/c/en/us/support/docs/switches/catalyst-9300-series-switches/221498-recommended-releases-for-catalyst-9200-9.html",
+          "confidence": "공식 확인(재대조, 개정 27.0)"
+        }
       ]
     },
     {
-      "match": {"vendor": "Moxa", "product": "EDS-516A", "version": null}, "target": "firmwareVersion",
-      "supportEndDate": null, "supportEndNote": "단종·보안 공지는 확인 못 함",
-      "supportEndSource": null, "supportEndConfidence": "확인 못 함",
+      "match": {
+        "vendor": "Moxa",
+        "product": "EDS-516A",
+        "version": null
+      },
+      "target": "firmwareVersion",
+      "supportEndDate": null,
+      "supportEndNote": "단종·보안 공지는 확인 못 함",
+      "supportEndSource": null,
+      "supportEndConfidence": "확인 못 함",
       "patchLevels": [
-        {"label": "v3.8", "detail": "빌드 17041115", "date": "2017-05-03", "source": "https://moxa.com.cn/Moxa/media/PDIM/S100000108/EDS-516A Series_moxa-eds-516a-series-firmware-v3.11.rom_Software Release History.pdf", "confidence": "2차 자료"},
-        {"label": "v3.10", "detail": "빌드 23061803", "date": "2023-08-31", "source": "https://moxa.com.cn/Moxa/media/PDIM/S100000108/EDS-516A Series_moxa-eds-516a-series-firmware-v3.11.rom_Software Release History.pdf", "confidence": "2차 자료"},
-        {"label": "v3.11", "detail": "빌드 24011623", "date": "2024-02-03", "source": "https://moxa.com.cn/Moxa/media/PDIM/S100000108/EDS-516A Series_moxa-eds-516a-series-firmware-v3.11.rom_Software Release History.pdf", "confidence": "2차 자료"}
+        {
+          "label": "v3.8",
+          "detail": "빌드 17041115",
+          "date": "2017-05-03",
+          "source": "https://moxa.com.cn/Moxa/media/PDIM/S100000108/EDS-516A Series_moxa-eds-516a-series-firmware-v3.11.rom_Software Release History.pdf",
+          "confidence": "2차 자료"
+        },
+        {
+          "label": "v3.10",
+          "detail": "빌드 23061803",
+          "date": "2023-08-31",
+          "source": "https://moxa.com.cn/Moxa/media/PDIM/S100000108/EDS-516A Series_moxa-eds-516a-series-firmware-v3.11.rom_Software Release History.pdf",
+          "confidence": "2차 자료"
+        },
+        {
+          "label": "v3.11",
+          "detail": "빌드 24011623",
+          "date": "2024-02-03",
+          "source": "https://moxa.com.cn/Moxa/media/PDIM/S100000108/EDS-516A Series_moxa-eds-516a-series-firmware-v3.11.rom_Software Release History.pdf",
+          "confidence": "2차 자료"
+        }
       ]
     },
     {
-      "match": {"vendor": "Siemens", "product": "SIMATIC S7-1500", "version": null}, "target": "firmwareVersion",
-      "supportEndDate": null, "supportEndNote": "CPU 모델별로 버전이 다름. 현재 최신 펌웨어 번호는 확인 못 함(로그인 필요 자료)",
-      "supportEndSource": null, "supportEndConfidence": "확인 못 함",
+      "match": {
+        "vendor": "Siemens",
+        "product": "SIMATIC S7-1500",
+        "version": null
+      },
+      "target": "firmwareVersion",
+      "supportEndDate": null,
+      "supportEndNote": "CPU 모델별로 버전이 다름. 현재 최신 펌웨어 번호는 확인 못 함(로그인 필요 자료)",
+      "supportEndSource": null,
+      "supportEndConfidence": "확인 못 함",
       "patchLevels": [
-        {"label": "V2.9.7", "detail": "SIPLUS 1511-1 PN T1 RAIL 항목", "date": null, "source": "https://cpe.gcve.eu/cpes/1407190", "confidence": "2차 자료"},
-        {"label": "V3.1.0", "detail": "1511-1 PN 항목", "date": null, "source": "https://nvd.nist.gov/products/cpe/detail/57FAFA32-D596-4F95-9EDE-2C5B248D1C39", "confidence": "2차 자료"},
-        {"label": "V3.1.5", "detail": "SSA-398330에서 수정이 적용된 버전(CPU 1518 MFP 한정 공지)", "date": null, "source": "https://cve.circl.lu/vuln/ssa-398330", "confidence": "공식 확인(공지 미러 열람)"}
+        {
+          "label": "V2.9.7",
+          "detail": "SIPLUS 1511-1 PN T1 RAIL 항목",
+          "date": null,
+          "source": "https://cpe.gcve.eu/cpes/1407190",
+          "confidence": "2차 자료"
+        },
+        {
+          "label": "V3.1.0",
+          "detail": "1511-1 PN 항목",
+          "date": null,
+          "source": "https://nvd.nist.gov/products/cpe/detail/57FAFA32-D596-4F95-9EDE-2C5B248D1C39",
+          "confidence": "2차 자료"
+        },
+        {
+          "label": "V3.1.5",
+          "detail": "SSA-398330에서 수정이 적용된 버전(CPU 1518 MFP 한정 공지)",
+          "date": null,
+          "source": "https://cve.circl.lu/vuln/ssa-398330",
+          "confidence": "공식 확인(공지 미러 열람)"
+        }
       ]
     },
     {
-      "match": {"vendor": "FANUC", "product": "R-30iB Plus", "version": null}, "target": "firmwareVersion",
-      "supportEndDate": null, "supportEndNote": "CISA 공지에 영향 버전으로 적힌 번호를 대략적 소프트웨어 수준으로 사용. 그 이후의 V9.xx 번호는 확인 못 함",
-      "supportEndSource": null, "supportEndConfidence": "확인 못 함",
+      "match": {
+        "vendor": "FANUC",
+        "product": "R-30iB Plus",
+        "version": null
+      },
+      "target": "firmwareVersion",
+      "supportEndDate": null,
+      "supportEndNote": "CISA 공지에 영향 버전으로 적힌 번호를 대략적 소프트웨어 수준으로 사용. 그 이후의 V9.xx 번호는 확인 못 함",
+      "supportEndSource": null,
+      "supportEndConfidence": "확인 못 함",
       "patchLevels": [
-        {"label": "V9.10", "detail": "ICSA-21-243-02 영향 버전 목록", "date": null, "source": "https://www.cisa.gov/news-events/ics-advisories/icsa-21-243-02", "confidence": "공식 확인"},
-        {"label": "V9.30", "detail": "ICSA-21-243-02 영향 버전 목록", "date": null, "source": "https://www.cisa.gov/news-events/ics-advisories/icsa-21-243-02", "confidence": "공식 확인"},
-        {"label": "V9.40", "detail": "ICSA-21-243-02 영향 버전 목록", "date": null, "source": "https://www.cisa.gov/news-events/ics-advisories/icsa-21-243-02", "confidence": "공식 확인"}
+        {
+          "label": "V9.10",
+          "detail": "ICSA-21-243-02 영향 버전 목록",
+          "date": null,
+          "source": "https://www.cisa.gov/news-events/ics-advisories/icsa-21-243-02",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "V9.30",
+          "detail": "ICSA-21-243-02 영향 버전 목록",
+          "date": null,
+          "source": "https://www.cisa.gov/news-events/ics-advisories/icsa-21-243-02",
+          "confidence": "공식 확인"
+        },
+        {
+          "label": "V9.40",
+          "detail": "ICSA-21-243-02 영향 버전 목록",
+          "date": null,
+          "source": "https://www.cisa.gov/news-events/ics-advisories/icsa-21-243-02",
+          "confidence": "공식 확인"
+        }
       ]
     },
     {
-      "match": {"vendor": "Mitsubishi Electric", "product": "MELSEC iQ-R R04CPU", "version": null}, "target": "firmwareVersion",
-      "supportEndDate": null, "supportEndNote": "펌웨어는 정수 번호. PSIRT 문서 본문은 암호화되어 2차 자료의 요약만 근거. 가장 높게 확인된 번호는 69",
-      "supportEndSource": null, "supportEndConfidence": "확인 못 함",
+      "match": {
+        "vendor": "Mitsubishi Electric",
+        "product": "MELSEC iQ-R R04CPU",
+        "version": null
+      },
+      "target": "firmwareVersion",
+      "supportEndDate": null,
+      "supportEndNote": "펌웨어는 정수 번호. PSIRT 문서 본문은 암호화되어 2차 자료의 요약만 근거. 가장 높게 확인된 번호는 69",
+      "supportEndSource": null,
+      "supportEndConfidence": "확인 못 함",
       "patchLevels": [
-        {"label": "펌웨어 51", "detail": "CVE-2020-5668 영향 범위(51 이하)", "date": null, "source": "https://tenable.com/plugins/ot/500549", "confidence": "2차 자료"},
-        {"label": "펌웨어 52", "detail": "CVE-2020-5668 수정 버전", "date": null, "source": "https://tenable.com/plugins/ot/500549", "confidence": "2차 자료"},
-        {"label": "펌웨어 69", "detail": "CVE-2023-1424 수정 버전으로 요약된 값(원문과 충돌하는 자료 있음)", "date": null, "source": "https://tenable.com/plugins/ot/501190", "confidence": "2차 자료"}
+        {
+          "label": "펌웨어 51",
+          "detail": "CVE-2020-5668 영향 범위(51 이하)",
+          "date": null,
+          "source": "https://tenable.com/plugins/ot/500549",
+          "confidence": "2차 자료"
+        },
+        {
+          "label": "펌웨어 52",
+          "detail": "CVE-2020-5668 수정 버전",
+          "date": null,
+          "source": "https://tenable.com/plugins/ot/500549",
+          "confidence": "2차 자료"
+        },
+        {
+          "label": "펌웨어 69",
+          "detail": "CVE-2023-1424 수정 버전으로 요약된 값(원문과 충돌하는 자료 있음)",
+          "date": null,
+          "source": "https://tenable.com/plugins/ot/501190",
+          "confidence": "2차 자료"
+        }
       ]
     },
     {
-      "match": {"vendor": "Siemens", "product": "SINUMERIK 840D sl", "version": null}, "target": "firmwareVersion",
-      "supportEndDate": "2024-10-01", "supportEndNote": "제품 단종 시행일(유통사 글, 2차 자료). 단종이 곧 지원 종료는 아니며 예비 부품은 이후 일정 기간 공급",
-      "supportEndSource": "https://www.eichler-service.com/en/magazine/sinumerik-840d-sl-product-discontinuation-as-of-01-10-2024", "supportEndConfidence": "2차 자료",
+      "match": {
+        "vendor": "Siemens",
+        "product": "SINUMERIK 840D sl",
+        "version": null
+      },
+      "target": "firmwareVersion",
+      "supportEndDate": "2024-10-01",
+      "supportEndNote": "제품 단종 시행일(유통사 글, 2차 자료). 단종이 곧 지원 종료는 아니며 예비 부품은 이후 일정 기간 공급",
+      "supportEndSource": "https://www.eichler-service.com/en/magazine/sinumerik-840d-sl-product-discontinuation-as-of-01-10-2024",
+      "supportEndConfidence": "2차 자료",
       "patchLevels": [
-        {"label": "V4.8 SP2", "detail": "CF 카드 SW, 단종 2018-12-31", "date": null, "source": "https://mall.industry.siemens.com/mall/en/us/Catalog/Product/6FC58511XG452YA8", "confidence": "2차 자료"},
-        {"label": "V4.94 HF1", "detail": "카탈로그 표기", "date": null, "source": "https://mall.industry.siemens.com/mall/en/us/Catalog/Product/6FC58511XG452YA8", "confidence": "2차 자료"},
-        {"label": "V4.95 SP4", "detail": "카탈로그에서 확인된 가장 높은 번호", "date": null, "source": "https://mall.industry.siemens.com/mall/en/us/Catalog/Product/6FC58511XG452YA8", "confidence": "2차 자료"}
+        {
+          "label": "V4.8 SP2",
+          "detail": "CF 카드 SW, 단종 2018-12-31",
+          "date": null,
+          "source": "https://mall.industry.siemens.com/mall/en/us/Catalog/Product/6FC58511XG452YA8",
+          "confidence": "2차 자료"
+        },
+        {
+          "label": "V4.94 HF1",
+          "detail": "카탈로그 표기",
+          "date": null,
+          "source": "https://mall.industry.siemens.com/mall/en/us/Catalog/Product/6FC58511XG452YA8",
+          "confidence": "2차 자료"
+        },
+        {
+          "label": "V4.95 SP4",
+          "detail": "카탈로그에서 확인된 가장 높은 번호",
+          "date": null,
+          "source": "https://mall.industry.siemens.com/mall/en/us/Catalog/Product/6FC58511XG452YA8",
+          "confidence": "2차 자료"
+        }
       ]
     },
-    {"match": {"vendor": "FANUC", "product": "Series 0i-MF Plus", "version": null}, "noPublicVersion": true, "supportEndNote": "시리즈·에디션 코드 체계를 공개 자료로 확인 못 함", "patchLevels": []},
-    {"match": {"vendor": "Mitsubishi Electric", "product": "FR-A800", "version": null}, "noPublicVersion": true, "supportEndNote": "버전은 정수 번호 형식이나 기종별 번호를 공개 자료로 확인 못 함", "patchLevels": []},
-    {"match": {"vendor": "KEYENCE", "product": "SR-2000", "version": null}, "noPublicVersion": true, "supportEndNote": "공식 지원 페이지에 펌웨어 번호가 없음", "patchLevels": []}
+    {
+      "match": {
+        "vendor": "FANUC",
+        "product": "Series 0i-MF Plus",
+        "version": null
+      },
+      "noPublicVersion": true,
+      "supportEndNote": "시리즈·에디션 코드 체계를 공개 자료로 확인 못 함",
+      "patchLevels": []
+    },
+    {
+      "match": {
+        "vendor": "Mitsubishi Electric",
+        "product": "FR-A800",
+        "version": null
+      },
+      "noPublicVersion": true,
+      "supportEndNote": "버전은 정수 번호 형식이나 기종별 번호를 공개 자료로 확인 못 함",
+      "patchLevels": []
+    },
+    {
+      "match": {
+        "vendor": "KEYENCE",
+        "product": "SR-2000",
+        "version": null
+      },
+      "noPublicVersion": true,
+      "supportEndNote": "공식 지원 페이지에 펌웨어 번호가 없음",
+      "patchLevels": []
+    }
   ]
 }

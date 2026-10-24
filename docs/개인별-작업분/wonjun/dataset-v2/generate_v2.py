@@ -233,6 +233,21 @@ def add_cross_file_conflicts(d, rng):
 
 
 # ---------- 요약과 검사 ----------
+def diversify_flows(d, rng):
+    """제조사 고유 통신 흐름을 섞는다. 포트는 흔히 쓰는 예시이며 실제 설정·지원 여부는 미검증이다."""
+    assets = {a["id"]: a for a in d["canonical_assets"]}
+    changed = 0
+    for f in d["application_flows"]:
+        src = assets.get(f["sourceAssetId"], {})
+        rule = R.VENDOR_FLOWS.get(src.get("vendor"))
+        if f["port"] == 4840 and rule and rng.random() < R.VENDOR_FLOW_SHARE:
+            f["port"], f["purpose"] = rule["port"], rule["purpose"]
+            f["provenance"] = "synthetic_variation_v2"
+            f["note"] = rule["note"]
+            changed += 1
+    return changed
+
+
 def update_summary(d, as_of, hetero_ids, research_hits):
     s = d["summary"]; q = d["quality_truth"]["issues"]
     s["rawRows"] = len(d["raw_asset_register"]); s["issues"] = len(q)
@@ -272,6 +287,7 @@ def build(code, src, out, research):
     add_exposure_edr_reboot(d["canonical_assets"], d["lines"], rng)
     hetero_ids = apply_heterogeneity(d, rng)
     hits = apply_research(d["canonical_assets"], d["software_installations"], research, rng)
+    diversify_flows(d, rng)
     fix_lines(d)
     as_of = rebuild_mes(d, rng)
     vary_reported(d, rng); reassign_sources(d, rng); add_cross_file_conflicts(d, rng); renumber(d)

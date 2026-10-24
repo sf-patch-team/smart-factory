@@ -54,3 +54,10 @@ DEPARTED_FORMATS = ["{o}-LEFT-2019", "{o}-퇴사", "(구){o}", "{o}-LEFT-2022", 
 CROSS_FILE_RATE = 0.08
 FILE_FOR = {"IT": "IT자산_수정본.xlsx", "OT": "설비대장_최종.xlsx"}
 CROSS_LEAK = 0.1
+
+# 제조사 고유 통신(예시). 포트는 널리 알려진 값이나 장비 설정에 따라 다르다. 실제 지원 여부는 미검증.
+VENDOR_FLOW_SHARE = 0.5
+VENDOR_FLOWS = {
+    "Siemens": {"port": 102, "purpose": "가상 PLC/CNC 데이터 읽기(ISO-on-TCP 계열 예시)", "note": "포트 102는 Siemens 계열 통신에 흔히 쓰이는 예시. 실제 장비 지원·설정 미검증"},
+    "Mitsubishi Electric": {"port": 5007, "purpose": "가상 PLC 데이터 읽기(SLMP 계열 예시)", "note": "5007은 설정 가능한 예시 포트. 실제 장비 설정 미검증"},
+}
