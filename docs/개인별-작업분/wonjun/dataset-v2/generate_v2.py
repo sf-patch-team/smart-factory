@@ -194,7 +194,7 @@ def support_end_year(asset):
     return int(date[:4]) if date else None
 
 
-def apply_catalog(assets, catalog, research, rng):
+def apply_catalog(assets, catalog, research, rng, expected):
     if not catalog:
         return 0
     products = {p["key"]: p for p in catalog["products"]}
@@ -221,12 +221,9 @@ def apply_catalog(assets, catalog, research, rng):
         idx = len(cands) - 1 if rng.random() < 0.35 else int(len(cands) * (rng.random() ** (1.4 if year >= 2023 else 0.8)))
         version = cands[min(idx, len(cands) - 1)]
         a["installedYear"] = year
-        a["catalogKey"] = key
-        a["catalogVersion"] = version
-        a["catalogLine"] = line["line"]
-        a["advisoryMatches"] = [] if a.get("lifecycle") == "retired" else [match_advisory(adv, line["line"], version) for adv in pr["advisories"]]
-        if a.get("lifecycle") == "retired":
-            a["advisoryNote"] = "retired 자산은 경고 대상에서 제외"
+        matches = [] if a.get("lifecycle") == "retired" else [match_advisory(adv, line["line"], version) for adv in pr["advisories"]]
+        expected.append({"assetId": a["id"], "product": key, "line": line["line"], "version": version,
+                         "lifecycle": a.get("lifecycle"), "matches": matches})
         if key.startswith("win"):
             a["osBuild"] = version
         if pr.get("firmware"):
@@ -241,8 +238,7 @@ def apply_catalog(assets, catalog, research, rng):
             a["supportStatusNote"] = "지원 종료 뒤 빌드는 ESU 등 별도 계약이 있는지 확인 필요(모델링하지 않음)"
         a["scenario"] = True
         a["scenarioNotice"] = "가상 회사 자산. 실제 제품·버전과 공지를 이용한 가정 시나리오이며 실제 회사·장비의 취약 사실이 아니다"
-        a["fieldProvenance"] = {"installedYear": "synthetic_assumption", "catalogVersion": "public_version_assigned_by_assumption",
-                                "advisoryMatches": "computed_scenario_from_public_advisories", "epss": "synthetic",
+        a["fieldProvenance"] = {"installedYear": "synthetic_assumption", "patchLevel": "public_version_assigned_by_assumption",
                                 "supportEnd": "public_source_see_supportEnd.confidence"}
         done += 1
     return done
@@ -451,12 +447,17 @@ def build(code, src, out, research, catalog=None):
     hits = apply_research(d["canonical_assets"], d["software_installations"], research, rng)
     extra_ids = add_extra_assets(d, rng)
     diversify_flows(d, rng)
-    catalog_hits = apply_catalog(d["canonical_assets"], catalog, research, rng)
+    expected = []
+    catalog_hits = apply_catalog(d["canonical_assets"], catalog, research, rng, expected)
     fix_lines(d)
     as_of = rebuild_mes(d, rng)
     vary_reported(d, rng); reassign_sources(d, rng); add_cross_file_conflicts(d, rng); renumber(d)
     update_summary(d, as_of, hetero_ids, hits, extra_ids, catalog_hits)
     checks = validate(d); checks["AI4I 원본값 보존"] = original_obs == [o["original"] for o in d["machine_observations"]]
+    note = ("정답지(QA 비교용): 자산의 제품·버전을 공개 공지와 비교한 기대 결과. 앱이 읽는 데이터가 아니다. "
+            "수집기가 새 공지를 받았을 때 낸 결과가 이것과 맞는지 확인하는 데 쓴다. EPSS는 시험용 값(synthetic)이다.")
+    (out / f"{code.lower()}_expected_matches.json").write_text(
+        json.dumps({"note": note, "scenario": True, "company": code, "items": expected}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     (out / f"{code.lower()}_factory_v2.json").write_text(json.dumps(d, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     return checks, hits
 
