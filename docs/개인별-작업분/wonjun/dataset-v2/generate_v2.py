@@ -205,6 +205,10 @@ def apply_catalog(assets, catalog, research, rng, expected):
         if not key:
             continue
         pr = products[key]
+        if pr.get("firmware") and rng.random() < R.UNKNOWN_FIRMWARE_CHANCE:
+            a["versionEvidence"] = "unknown_firmware_or_version"
+            a["fleetMixV2"] = "synthetic_assumption(firmware_unknown)"
+            continue
         year = rng.choice([2018, 2019, 2020, 2021, 2021, 2022, 2022, 2023, 2023, 2024, 2025])
         end_year = support_end_year(a)
         if end_year:
@@ -218,7 +222,7 @@ def apply_catalog(assets, catalog, research, rng, expected):
             continue
         year = max(year, line["ga"] or 0)
         cands = line["candidates"]
-        idx = len(cands) - 1 if rng.random() < 0.35 else int(len(cands) * (rng.random() ** (1.4 if year >= 2023 else 0.8)))
+        idx = len(cands) - 1 if rng.random() < 0.2 else int(len(cands) * (rng.random() ** (1.4 if year >= 2023 else 0.8)))
         version = cands[min(idx, len(cands) - 1)]
         a["installedYear"] = year
         matches = [] if a.get("lifecycle") == "retired" else [match_advisory(adv, line["line"], version) for adv in pr["advisories"]]
@@ -389,6 +393,82 @@ def add_extra_assets(d, rng):
     return added
 
 
+def _clean_rows(d):
+    """자산별로 대장 행과 '오류가 표시된 필드'를 모은다. 오류가 표시된 필드는 건드리지 않는다."""
+    rows, flagged = {}, set()
+    for rid, aid in d["quality_truth"]["row_to_asset"].items():
+        rows.setdefault(aid, []).append(rid)
+    for i in d["quality_truth"]["issues"]:
+        flagged.add((i["rowId"], i["field"]))
+    return rows, flagged
+
+
+def _blocked(rows, flagged, aid, fields):
+    return any((rid, f) in flagged for rid in rows.get(aid, []) for f in fields)
+
+
+def _set_payload(raw, rows, aid, field, old, new):
+    for rid in rows.get(aid, []):
+        p = raw[rid]["payload"]
+        if p.get(field) == old:
+            p[field] = new
+
+
+def diversify_fleet(d, rng, skip_ids):
+    """현실의 혼합 구성: 제품·OS 혼합, 버전 미상, 미확인·담당 미지정·IP 미할당 자산을 섞는다.
+
+    대장(raw)과 소프트웨어 설치 목록을 같이 고쳐 정답과 어긋나지 않게 한다.
+    오류가 이미 표시된 필드를 가진 자산은 건드리지 않는다.
+    """
+    assets = d["canonical_assets"]
+    rows, flagged = _clean_rows(d)
+    raw = {r["id"]: r for r in d["raw_asset_register"]}
+    sw = {}
+    for s in d["software_installations"]:
+        sw.setdefault(s["assetId"], []).append(s)
+    stat = collections.Counter()
+    for a in assets:
+        if a["id"] in skip_ids or a["assetType"] not in R.FLEET_MIX and a["assetType"] not in R.OS_TYPES:
+            continue
+        aid = a["id"]
+        old = (a["vendor"], a["product"], a["version"])
+        if not _blocked(rows, flagged, aid, ("제조사", "제품", "버전")):
+            new = None
+            roll = rng.random()
+            acc = 0.0
+            for p, target in R.FLEET_MIX.get(a["assetType"], []):
+                acc += p
+                if roll < acc:
+                    new = target
+                    break
+            if new is None and a["assetType"] in R.OS_TYPES and rng.random() < R.UNKNOWN_OS_CHANCE:
+                new = ("Microsoft", "Windows", None)
+            if new and new != old:
+                a["vendor"], a["product"], a["version"] = new
+                a["versionEvidence"] = "unknown_firmware_or_version" if new[2] is None else "synthetic_release_only"
+                a["fleetMixV2"] = "synthetic_assumption(product_mix)"
+                for s in sw.get(aid, []):
+                    if (s["vendor"], s["product"], s["version"]) == old:
+                        s["vendor"], s["product"], s["version"] = new
+                _set_payload(raw, rows, aid, "제조사", old[0], new[0])
+                _set_payload(raw, rows, aid, "제품", old[1], new[1])
+                _set_payload(raw, rows, aid, "버전", old[2] if old[2] is not None else "", new[2] if new[2] is not None else "")
+                stat["제품·OS 혼합"] += 1
+        if a.get("lastVerifiedAt") and not _blocked(rows, flagged, aid, ("확인일",)) and rng.random() < R.NEVER_VERIFIED_CHANCE:
+            _set_payload(raw, rows, aid, "확인일", a["lastVerifiedAt"], "")
+            a["lastVerifiedAt"] = None
+            stat["확인한 적 없음"] += 1
+        if a.get("ownerId") and not _blocked(rows, flagged, aid, ("담당",)) and rng.random() < R.NO_OWNER_CHANCE:
+            _set_payload(raw, rows, aid, "담당", a["ownerId"], "")
+            a["ownerId"] = None
+            stat["담당 미지정"] += 1
+        if a.get("ip") and not _blocked(rows, flagged, aid, ("IP",)) and rng.random() < R.NO_IP_CHANCE:
+            _set_payload(raw, rows, aid, "IP", a["ip"], "")
+            a["ip"] = None
+            stat["IP 미할당"] += 1
+    return dict(stat)
+
+
 def diversify_flows(d, rng):
     """제조사 고유 통신 흐름을 섞는다. 포트는 흔히 쓰는 예시이며 실제 설정·지원 여부는 미검증이다."""
     assets = {a["id"]: a for a in d["canonical_assets"]}
@@ -404,7 +484,7 @@ def diversify_flows(d, rng):
     return changed
 
 
-def update_summary(d, as_of, hetero_ids, research_hits, extra_ids, catalog_hits=0):
+def update_summary(d, as_of, hetero_ids, research_hits, extra_ids, catalog_hits=0, fleet_stat=None):
     s = d["summary"]; q = d["quality_truth"]["issues"]
     s["assets"] = len(d["canonical_assets"])
     s["assetTypes"] = dict(collections.Counter(x["assetType"] for x in d["canonical_assets"]))
@@ -412,7 +492,22 @@ def update_summary(d, as_of, hetero_ids, research_hits, extra_ids, catalog_hits=
     s["issueTypes"] = dict(sorted(collections.Counter(i["issueType"] for i in q).items()))
     d["schemaVersion"] = "2.0-draft"
     d["v2"] = {"generator": "generate_v2.py", "seed": R.SEED, "asOfProgress": as_of, "heterogeneityAssets": hetero_ids,
-               "researchedAssets": research_hits, "catalogAssets": catalog_hits, "addedAssetIds": extra_ids, "note": "원본 대비 파생 데이터. 변형 값은 시험용 가정이며 실제 회사 자료가 아니다."}
+               "researchedAssets": research_hits, "fleetMix": fleet_stat, "catalogAssets": catalog_hits, "addedAssetIds": extra_ids, "note": "원본 대비 파생 데이터. 변형 값은 시험용 가정이며 실제 회사 자료가 아니다."}
+
+
+def raw_matches_truth(d):
+    assets = {a["id"]: a for a in d["canonical_assets"]}
+    flagged_rows = {i["rowId"] for i in d["quality_truth"]["issues"]}
+    for r in d["raw_asset_register"]:
+        a = assets[d["quality_truth"]["row_to_asset"][r["id"]]]
+        if r["id"].endswith("-DUP") or r["id"] in flagged_rows:
+            continue
+        for field, key in (("제조사", "vendor"), ("제품", "product")):
+            if field not in r["payload"]:
+                continue
+            if r["payload"][field].strip().lower() != a[key].strip().lower():   # 공백·대소문자 변형은 원본의 의도된 잡음
+                return False
+    return True
 
 
 def validate(d):
@@ -432,6 +527,7 @@ def validate(d):
         "raw→정답 연결": all(r["id"] in d["quality_truth"]["row_to_asset"] for r in d["raw_asset_register"]),
         "issue→raw 행": all(i["rowId"] in {r["id"] for r in d["raw_asset_register"]} for i in d["quality_truth"]["issues"]),
         "MES 예외→LOT/WO": all(e["lotId"] in lots and e["expectedWorkOrderId"] in wos for e in d["raw_mes_exceptions"]),
+        "대장 제조사·제품 일치(오류 표시 없는 행)": raw_matches_truth(d),
         "기간 하루 이상": max(dt.datetime.fromisoformat(o["simulatedTimestamp"]) for o in d["machine_observations"]) - base > dt.timedelta(hours=24),
     }
     return checks
@@ -444,6 +540,7 @@ def build(code, src, out, research, catalog=None):
     vary_attributes(d["canonical_assets"], rng)
     add_exposure_edr_reboot(d["canonical_assets"], d["lines"], rng)
     hetero_ids = apply_heterogeneity(d, rng)
+    fleet_stat = diversify_fleet(d, rng, set(hetero_ids))
     hits = apply_research(d["canonical_assets"], d["software_installations"], research, rng)
     extra_ids = add_extra_assets(d, rng)
     diversify_flows(d, rng)
@@ -452,7 +549,7 @@ def build(code, src, out, research, catalog=None):
     fix_lines(d)
     as_of = rebuild_mes(d, rng)
     vary_reported(d, rng); reassign_sources(d, rng); add_cross_file_conflicts(d, rng); renumber(d)
-    update_summary(d, as_of, hetero_ids, hits, extra_ids, catalog_hits)
+    update_summary(d, as_of, hetero_ids, hits, extra_ids, catalog_hits, fleet_stat)
     checks = validate(d); checks["AI4I 원본값 보존"] = original_obs == [o["original"] for o in d["machine_observations"]]
     note = ("정답지(QA 비교용): 자산의 제품·버전을 공개 공지와 비교한 기대 결과. 앱이 읽는 데이터가 아니다. "
             "수집기가 새 공지를 받았을 때 낸 결과가 이것과 맞는지 확인하는 데 쓴다. EPSS는 시험용 값(synthetic)이다.")

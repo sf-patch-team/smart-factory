@@ -76,3 +76,27 @@ EXTRA_VENDOR = "가상 설비 공급사"
 
 EPSS_DATE = "2026-10-22"          # EPSS는 시험용 값이며 이 날짜는 가정이다
 AS_OF_MONTH = "2026-10"
+
+# 설비 구성의 다양화(현실의 혼합). 새 제품에는 펌웨어·버전을 모델링하지 않는다(미상).
+# (확률, (제조사, 제품, 버전)). 현재 값과 같으면 건너뛴다.
+WIN10 = ("Microsoft", "Windows 10 Enterprise", "22H2")
+WIN11 = ("Microsoft", "Windows 11", "23H2")
+LTSC = ("Microsoft", "Windows 10 IoT Enterprise LTSC", "2021")
+FLEET_MIX = {
+    "업무 PC": [(0.22, WIN10), (0.04, LTSC)],
+    "HMI PC": [(0.18, WIN10), (0.08, WIN11)],
+    "엔지니어링 PC": [(0.5, WIN11)],
+    "비전 검사 PC": [(0.25, LTSC)],
+    "PLC": [(0.25, ("Siemens", "SIMATIC S7-1500", None)), (0.25, ("Mitsubishi Electric", "MELSEC iQ-R R04CPU", None)),
+            (0.12, ("Rockwell Automation", "ControlLogix 1756-L8x", None))],
+    "CNC 컨트롤러": [(0.25, ("FANUC", "Series 0i-MF Plus", None)), (0.08, ("Mitsubishi Electric", "M80", None))],
+    "로봇 컨트롤러": [(0.2, ("Yaskawa", "YRC1000", None))],
+    "인버터": [(0.25, ("Siemens", "SINAMICS G120", None))],
+    "산업용 스위치": [(0.3, ("Siemens", "SCALANCE XC208", None)), (0.15, ("Cisco", "IE-3300", None))],
+}
+OS_TYPES = ("업무 PC", "HMI PC", "엔지니어링 PC", "비전 검사 PC")
+UNKNOWN_OS_CHANCE = 0.06          # 버전을 모르는 PC
+NEVER_VERIFIED_CHANCE = 0.08      # 한 번도 확인한 적 없는 자산
+NO_OWNER_CHANCE = 0.05            # 담당자 미지정
+NO_IP_CHANCE = 0.03               # IP 미할당(DHCP 누락 등)
+UNKNOWN_FIRMWARE_CHANCE = 0.10        # 펌웨어를 모르는 제어기

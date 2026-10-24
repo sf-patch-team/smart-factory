@@ -24,6 +24,11 @@ def stats(d, exp):
         "노출 장비(remote·dmz·perimeter)": sum(1 for x in a if x.get("exposure") not in (None, "internal")),
         "통신 4840(OPC UA)": f'{ports[4840]}/{len(d["application_flows"])}',
         "통신 102·5007": f'{ports[102]}·{ports[5007]}',
+        "제품 종류(제조사·제품 조합)": len({(x["vendor"], x["product"]) for x in a}),
+        "버전·펌웨어 미상": sum(1 for x in a if x.get("versionEvidence") == "unknown_firmware_or_version"),
+        "IP 미할당": sum(1 for x in a if not x.get("ip")),
+        "담당 미지정": sum(1 for x in a if not x.get("ownerId")),
+        "한 번도 확인한 적 없음": sum(1 for x in a if not x.get("lastVerifiedAt")),
         "지원 종료 자산": sum(1 for x in a if x.get("supportStatus") == "ended"),
         "정답지의 판정 분포": dict(sorted(status.items())),
     }
