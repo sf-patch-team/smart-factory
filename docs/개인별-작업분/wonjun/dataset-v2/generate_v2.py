@@ -237,7 +237,7 @@ def apply_catalog(assets, catalog, research, rng, expected):
             a["supportStatus"] = "ended"
             a["supportStatusNote"] = "지원 종료 뒤 빌드는 ESU 등 별도 계약이 있는지 확인 필요(모델링하지 않음)"
         a["scenario"] = True
-        a["scenarioNotice"] = "가상 회사 자산. 실제 제품·버전과 공지를 이용한 가정 시나리오이며 실제 회사·장비의 취약 사실이 아니다"
+        a["scenarioNotice"] = "가상 회사 자산. 제품·버전은 실제 공개 버전 번호를 가정해 배정한 값이며 실제 회사·장비의 값이 아니다"
         a["fieldProvenance"] = {"installedYear": "synthetic_assumption", "patchLevel": "public_version_assigned_by_assumption",
                                 "supportEnd": "public_source_see_supportEnd.confidence"}
         done += 1
