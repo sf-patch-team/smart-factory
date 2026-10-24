@@ -1356,6 +1356,513 @@
           }
         }
       ]
+    },
+    {
+      "key": "ls_xgk",
+      "vendor": "LS ELECTRIC",
+      "product": "XGK-CPUU",
+      "firmware": true,
+      "lines": [
+        {
+          "line": "V3",
+          "ga": null,
+          "candidates": [
+            "V3.50"
+          ]
+        }
+      ],
+      "candidateNote": "공지에 'V3.50 미만이 영향'이라고 나온 경계 번호만 후보로 쓴다(그 아래 번호는 근거가 없어 넣지 않음). 출시 연도는 확인 못 함",
+      "advisories": [
+        {
+          "cve": "CVE-2022-2758",
+          "title": "XGT PLC 계열 취약점(ICSA-22-228-02)",
+          "kev": false,
+          "kevAdded": null,
+          "affected": [
+            "V3"
+          ],
+          "fixed": {
+            "V3": [
+              "V3.50"
+            ]
+          },
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-22-228-02",
+          "source": "NVD + SUMMARY",
+          "cvss": {
+            "score": 6.5,
+            "version": "3.1",
+            "basis": "NVD"
+          },
+          "note": "공지는 XGK-CPUU/H/A/S/E 계열 V3.50 미만이 영향. 모델별 수정 펌웨어는 공지에 없음"
+        }
+      ]
+    },
+    {
+      "key": "ls_xgi",
+      "vendor": "LS ELECTRIC",
+      "product": "XGI-CPUU",
+      "firmware": true,
+      "lines": [
+        {
+          "line": "V3",
+          "ga": null,
+          "candidates": [
+            "V3.20"
+          ]
+        }
+      ],
+      "candidateNote": "공지에 'V3.20 미만이 영향'이라고 나온 경계 번호만 후보로 쓴다. 출시 연도는 확인 못 함",
+      "advisories": [
+        {
+          "cve": "CVE-2022-2758",
+          "title": "XGT PLC 계열 취약점(ICSA-22-228-02)",
+          "kev": false,
+          "kevAdded": null,
+          "affected": [
+            "V3"
+          ],
+          "fixed": {
+            "V3": [
+              "V3.20"
+            ]
+          },
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-22-228-02",
+          "source": "NVD + SUMMARY",
+          "cvss": {
+            "score": 6.5,
+            "version": "3.1",
+            "basis": "NVD"
+          },
+          "note": "공지는 XGI-CPUU/UD/H/S/E 계열 V3.20 미만이 영향"
+        }
+      ]
+    },
+    {
+      "key": "ls_xbc",
+      "vendor": "LS ELECTRIC",
+      "product": "XBC-DN32U",
+      "firmware": true,
+      "lines": [
+        {
+          "line": "os",
+          "ga": null,
+          "candidates": [
+            "01.80"
+          ]
+        }
+      ],
+      "candidateNote": "공지에 영향 버전으로 나온 OS 버전 01.80만 후보로 쓴다. 출시 연도는 확인 못 함",
+      "advisories": [
+        {
+          "cve": "CVE-2023-22803",
+          "title": "중요 기능에 인증 없음",
+          "kev": false,
+          "kevAdded": null,
+          "affected": [
+            "os"
+          ],
+          "fixed": {},
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-23-040-02",
+          "source": "NVD + SUMMARY",
+          "cvss": {
+            "score": 7.5,
+            "version": "3.1",
+            "basis": "NVD"
+          },
+          "note": "제조사가 2023년 말까지 수정을 낼 예정이라고 했으나 실제 배포 여부는 확인 못 함. 우회: 호스트 테이블 옵션 사용",
+          "noFix": true
+        },
+        {
+          "cve": "CVE-2023-22804",
+          "title": "사용자 생성에 인증 없음",
+          "kev": false,
+          "kevAdded": null,
+          "affected": [
+            "os"
+          ],
+          "fixed": {},
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-23-040-02",
+          "source": "NVD + SUMMARY",
+          "cvss": {
+            "score": 9.8,
+            "version": "3.1",
+            "basis": "NVD(두 출처 9.1/9.8)"
+          },
+          "note": "제조사가 2023년 말까지 수정을 낼 예정이라고 했으나 실제 배포 여부는 확인 못 함. 우회: 호스트 테이블 옵션 사용",
+          "noFix": true
+        },
+        {
+          "cve": "CVE-2023-22805",
+          "title": "읽기 금지 접근 통제 미흡",
+          "kev": false,
+          "kevAdded": null,
+          "affected": [
+            "os"
+          ],
+          "fixed": {},
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-23-040-02",
+          "source": "NVD + SUMMARY",
+          "cvss": {
+            "score": 6.5,
+            "version": "3.1",
+            "basis": "NVD(두 출처 6.5/4.3)"
+          },
+          "note": "제조사가 2023년 말까지 수정을 낼 예정이라고 했으나 실제 배포 여부는 확인 못 함. 우회: 호스트 테이블 옵션 사용",
+          "noFix": true
+        },
+        {
+          "cve": "CVE-2023-22806",
+          "title": "XGT 통신 평문 전송",
+          "kev": false,
+          "kevAdded": null,
+          "affected": [
+            "os"
+          ],
+          "fixed": {},
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-23-040-02",
+          "source": "NVD + SUMMARY",
+          "cvss": {
+            "score": 7.5,
+            "version": "3.1",
+            "basis": "NVD"
+          },
+          "note": "제조사가 2023년 말까지 수정을 낼 예정이라고 했으나 실제 배포 여부는 확인 못 함. 우회: 호스트 테이블 옵션 사용",
+          "noFix": true
+        },
+        {
+          "cve": "CVE-2023-22807",
+          "title": "XGT 프로토콜로 PLC 접근 통제 미흡",
+          "kev": false,
+          "kevAdded": null,
+          "affected": [
+            "os"
+          ],
+          "fixed": {},
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-23-040-02",
+          "source": "NVD + SUMMARY",
+          "cvss": {
+            "score": 9.8,
+            "version": "3.1",
+            "basis": "NVD"
+          },
+          "note": "제조사가 2023년 말까지 수정을 낼 예정이라고 했으나 실제 배포 여부는 확인 못 함. 우회: 호스트 테이블 옵션 사용",
+          "noFix": true
+        },
+        {
+          "cve": "CVE-2023-0102",
+          "title": "삭제 명령에 인증 없음",
+          "kev": false,
+          "kevAdded": null,
+          "affected": [
+            "os"
+          ],
+          "fixed": {},
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-23-040-02",
+          "source": "NVD + SUMMARY",
+          "cvss": {
+            "score": 9.1,
+            "version": "3.1",
+            "basis": "NVD"
+          },
+          "note": "제조사가 2023년 말까지 수정을 낼 예정이라고 했으나 실제 배포 여부는 확인 못 함. 우회: 호스트 테이블 옵션 사용",
+          "noFix": true
+        },
+        {
+          "cve": "CVE-2023-0103",
+          "title": "메모리 접근 취약점",
+          "kev": false,
+          "kevAdded": null,
+          "affected": [
+            "os"
+          ],
+          "fixed": {},
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-23-040-02",
+          "source": "NVD + SUMMARY",
+          "cvss": {
+            "score": 7.5,
+            "version": "3.1",
+            "basis": "NVD"
+          },
+          "note": "제조사가 2023년 말까지 수정을 낼 예정이라고 했으나 실제 배포 여부는 확인 못 함. 우회: 호스트 테이블 옵션 사용",
+          "noFix": true
+        }
+      ]
+    },
+    {
+      "key": "kepserverex",
+      "vendor": "PTC Kepware",
+      "product": "KEPServerEX",
+      "lines": [
+        {
+          "line": "v6",
+          "ga": null,
+          "candidates": [
+            "6.12",
+            "6.14.263.0",
+            "6.15"
+          ]
+        }
+      ],
+      "candidateNote": "후보는 CISA 공지의 수정 버전(6.12, 6.15)과 영향 범위 끝(6.14.263.0)에 나온 번호다. 출시 연도는 확인 못 함",
+      "advisories": [
+        {
+          "cve": "CVE-2022-2848",
+          "title": "OPC UA 서버 버퍼 오버플로",
+          "kev": false,
+          "kevAdded": null,
+          "affected": [
+            "v6"
+          ],
+          "fixed": {
+            "v6": [
+              "6.12"
+            ]
+          },
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-22-242-10",
+          "source": "VENDOR(CISA 원문)",
+          "cvss": {
+            "score": 9.1,
+            "version": "3.1",
+            "basis": "CISA"
+          }
+        },
+        {
+          "cve": "CVE-2022-2825",
+          "title": "OPC UA 서버 버퍼 오버플로",
+          "kev": false,
+          "kevAdded": null,
+          "affected": [
+            "v6"
+          ],
+          "fixed": {
+            "v6": [
+              "6.12"
+            ]
+          },
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-22-242-10",
+          "source": "VENDOR(CISA 원문)",
+          "cvss": {
+            "score": 9.8,
+            "version": "3.1",
+            "basis": "CISA"
+          }
+        },
+        {
+          "cve": "CVE-2023-5908",
+          "title": "OPC UA 서버 힙 오버플로",
+          "kev": false,
+          "kevAdded": null,
+          "affected": [
+            "v6"
+          ],
+          "fixed": {
+            "v6": [
+              "6.15"
+            ]
+          },
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-23-334-03",
+          "source": "VENDOR(CISA 원문)",
+          "cvss": {
+            "score": 9.1,
+            "version": "3.1",
+            "basis": "CISA"
+          },
+          "note": "영향: 6.14.263.0 이하"
+        },
+        {
+          "cve": "CVE-2023-5909",
+          "title": "OPC UA 서버 인증서 검증 미흡",
+          "kev": false,
+          "kevAdded": null,
+          "affected": [
+            "v6"
+          ],
+          "fixed": {
+            "v6": [
+              "6.15"
+            ]
+          },
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-23-334-03",
+          "source": "VENDOR(CISA 원문)",
+          "cvss": {
+            "score": 7.5,
+            "version": "3.1",
+            "basis": "CISA"
+          },
+          "note": "영향: 6.14.263.0 이하"
+        },
+        {
+          "cve": "CVE-2024-6098",
+          "title": "OPC UA 서버 자원 고갈",
+          "kev": false,
+          "kevAdded": null,
+          "affected": [
+            "v6"
+          ],
+          "fixed": {},
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-24-228-11",
+          "source": "VENDOR(CISA 원문)",
+          "cvss": {
+            "score": 5.3,
+            "version": "3.1",
+            "basis": "CISA"
+          },
+          "note": "수정 버전은 로그인이 필요한 제조사 문서에만 있어 확인 못 함"
+        }
+      ]
+    },
+    {
+      "key": "ignition",
+      "vendor": "Inductive Automation",
+      "product": "Ignition",
+      "lines": [
+        {
+          "line": "8.0",
+          "ga": 2019,
+          "candidates": [
+            "8.0.10",
+            "8.0.13"
+          ]
+        },
+        {
+          "line": "8.1",
+          "ga": 2020,
+          "candidates": [
+            "8.1.8",
+            "8.1.9",
+            "8.1.10"
+          ]
+        }
+      ],
+      "candidateNote": "후보는 CISA 공지의 영향 범위·수정 버전에 나온 번호다. 출시 연도는 제조사 장기 지원 표(8.0: 2019, 8.1: 2020)",
+      "advisories": [
+        {
+          "cve": "CVE-2022-1264",
+          "title": "경로 조작",
+          "kev": false,
+          "kevAdded": null,
+          "affected": [
+            "8.0",
+            "8.1"
+          ],
+          "fixed": {
+            "8.1": [
+              "8.1.10"
+            ]
+          },
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-22-102-03",
+          "source": "VENDOR(CISA 원문)",
+          "cvss": {
+            "score": 6.8,
+            "version": "3.1",
+            "basis": "CISA"
+          },
+          "note": "8.0은 8.0.4 이후 전 버전 영향이나 수정 버전이 공지에 없음"
+        },
+        {
+          "cve": "CVE-2022-1704",
+          "title": "XML 외부 개체",
+          "kev": false,
+          "kevAdded": null,
+          "affected": [
+            "8.1"
+          ],
+          "fixed": {
+            "8.1": [
+              "8.1.9"
+            ]
+          },
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-22-207-01",
+          "source": "VENDOR(CISA 원문)",
+          "cvss": {
+            "score": 7.6,
+            "version": "3.1",
+            "basis": "CISA"
+          },
+          "note": "공지가 영향 범위는 8.1.8 미만, 수정은 8.1.9 이상이라고 적어 서로 어긋남(원문 그대로)"
+        },
+        {
+          "cve": "CVE-2020-14520",
+          "title": "접근 통제 누락",
+          "kev": false,
+          "kevAdded": null,
+          "affected": [
+            "8.0"
+          ],
+          "fixed": {
+            "8.0": [
+              "8.0.13"
+            ]
+          },
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-20-212-01",
+          "source": "VENDOR(CISA 원문)",
+          "cvss": {
+            "score": 7.5,
+            "version": "3.1",
+            "basis": "CISA"
+          }
+        }
+      ]
+    },
+    {
+      "key": "wincc",
+      "vendor": "Siemens",
+      "product": "SIMATIC WinCC",
+      "lines": [
+        {
+          "line": "V7.5 SP2",
+          "ga": null,
+          "candidates": [
+            "V7.5 SP2 Update 17",
+            "V7.5 SP2 Update 18"
+          ]
+        }
+      ],
+      "candidateNote": "후보는 공지의 수정 업데이트 번호(17, 18)다. 출시 연도는 확인 못 함. Siemens 공지는 이후 수정 수준이 바뀌었을 수 있어 ProductCERT 재확인 필요",
+      "advisories": [
+        {
+          "cve": "CVE-2024-30321",
+          "title": "정보 노출",
+          "kev": false,
+          "kevAdded": null,
+          "affected": [
+            "V7.5 SP2"
+          ],
+          "fixed": {
+            "V7.5 SP2": [
+              "V7.5 SP2 Update 17"
+            ]
+          },
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-24-193-16",
+          "source": "VENDOR(CISA 원문)",
+          "cvss": {
+            "score": 5.9,
+            "version": "3.1",
+            "basis": "CISA"
+          }
+        },
+        {
+          "cve": "CVE-2024-35783",
+          "title": "불필요 권한 실행",
+          "kev": false,
+          "kevAdded": null,
+          "affected": [
+            "V7.5 SP2"
+          ],
+          "fixed": {
+            "V7.5 SP2": [
+              "V7.5 SP2 Update 18"
+            ]
+          },
+          "url": "https://www.cisa.gov/news-events/ics-advisories/icsa-24-256-14",
+          "source": "VENDOR(CISA 원문)",
+          "cvss": {
+            "score": null,
+            "version": null,
+            "basis": "점수 확인 못 함"
+          }
+        }
+      ]
     }
   ],
   "notInCatalog": {

@@ -59,6 +59,7 @@ CROSS_LEAK = 0.1
 VENDOR_FLOW_SHARE = 0.5
 VENDOR_FLOWS = {
     "Siemens": {"port": 102, "purpose": "가상 PLC/CNC 데이터 읽기(ISO-on-TCP 계열 예시)", "note": "포트 102는 Siemens 계열 통신에 흔히 쓰이는 예시. 실제 장비 지원·설정 미검증"},
+    "LS ELECTRIC": {"port": 2004, "purpose": "가상 PLC 데이터 읽기(LS XGT 전용 통신 계열 예시)", "note": "2004는 흔히 쓰이는 예시 포트. 실제 설정·지원 미검증"},
     "Mitsubishi Electric": {"port": 5007, "purpose": "가상 PLC 데이터 읽기(SLMP 계열 예시)", "note": "5007은 설정 가능한 예시 포트. 실제 장비 설정 미검증"},
 }
 
@@ -82,17 +83,9 @@ AS_OF_MONTH = "2026-10"
 WIN10 = ("Microsoft", "Windows 10 Enterprise", "22H2")
 WIN11 = ("Microsoft", "Windows 11", "23H2")
 LTSC = ("Microsoft", "Windows 10 IoT Enterprise LTSC", "2021")
-FLEET_MIX = {
+FLEET_MIX = {                      # 라인에 속하지 않는 공용 자산만 자산 단위로 섞는다
     "업무 PC": [(0.22, WIN10), (0.04, LTSC)],
-    "HMI PC": [(0.18, WIN10), (0.08, WIN11)],
     "엔지니어링 PC": [(0.5, WIN11)],
-    "비전 검사 PC": [(0.25, LTSC)],
-    "PLC": [(0.25, ("Siemens", "SIMATIC S7-1500", None)), (0.25, ("Mitsubishi Electric", "MELSEC iQ-R R04CPU", None)),
-            (0.12, ("Rockwell Automation", "ControlLogix 1756-L8x", None))],
-    "CNC 컨트롤러": [(0.25, ("FANUC", "Series 0i-MF Plus", None)), (0.08, ("Mitsubishi Electric", "M80", None))],
-    "로봇 컨트롤러": [(0.2, ("Yaskawa", "YRC1000", None))],
-    "인버터": [(0.25, ("Siemens", "SINAMICS G120", None))],
-    "산업용 스위치": [(0.3, ("Siemens", "SCALANCE XC208", None)), (0.15, ("Cisco", "IE-3300", None))],
 }
 OS_TYPES = ("업무 PC", "HMI PC", "엔지니어링 PC", "비전 검사 PC")
 UNKNOWN_OS_CHANCE = 0.06          # 버전을 모르는 PC
@@ -100,3 +93,46 @@ NEVER_VERIFIED_CHANCE = 0.08      # 한 번도 확인한 적 없는 자산
 NO_OWNER_CHANCE = 0.05            # 담당자 미지정
 NO_IP_CHANCE = 0.03               # IP 미할당(DHCP 누락 등)
 UNKNOWN_FIRMWARE_CHANCE = 0.10        # 펌웨어를 모르는 제어기
+
+# ---------------- 공정(라인) 프로필 ----------------
+# 단순 공정(세척·이송)은 LS ELECTRIC, 복잡한 공정(절삭·밀링·비전)은 Mitsubishi·Siemens·FANUC를 주로 쓴다.
+# 한 라인은 같은 제조사로 통일하고, 가끔 새로 추가된 설비 한두 대만 다르다.
+LS = "LS ELECTRIC"
+LS_PLC = [(0.5, (LS, "XGK-CPUU", None)), (0.3, (LS, "XGI-CPUU", None)), (0.2, (LS, "XBC-DN32U", None))]
+MITSU_PLC = ("Mitsubishi Electric", "MELSEC iQ-R R04CPU", None)
+SIEMENS_PLC = ("Siemens", "SIMATIC S7-1500", None)
+LINE_PLC = [(0.70, "LS"), (0.20, MITSU_PLC), (0.10, SIEMENS_PLC)]           # 세척·이송 셀의 PLC
+LINE_CNC = [(0.45, ("Siemens", "SINUMERIK 840D sl", None)), (0.35, ("FANUC", "Series 0i-MF Plus", None)),
+            (0.20, ("Mitsubishi Electric", "M80", None))]
+LINE_ROBOT = [(0.75, ("FANUC", "R-30iB Plus", None)), (0.25, ("Yaskawa", "YRC1000", None))]
+LINE_INVERTER = [(0.65, (LS, "LSLV-H100", None)), (0.35, ("Mitsubishi Electric", "FR-A800", None))]
+LINE_SWITCH = [(0.70, ("Moxa", "EDS-516A", None)), (0.20, ("Siemens", "SCALANCE XC208", None)), (0.10, ("Cisco", "IE-3300", None))]
+LINE_ADDITION_CHANCE = 0.10        # 라인마다 새로 추가된 설비가 다른 제조사일 확률
+# 도입 시기(웨이브)별 OS와 도입 연도. 앞쪽 라인이 오래된 라인이다.
+WAVES = [(0.4, "old", [2019, 2020, 2021], {"hmi": LTSC, "vision": WIN10}),
+         (0.8, "mid", [2022, 2023], {"hmi": LTSC, "vision": LTSC}),
+         (1.0, "new", [2024, 2025], {"hmi": WIN11, "vision": WIN11})]
+TYPE_KEY = {"CNC 컨트롤러": "cnc", "로봇 컨트롤러": "robot", "PLC": "plc", "인버터": "inverter", "산업용 스위치": "switch",
+            "HMI PC": "hmi", "비전 검사 PC": "vision"}
+
+# ---------------- 서버 계층 ----------------
+# 서버 자산에 OS와 응용 프로그램을 설치 목록(software_installations)으로 따로 적는다.
+WS2016 = ("Microsoft", "Windows Server", "2016")
+WS2019 = ("Microsoft", "Windows Server", "2019")
+WS2022 = ("Microsoft", "Windows Server", "2022")
+RHEL8 = ("Red Hat", "Red Hat Enterprise Linux", "8")
+KEP = ("PTC Kepware", "KEPServerEX", None)
+IGN80 = ("Inductive Automation", "Ignition", "8.0")
+IGN81 = ("Inductive Automation", "Ignition", "8.1")
+WINCC = ("Siemens", "SIMATIC WinCC", None)
+SQL2017 = ("Microsoft", "SQL Server", "2017")
+ORA19 = ("Oracle", "Oracle Database", "19c")
+SERVER_SOFTWARE = {      # 서버 종류: (OS 후보, 응용 후보). None은 가상 공급사 응용만 둠
+    "OPC 수집 서버": ([(0.55, WS2019), (0.25, WS2016), (0.20, WS2022)], [(0.60, KEP), (0.15, IGN80), (0.15, IGN81), (0.10, None)]),
+    "SCADA 서버": ([(0.50, WS2019), (0.35, WS2016), (0.15, WS2022)], [(0.50, WINCC), (0.15, IGN80), (0.20, IGN81), (0.15, None)]),
+    "MES 앱 서버": ([(0.50, WS2019), (0.30, WS2022), (0.20, RHEL8)], []),
+    "ERP 연계 서버": ([(0.60, WS2019), (0.40, RHEL8)], []),
+    "품질관리 서버": ([(0.70, WS2019), (0.30, WS2022)], []),
+    "물류관리 서버": ([(0.70, WS2019), (0.30, WS2022)], []),
+}
+DB_SERVER = [(0.70, SQL2017[:2] + ("2019",)), (0.20, SQL2017), (0.10, ORA19)]   # MES DB 서버의 주 제품

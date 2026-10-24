@@ -133,6 +133,9 @@ CATALOG_KEYS = {
     ("Palo Alto Networks", "PAN-OS", "10.2"): "panos", ("Cisco", "Catalyst 9300", None): "iosxe",
     ("Siemens", "SIMATIC S7-1500", None): "s7_1500", ("Siemens", "SINUMERIK 840D sl", None): "sinumerik",
     ("Mitsubishi Electric", "MELSEC iQ-R R04CPU", None): "iqr", ("FANUC", "R-30iB Plus", None): "fanuc", ("Moxa", "EDS-516A", None): "eds516a",
+    ("LS ELECTRIC", "XGK-CPUU", None): "ls_xgk", ("LS ELECTRIC", "XGI-CPUU", None): "ls_xgi", ("LS ELECTRIC", "XBC-DN32U", None): "ls_xbc",
+    ("PTC Kepware", "KEPServerEX", None): "kepserverex", ("Inductive Automation", "Ignition", "8.0"): "ignition",
+    ("Inductive Automation", "Ignition", "8.1"): "ignition", ("Siemens", "SIMATIC WinCC", None): "wincc",
 }
 
 
@@ -209,7 +212,7 @@ def apply_catalog(assets, catalog, research, rng, expected):
             a["versionEvidence"] = "unknown_firmware_or_version"
             a["fleetMixV2"] = "synthetic_assumption(firmware_unknown)"
             continue
-        year = rng.choice([2018, 2019, 2020, 2021, 2021, 2022, 2022, 2023, 2023, 2024, 2025])
+        year = a.get("installedYear") or rng.choice([2018, 2019, 2020, 2021, 2021, 2022, 2022, 2023, 2023, 2024, 2025])
         end_year = support_end_year(a)
         if end_year:
             year = min(year, end_year)
@@ -394,12 +397,13 @@ def add_extra_assets(d, rng):
 
 
 def _clean_rows(d):
-    """자산별로 대장 행과 '오류가 표시된 필드'를 모은다. 오류가 표시된 필드는 건드리지 않는다."""
-    rows, flagged = {}, set()
+    """자산별 대장 행과 '오류가 표시된 필드'(→ 오류 객체)를 모은다. 없애기로 표시한 오류는 제외한다."""
+    rows, flagged = {}, {}
     for rid, aid in d["quality_truth"]["row_to_asset"].items():
         rows.setdefault(aid, []).append(rid)
     for i in d["quality_truth"]["issues"]:
-        flagged.add((i["rowId"], i["field"]))
+        if not i.get("_drop"):
+            flagged[(i["rowId"], i["field"])] = i
     return rows, flagged
 
 
@@ -410,15 +414,110 @@ def _blocked(rows, flagged, aid, fields):
 def _set_payload(raw, rows, aid, field, old, new):
     for rid in rows.get(aid, []):
         p = raw[rid]["payload"]
-        if p.get(field) == old:
+        if str(p.get(field, "")).strip().lower() == str(old).strip().lower():     # 공백·대소문자 변형 행도 같이 바꾼다
             p[field] = new
 
 
-def diversify_fleet(d, rng, skip_ids):
-    """현실의 혼합 구성: 제품·OS 혼합, 버전 미상, 미확인·담당 미지정·IP 미할당 자산을 섞는다.
+def _abbreviate(product):
+    return "WIN " + product.split(" ", 1)[1] if product.startswith("Windows ") else product.replace(" ", "").replace("-", "")
 
-    대장(raw)과 소프트웨어 설치 목록을 같이 고쳐 정답과 어긋나지 않게 한다.
-    오류가 이미 표시된 필드를 가진 자산은 건드리지 않는다.
+
+def _remap_issues(a, new, rows, flagged, raw):
+    """제조사·제품·버전에 표시된 오류를 새 값에 맞게 바꾼다(별칭·약어는 다시 만들고 나머지는 없앤다)."""
+    for rid in rows.get(a["id"], []):
+        for field, value in (("제조사", new[0]), ("제품", new[1]), ("버전", new[2] or "")):
+            issue = flagged.get((rid, field))
+            if not issue:
+                continue
+            if issue["issueType"] == "vendor_alias":
+                issue["expected"] = value
+                issue["reported"] = f"  {value.upper()} "
+            elif issue["issueType"] == "product_abbreviation":
+                issue["expected"] = value
+                issue["reported"] = _abbreviate(value)
+            else:
+                issue["_drop"] = True
+                raw[rid]["payload"][field] = value
+                continue
+            raw[rid]["payload"][field] = issue["reported"]
+
+
+def pick(rng, options):
+    """(가중치, 값) 목록에서 하나를 고른다. 가중치 합이 1이 아니어도 된다."""
+    total = sum(p for p, _ in options)
+    roll = rng.random() * total
+    acc = 0.0
+    for p, v in options:
+        acc += p
+        if roll < acc:
+            return v
+    return options[-1][1]
+
+
+def retarget(a, new, rows, flagged, raw, sw, tag):
+    """자산의 제조사·제품·버전을 바꾸고 대장·설치 목록·오류 표시를 같이 고친다."""
+    aid = a["id"]
+    old = (a["vendor"], a["product"], a["version"])
+    if new == old:
+        return False
+    a["vendor"], a["product"], a["version"] = new
+    a["versionEvidence"] = "unknown_firmware_or_version" if new[2] is None else "synthetic_release_only"
+    a["fleetMixV2"] = tag
+    for s in sw.get(aid, []):
+        if (s["vendor"], s["product"], s["version"]) == old:
+            s["vendor"], s["product"], s["version"] = new
+    _set_payload(raw, rows, aid, "제조사", old[0], new[0])
+    _set_payload(raw, rows, aid, "제품", old[1], new[1])
+    _set_payload(raw, rows, aid, "버전", old[2] if old[2] is not None else "", new[2] if new[2] is not None else "")
+    _remap_issues(a, new, rows, flagged, raw)
+    return True
+
+
+def apply_line_profiles(d, skip_ids, ctx):
+    """라인마다 제조사를 통일한다. 단순 공정(세척·이송)은 LS가 많고 복잡한 공정은 Mitsubishi·Siemens·FANUC가 많다.
+
+    도입 시기가 빠른 라인일수록 오래된 OS를 쓰고, 라인에 새로 추가된 설비 한 대만 가끔 다르다.
+    """
+    stat = collections.Counter()
+    by_site, by_line = {}, {}
+    for l in d["lines"]:
+        by_site.setdefault(l["siteId"], []).append(l)
+    for a in d["canonical_assets"]:
+        by_line.setdefault(a["line"], []).append(a)
+    for lines in by_site.values():
+        for idx, line in enumerate(lines):
+            lr = random.Random(f"{R.SEED}-{d['code']}-{line['id']}")
+            frac = (idx + 1) / len(lines)
+            _, wave, years, os_pick = next(w for w in R.WAVES if frac <= w[0] + 1e-9)
+            plc = pick(lr, R.LINE_PLC)
+            prof = {"cnc": pick(lr, R.LINE_CNC), "robot": pick(lr, R.LINE_ROBOT), "plc": pick(lr, R.LS_PLC) if plc == "LS" else plc,
+                    "inverter": pick(lr, R.LINE_INVERTER), "switch": pick(lr, R.LINE_SWITCH), **os_pick}
+            addition = lr.random() < R.LINE_ADDITION_CHANCE
+            added = False
+            for a in by_line.get(line["id"], []):
+                if a["id"] in skip_ids:
+                    continue
+                a["installedYear"] = lr.choice(years)
+                a["lineWave"] = wave
+                key = R.TYPE_KEY.get(a["assetType"])
+                if not key:
+                    continue
+                target = prof[key]
+                if addition and key == "cnc" and not added:
+                    target = pick(lr, [(p, v) for p, v in R.LINE_CNC if v != prof["cnc"]])
+                    added = True
+                    a["installedYear"] = max(years) + 1 if max(years) < 2025 else 2025
+                    stat["새로 추가된 설비"] += 1
+                if retarget(a, target, *ctx, "synthetic_assumption(line_profile)"):
+                    stat["라인 프로필 적용"] += 1
+    return dict(stat)
+
+
+def diversify_fleet(d, rng, skip_ids):
+    """현실의 혼합 구성. 라인 자산은 라인 프로필로, 공용 자산(사무 PC 등)은 자산 단위로 섞는다.
+
+    버전 미상 PC, 한 번도 확인한 적 없는 자산, 담당 미지정, IP 미할당도 섞는다.
+    대장(raw)과 소프트웨어 설치 목록을 같이 고쳐 정답과 어긋나지 않게 하고, 오류가 표시된 필드는 건드리지 않는다.
     """
     assets = d["canonical_assets"]
     rows, flagged = _clean_rows(d)
@@ -426,34 +525,24 @@ def diversify_fleet(d, rng, skip_ids):
     sw = {}
     for s in d["software_installations"]:
         sw.setdefault(s["assetId"], []).append(s)
-    stat = collections.Counter()
+    ctx = (rows, flagged, raw, sw)
+    stat = collections.Counter(apply_line_profiles(d, skip_ids, ctx))
     for a in assets:
-        if a["id"] in skip_ids or a["assetType"] not in R.FLEET_MIX and a["assetType"] not in R.OS_TYPES:
+        if a["id"] in skip_ids:
             continue
         aid = a["id"]
-        old = (a["vendor"], a["product"], a["version"])
-        if not _blocked(rows, flagged, aid, ("제조사", "제품", "버전")):
-            new = None
-            roll = rng.random()
-            acc = 0.0
-            for p, target in R.FLEET_MIX.get(a["assetType"], []):
+        if a["line"] == "공용" and a["assetType"] in R.FLEET_MIX:
+            roll = rng.random(); acc = 0.0; new = None
+            for p, target in R.FLEET_MIX[a["assetType"]]:
                 acc += p
                 if roll < acc:
                     new = target
                     break
-            if new is None and a["assetType"] in R.OS_TYPES and rng.random() < R.UNKNOWN_OS_CHANCE:
-                new = ("Microsoft", "Windows", None)
-            if new and new != old:
-                a["vendor"], a["product"], a["version"] = new
-                a["versionEvidence"] = "unknown_firmware_or_version" if new[2] is None else "synthetic_release_only"
-                a["fleetMixV2"] = "synthetic_assumption(product_mix)"
-                for s in sw.get(aid, []):
-                    if (s["vendor"], s["product"], s["version"]) == old:
-                        s["vendor"], s["product"], s["version"] = new
-                _set_payload(raw, rows, aid, "제조사", old[0], new[0])
-                _set_payload(raw, rows, aid, "제품", old[1], new[1])
-                _set_payload(raw, rows, aid, "버전", old[2] if old[2] is not None else "", new[2] if new[2] is not None else "")
-                stat["제품·OS 혼합"] += 1
+            if new and retarget(a, new, *ctx, "synthetic_assumption(product_mix)"):
+                stat["공용 자산 혼합"] += 1
+        if a["assetType"] in R.OS_TYPES and rng.random() < R.UNKNOWN_OS_CHANCE:
+            if retarget(a, ("Microsoft", "Windows", None), *ctx, "synthetic_assumption(version_unknown)"):
+                stat["버전 미상 PC"] += 1
         if a.get("lastVerifiedAt") and not _blocked(rows, flagged, aid, ("확인일",)) and rng.random() < R.NEVER_VERIFIED_CHANCE:
             _set_payload(raw, rows, aid, "확인일", a["lastVerifiedAt"], "")
             a["lastVerifiedAt"] = None
@@ -467,6 +556,104 @@ def diversify_fleet(d, rng, skip_ids):
             a["ip"] = None
             stat["IP 미할당"] += 1
     return dict(stat)
+
+
+def add_server_software(d, rng, skip_ids):
+    """서버 계층의 OS와 응용 프로그램을 설치 목록에 따로 적는다(수집 계층: OPC 수집·SCADA, 메인 계층: MES·DB·ERP).
+
+    MES DB 서버는 주 제품(SQL Server 2019·2017, Oracle 19c)도 섞는다. 응용 프로그램은 실제 제품이며
+    MES 응용 같은 가상 공급사 제품은 기존 설치 항목을 그대로 둔다.
+    """
+    rows, flagged = _clean_rows(d)
+    raw = {r["id"]: r for r in d["raw_asset_register"]}
+    sw = {}
+    for s in d["software_installations"]:
+        sw.setdefault(s["assetId"], []).append(s)
+    counts = collections.Counter({k: len(v) for k, v in sw.items()})
+    stat = collections.Counter()
+
+    def install(a, product, role):
+        counts[a["id"]] += 1
+        d["software_installations"].append({
+            "id": f"{a['id']}-SW{counts[a['id']]:02d}", "assetId": a["id"], "vendor": product[0], "product": product[1],
+            "version": product[2], "role": role, "provenance": "synthetic_installation_assumption_v2"})
+        stat[f"설치 항목({role})"] += 1
+
+    for a in d["canonical_assets"]:
+        if a["id"] in skip_ids:
+            continue
+        kind = a["assetType"]
+        if kind == "MES DB 서버":
+            if retarget(a, pick(rng, R.DB_SERVER), rows, flagged, raw, sw, "synthetic_assumption(db_mix)"):
+                stat["DB 제품 혼합"] += 1
+            os_choice = R.RHEL8 if a["product"] == "Oracle Database" else pick(rng, [(0.7, R.WS2019), (0.3, R.WS2016)])
+            apps = []
+        elif kind in R.SERVER_SOFTWARE:
+            os_opts, app_opts = R.SERVER_SOFTWARE[kind]
+            os_choice = pick(rng, os_opts)
+            app = pick(rng, app_opts) if app_opts else None
+            apps = [app] if app else []
+        else:
+            continue
+        a["installedYear"] = rng.choice([2018, 2019, 2020, 2021, 2022, 2023, 2024])
+        install(a, os_choice, "os")
+        for app in apps:
+            install(a, app, "app")
+    return dict(stat)
+
+
+def choose_version(pr, wanted_line, year, rng, end_year=None):
+    """제품 카탈로그에서 계열(line)과 버전 후보를 고른다. 계열 출시 연도 이전이면 고르지 않는다."""
+    if end_year:
+        year = min(year, end_year)
+    if wanted_line is None:
+        options = [l for l in pr["lines"] if (l["ga"] or 0) <= year] or pr["lines"][:1]
+        line = options[int(len(options) * (rng.random() ** 0.8))]
+    else:
+        line = next((l for l in pr["lines"] if l["line"] == wanted_line), None)
+        if not line:
+            return None
+    year = max(year, line["ga"] or 0)
+    cands = line["candidates"]
+    idx = len(cands) - 1 if rng.random() < 0.2 else int(len(cands) * (rng.random() ** (1.4 if year >= 2023 else 0.8)))
+    return line, cands[min(idx, len(cands) - 1)], year
+
+
+def apply_catalog_installs(d, catalog, research, rng, expected):
+    """서버 설치 항목(OS·응용)에 실제 버전을 배정하고 지원 종료일을 붙인다. 설치 항목은 `role`이 있는 것만 다룬다."""
+    if not catalog:
+        return 0
+    products = {p["key"]: p for p in catalog["products"]}
+    ends = {(e["match"]["vendor"], e["match"]["product"], e["match"].get("version")): e for e in (research or {}).get("entries", []) if e.get("supportEndDate")}
+    assets = {a["id"]: a for a in d["canonical_assets"]}
+    done = 0
+    for s in d["software_installations"]:
+        if not s.get("role"):
+            continue
+        a = assets[s["assetId"]]
+        ref = (s["vendor"], s["product"], s["version"])
+        end = ends.get(ref)
+        if end:
+            s["supportEnd"] = {"date": end["supportEndDate"], "source": end.get("supportEndSource"), "confidence": end.get("supportEndConfidence"), "note": end.get("supportEndNote")}
+        key = CATALOG_KEYS.get(ref)
+        if not key:
+            s["scenario"] = True
+            continue
+        pr = products[key]
+        end_year = int(end["supportEndDate"][:4]) if end else None
+        chosen = choose_version(pr, s["version"], a.get("installedYear") or 2022, rng, end_year)
+        if not chosen:
+            continue
+        line, version, _ = chosen
+        if s["version"] is None:
+            s["version"] = version
+        s["patchLevel"] = {"label": version, "source": "product_catalog.json", "confidence": "카탈로그 후보(번호만)"}
+        s["scenario"] = True
+        matches = [] if a.get("lifecycle") == "retired" else [match_advisory(adv, line["line"], version) for adv in pr["advisories"]]
+        expected.append({"assetId": a["id"], "softwareId": s["id"], "role": s["role"], "product": key, "line": line["line"],
+                         "version": version, "lifecycle": a.get("lifecycle"), "matches": matches})
+        done += 1
+    return done
 
 
 def diversify_flows(d, rng):
@@ -510,6 +697,14 @@ def raw_matches_truth(d):
     return True
 
 
+def line_vendor_ok(d):
+    kinds = {}
+    for a in d["canonical_assets"]:
+        if a["assetType"] == "CNC 컨트롤러":
+            kinds.setdefault(a["line"], set()).add(a["product"])
+    return all(len(v) <= 2 for v in kinds.values())
+
+
 def validate(d):
     ids = {a["id"] for a in d["canonical_assets"]}; eq = {e["id"]: e for e in d["equipment"]}; lines = {l["id"] for l in d["lines"]}
     wos = {w["id"]: w for w in d["mes_work_orders"]}; lots = {l["id"]: l for l in d["mes_lots"]}
@@ -528,6 +723,7 @@ def validate(d):
         "issue→raw 행": all(i["rowId"] in {r["id"] for r in d["raw_asset_register"]} for i in d["quality_truth"]["issues"]),
         "MES 예외→LOT/WO": all(e["lotId"] in lots and e["expectedWorkOrderId"] in wos for e in d["raw_mes_exceptions"]),
         "대장 제조사·제품 일치(오류 표시 없는 행)": raw_matches_truth(d),
+        "라인당 CNC 제조사 2종 이하": line_vendor_ok(d),
         "기간 하루 이상": max(dt.datetime.fromisoformat(o["simulatedTimestamp"]) for o in d["machine_observations"]) - base > dt.timedelta(hours=24),
     }
     return checks
@@ -541,11 +737,14 @@ def build(code, src, out, research, catalog=None):
     add_exposure_edr_reboot(d["canonical_assets"], d["lines"], rng)
     hetero_ids = apply_heterogeneity(d, rng)
     fleet_stat = diversify_fleet(d, rng, set(hetero_ids))
+    fleet_stat.update(add_server_software(d, rng, set(hetero_ids)))
+    d["quality_truth"]["issues"] = [i for i in d["quality_truth"]["issues"] if not i.get("_drop")]
     hits = apply_research(d["canonical_assets"], d["software_installations"], research, rng)
     extra_ids = add_extra_assets(d, rng)
     diversify_flows(d, rng)
     expected = []
     catalog_hits = apply_catalog(d["canonical_assets"], catalog, research, rng, expected)
+    catalog_hits += apply_catalog_installs(d, catalog, research, rng, expected)
     fix_lines(d)
     as_of = rebuild_mes(d, rng)
     vary_reported(d, rng); reassign_sources(d, rng); add_cross_file_conflicts(d, rng); renumber(d)

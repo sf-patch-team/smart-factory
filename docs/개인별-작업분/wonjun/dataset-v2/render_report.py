@@ -17,13 +17,16 @@ def stats(d, exp):
     status = collections.Counter(m["status"] for x in cat for m in x["matches"])
     ports = collections.Counter(f["port"] for f in d["application_flows"])
     return {
-        "자산": len(a), "버전 배정 자산": len(cat), "대장 행": len(d["raw_asset_register"]),
+        "자산": len(a), "버전 배정 항목(자산+설치)": len(cat), "대장 행": len(d["raw_asset_register"]),
         "작업지시": len(d["mes_work_orders"]),
         "중요도 high/mid/low": "/".join(str(sum(1 for x in a if x["criticality"] == k)) for k in ("high", "mid", "low")),
         "되돌리기 가능/불가": f'{sum(1 for x in a if x["rollbackPossible"])}/{sum(1 for x in a if not x["rollbackPossible"])}',
         "노출 장비(remote·dmz·perimeter)": sum(1 for x in a if x.get("exposure") not in (None, "internal")),
         "통신 4840(OPC UA)": f'{ports[4840]}/{len(d["application_flows"])}',
         "통신 102·5007": f'{ports[102]}·{ports[5007]}',
+        "서버 설치 항목(OS·응용)": sum(1 for x in d["software_installations"] if x.get("role")),
+        "라인(공정)당 제조사 혼합 라인 수": sum(1 for l in d["lines"] for t in ("CNC 컨트롤러", "PLC", "인버터", "로봇 컨트롤러", "산업용 스위치")
+                                     if len({x["product"] for x in a if x["line"] == l["id"] and x["assetType"] == t}) > 1),
         "제품 종류(제조사·제품 조합)": len({(x["vendor"], x["product"]) for x in a}),
         "버전·펌웨어 미상": sum(1 for x in a if x.get("versionEvidence") == "unknown_firmware_or_version"),
         "IP 미할당": sum(1 for x in a if not x.get("ip")),

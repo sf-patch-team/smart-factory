@@ -878,6 +878,90 @@
       "noPublicVersion": true,
       "supportEndNote": "공식 지원 페이지에 펌웨어 번호가 없음",
       "patchLevels": []
+    },
+    {
+      "match": {
+        "vendor": "Microsoft",
+        "product": "Windows Server",
+        "version": "2016"
+      },
+      "supportEndDate": "2027-01-12",
+      "supportEndSource": "https://learn.microsoft.com/en-us/lifecycle/products/windows-server-2016",
+      "supportEndConfidence": "공식 확인",
+      "supportEndNote": "연장 지원 종료(표의 1/13/2027은 UTC 표기라 태평양 시간 기준 하루 앞), 주류 지원은 2022-01-11 종료. 빌드·KB는 조사하지 않음",
+      "patchLevels": []
+    },
+    {
+      "match": {
+        "vendor": "Microsoft",
+        "product": "SQL Server",
+        "version": "2017"
+      },
+      "supportEndDate": "2027-10-12",
+      "supportEndSource": "https://learn.microsoft.com/en-us/lifecycle/products/sql-server-2017",
+      "supportEndConfidence": "공식 확인",
+      "supportEndNote": "연장 지원 종료(UTC 표기 하루 차이), 주류 지원 2022-10-11 종료. 누적 업데이트는 조사하지 않음",
+      "patchLevels": []
+    },
+    {
+      "match": {
+        "vendor": "Red Hat",
+        "product": "Red Hat Enterprise Linux",
+        "version": "8"
+      },
+      "supportEndDate": "2029-05-31",
+      "supportEndSource": "https://access.redhat.com/product-life-cycles/api/v1/products?name=Red%20Hat%20Enterprise%20Linux",
+      "supportEndConfidence": "공식 확인(Red Hat API)",
+      "supportEndNote": "유지 지원 종료. 확장 수명 부가 서비스는 2033-05-31",
+      "patchLevels": []
+    },
+    {
+      "match": {
+        "vendor": "Red Hat",
+        "product": "Red Hat Enterprise Linux",
+        "version": "9"
+      },
+      "supportEndDate": "2032-05-31",
+      "supportEndSource": "https://access.redhat.com/product-life-cycles/api/v1/products?name=Red%20Hat%20Enterprise%20Linux",
+      "supportEndConfidence": "공식 확인(Red Hat API)",
+      "supportEndNote": "유지 지원 종료",
+      "patchLevels": []
+    },
+    {
+      "match": {
+        "vendor": "Oracle",
+        "product": "Oracle Database",
+        "version": "19c"
+      },
+      "supportEndDate": "2032-12-31",
+      "supportEndSource": "https://oracle.com/assets/tsp-soc-069318.pdf",
+      "supportEndConfidence": "공식 확인(변경 안내문, 일부 항목 상충)",
+      "supportEndNote": "연장 지원 종료. 프리미어 지원은 2029-12-31까지로 적혀 있으나 같은 문서에 상충하는 오래된 항목이 있음 — 확인 필요",
+      "patchLevels": []
+    },
+    {
+      "match": {
+        "vendor": "Inductive Automation",
+        "product": "Ignition",
+        "version": "8.1"
+      },
+      "supportEndDate": "2029-09-16",
+      "supportEndSource": "https://docs.inductiveautomation.com/long-term-support",
+      "supportEndConfidence": "공식 확인",
+      "supportEndNote": "제한 지원 종료. 활성 지원은 2027-09-16까지",
+      "patchLevels": []
+    },
+    {
+      "match": {
+        "vendor": "Inductive Automation",
+        "product": "Ignition",
+        "version": "8.0"
+      },
+      "supportEndDate": "2022-11-30",
+      "supportEndSource": "https://docs.inductiveautomation.com/long-term-support",
+      "supportEndConfidence": "공식 확인",
+      "supportEndNote": "제한 지원 종료(장기 지원 버전 아님)",
+      "patchLevels": []
     }
   ]
 }
