@@ -73,12 +73,12 @@ def asset_row(code, a):
             "종료" if a.get("supportStatus") == "ended" else "", a["criticality"], join(a.get("patchConstraints")),
             "가능" if a.get("rollbackPossible") else "불가", a.get("exposure"), a.get("edr"), a.get("rebootWindow"),
             a.get("ownerId"), a.get("ip"), a.get("networkSegmentId"), a.get("lifecycle"), a.get("lastVerifiedAt"),
-            a.get("versionEvidence"), a.get("registerStatus")]
+            a.get("versionEvidence"), a.get("registerStatus"), a.get("process"), "예" if a.get("bottleneck") else "", a.get("redundancy"), a.get("osManagement")]
 
 
 ASSET_HEAD = ["회사", "자산 ID", "사이트", "라인", "구역", "이름", "종류", "구분(IT/OT)", "제조사", "제품", "버전(기본)",
               "펌웨어·빌드(배정)", "도입 연도", "도입 시기", "지원 종료일", "단종일", "지원 상태", "중요도", "작업 제약",
-              "되돌리기", "노출", "EDR", "재부팅 창", "담당", "IP", "망 구역", "수명주기", "마지막 확인", "버전 근거", "대장 상태"]
+              "되돌리기", "노출", "EDR", "재부팅 창", "담당", "IP", "망 구역", "수명주기", "마지막 확인", "버전 근거", "대장 상태", "공정", "병목", "이중화", "OS·펌웨어 관리"]
 
 
 def main(out_dir, xlsx):
@@ -139,9 +139,9 @@ def main(out_dir, xlsx):
         for l in data[c]["lines"]:
             q = by_line.get(l["id"], [])
             g = lambda t: join(sorted({a["product"] for a in q if a["assetType"] == t}))
-            line_rows.append([c, l["siteId"], l["id"], l["productFamily"], q[0].get("lineWave") if q else "", g("CNC 컨트롤러"), g("PLC"),
+            line_rows.append([c, l["siteId"], l["id"], l.get("lineType"), join(l["operations"]), l["productFamily"], q[0].get("lineWave") if q else "", g("CNC 컨트롤러"), g("PLC"),
                               g("인버터"), g("로봇 컨트롤러"), g("산업용 스위치"), g("HMI PC"), g("비전 검사 PC"), len(q)])
-    write_sheet(wb, "라인 구성", ["회사", "사이트", "라인", "제품군", "도입 시기", "CNC", "PLC(세척·이송)", "인버터", "로봇", "스위치", "HMI OS", "비전 PC OS", "자산 수"], line_rows)
+    write_sheet(wb, "라인 구성", ["회사", "사이트", "라인", "라인 유형", "공정", "제품군", "도입 시기", "CNC", "PLC(세척·이송)", "인버터", "로봇", "스위치", "HMI OS", "비전 PC OS", "자산 수"], line_rows)
 
     # ---- 서버·설치 SW
     sw_rows = []

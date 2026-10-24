@@ -30,6 +30,8 @@ def vary_attributes(assets, rng):
     for a in assets:
         t, changed = a["assetType"], []
         for key, table in (("criticality", R.CRITICALITY), ("lifecycle", R.LIFECYCLE)):
+            if key == "criticality" and a.get("process"):
+                continue
             if t in table:
                 new = weighted(rng, table[t])
                 if new != a[key]:
@@ -39,11 +41,12 @@ def vary_attributes(assets, rng):
         if rng.random() < R.ROLLBACK_FALSE_CHANCE.get(t, 0):
             a["rollbackPossible"] = False; changed.append("rollbackPossible")
         cons = list(a["patchConstraints"])
-        for typ, token, p in sorted(R.EXTRA_CONSTRAINT):
-            if typ == t and token not in cons and rng.random() < p:
-                cons.append(token)
-        if rng.random() < R.CLEAR_CONSTRAINT_CHANCE.get(t, 0):
-            cons = []
+        if not a.get("process"):
+            for typ, token, p in sorted(R.EXTRA_CONSTRAINT):
+                if typ == t and token not in cons and rng.random() < p:
+                    cons.append(token)
+            if rng.random() < R.CLEAR_CONSTRAINT_CHANCE.get(t, 0):
+                cons = []
         if cons != a["patchConstraints"]:
             a["patchConstraints"] = cons; changed.append("patchConstraints")
         if changed:
@@ -224,9 +227,11 @@ def apply_catalog(assets, catalog, research, rng, expected):
         if not line:
             continue
         year = max(year, line["ga"] or 0)
-        cands = line["candidates"]
-        idx = len(cands) - 1 if rng.random() < 0.2 else int(len(cands) * (rng.random() ** (1.4 if year >= 2023 else 0.8)))
-        version = cands[min(idx, len(cands) - 1)]
+        version = pick_by_date(line, year, rng, a.get("category", "IT"))
+        if version is None:
+            cands = line["candidates"]
+            idx = len(cands) - 1 if rng.random() < 0.2 else int(len(cands) * (rng.random() ** (1.4 if year >= 2023 else 0.8)))
+            version = cands[min(idx, len(cands) - 1)]
         a["installedYear"] = year
         matches = [] if a.get("lifecycle") == "retired" else [match_advisory(adv, line["line"], version) for adv in pr["advisories"]]
         expected.append({"assetId": a["id"], "product": key, "line": line["line"], "version": version,
@@ -351,7 +356,7 @@ def add_cross_file_conflicts(d, rng):
         other = rng.choice([f for f in {x["source"] for x in base_rows} if f != r["source"]])
         p = dict(r["payload"])
         p["버전"] = rng.choice(["", "미상", "22H2", "2019", "3.0"]) if not p["버전"] or p["버전"] in ("", "-") else p["버전"] + ".1"
-        p["담당"] = f"{d['code']}-IT" if str(p["담당"]).endswith("OT") else f"{d['code']}-OT"
+        p["담당"] = f"{d['code']}-OT" if str(p["담당"]).startswith(f"{d['code']}-IT") else f"{d['code']}-IT"
         new = {"id": r["id"] + "-X", "source": other, "sourceRow": 9000 + len(d["raw_asset_register"]),
                "collectedAt": "2026-09-1%d" % rng.randint(0, 9) + "T09:00:00+09:00", "payload": p}
         d["raw_asset_register"].append(new)
@@ -440,6 +445,354 @@ def _remap_issues(a, new, rows, flagged, raw):
                 raw[rid]["payload"][field] = value
                 continue
             raw[rid]["payload"][field] = issue["reported"]
+
+
+def _num(pattern, items, key):
+    """식별자에서 번호를 뽑아 최댓값을 구한다."""
+    nums = [int(m.group(1)) for x in items if (m := re.search(pattern, x[key]))]
+    return max(nums) if nums else 0
+
+
+def restructure_lines(d):
+    """라인을 가공 / 세척·검사 / 조립·포장 유형으로 나누고 유형마다 설비 종류와 수를 다르게 한다.
+
+    남는 자산(와 딸린 대장 행·설치 목록·통신·스위치 포트·설비)은 지우고 모자라는 자산은 같은 라인의 같은 종류를 본떠 만든다.
+    CNC는 내장 패널을 쓰므로 조작 PC(HMI)는 라인당 1~2대 공용으로 줄인다. 공정(`process`)과 이중화(`redundancy`)를 자산에 붙인다.
+    """
+    rng = random.Random(f"{R.SEED}-{d['code']}-restructure")
+    code = d["code"]
+    assets = d["canonical_assets"]
+    raw = {r["id"]: r for r in d["raw_asset_register"]}
+    r2a = d["quality_truth"]["row_to_asset"]
+    next_a = _num(r"A(\d+)$", assets, "id") + 1
+    next_raw = _num(r"RAW(\d+)", d["raw_asset_register"], "id") + 1
+    next_flow = _num(r"F(\d+)$", d["application_flows"], "id") + 1
+    next_eq = _num(r"E(\d+)$", d["equipment"], "id") + 1
+    used_ips = collections.defaultdict(set)
+    for a in assets:
+        if a.get("ip"):
+            used_ips[a["networkSegmentId"]].add(a["ip"])
+    seg = {s["id"]: s for s in d["network_segments"]}
+    stat = collections.Counter()
+
+    # 라인 유형 배정
+    by_site = {}
+    for l in d["lines"]:
+        by_site.setdefault(l["siteId"], []).append(l)
+    for lines in by_site.values():
+        n = len(lines)
+        types = []
+        for name, share in R.LINE_TYPE_SHARE[:-1]:
+            types += [name] * round(n * share)
+        types += [R.LINE_TYPE_SHARE[-1][0]] * (n - len(types))
+        rng.shuffle(types)
+        for l, tp in zip(lines, types):
+            l["lineType"] = tp
+            l["operations"] = list(R.LINE_TYPES[tp]["ops"])
+
+    removed = set()
+    created = []
+    for line in d["lines"]:
+        spec = R.LINE_TYPES[line["lineType"]]
+        in_line = {}
+        for a in sorted((x for x in assets if x["line"] == line["id"]), key=lambda x: x["id"]):
+            in_line.setdefault(a["assetType"], []).append(a)
+        for kind, (lo, hi) in spec["counts"].items():
+            target = rng.randint(lo, hi)
+            have = in_line.get(kind, [])
+            for extra in have[target:]:
+                removed.add(extra["id"])
+            if len(have) < target and have:
+                for _ in range(target - len(have)):
+                    new = copy.deepcopy(have[0])
+                    new["id"] = f"{code}-A{next_a:05d}"
+                    new["serial"] = f"SIM-{code}-{next_a:06d}"
+                    next_a += 1
+                    free = [h for h in range(11, 250) if f"{seg[new['networkSegmentId']]['cidr'].rsplit('.', 1)[0]}.{h}" not in used_ips[new["networkSegmentId"]]]
+                    new["ip"] = f"{seg[new['networkSegmentId']]['cidr'].rsplit('.', 1)[0]}.{rng.choice(free)}"
+                    used_ips[new["networkSegmentId"]].add(new["ip"])
+                    new["provenance"] = "synthetic_design_v2"
+                    new["_template"] = have[0]["id"]
+                    created.append(new)
+                    in_line[kind] = in_line.get(kind, []) + [new]
+        line["_kept"] = {k: [a for a in v if a["id"] not in removed] for k, v in in_line.items()}
+    stat["삭제한 자산"] = len(removed)
+    stat["새로 만든 자산"] = len(created)
+
+    # 삭제: 자산, 대장 행·오류, 설치 목록, 통신, 스위치 포트, 설비
+    drop_rows = {rid for rid, aid in r2a.items() if aid in removed}
+    d["canonical_assets"] = [a for a in assets if a["id"] not in removed] + created
+    assets = d["canonical_assets"]
+    d["raw_asset_register"] = [r for r in d["raw_asset_register"] if r["id"] not in drop_rows]
+    for rid in drop_rows:
+        r2a.pop(rid, None)
+    d["quality_truth"]["issues"] = [i for i in d["quality_truth"]["issues"] if i["rowId"] not in drop_rows]
+    d["software_installations"] = [s for s in d["software_installations"] if s["assetId"] not in removed]
+    d["application_flows"] = [f for f in d["application_flows"] if f["sourceAssetId"] not in removed and f["targetAssetId"] not in removed]
+    d["line_port_bindings"] = [b for b in d["line_port_bindings"] if b["assetId"] not in removed and b["switchAssetId"] not in removed]
+    kept_eq = [e for e in d["equipment"] if e["controlAssetId"] not in removed]
+
+    # 새 자산의 설치 목록·통신·스위치 포트
+    sw_by = collections.defaultdict(list)
+    for s in d["software_installations"]:
+        sw_by[s["assetId"]].append(s)
+    flows_by = collections.defaultdict(list)
+    for f in d["application_flows"]:
+        flows_by[f["sourceAssetId"]].append(f)
+    bind_count = collections.Counter(b["switchAssetId"] for b in d["line_port_bindings"])
+    used_ports = collections.defaultdict(set)
+    for b in d["line_port_bindings"]:
+        used_ports[b["switchAssetId"]].add(b["port"])
+    sw_counter = collections.Counter({k: len(v) for k, v in sw_by.items()})
+    for a in created:
+        tmpl = a.pop("_template")
+        for s in list(sw_by.get(tmpl, [])):
+            sw_counter[a["id"]] += 1
+            d["software_installations"].append({**s, "id": f"{a['id']}-SW{sw_counter[a['id']]:02d}", "assetId": a["id"]})
+        for f in list(flows_by.get(tmpl, [])):
+            d["application_flows"].append({**f, "id": f"{code}-F{next_flow:05d}", "sourceAssetId": a["id"]})
+            next_flow += 1
+        switches = [x for x in assets if x["line"] == a["line"] and x["assetType"] == "산업용 스위치"]
+        if switches:
+            sw_asset = min(switches, key=lambda x: bind_count[x["id"]])
+            port = min(p for p in range(1, 15) if p not in used_ports[sw_asset["id"]])
+            used_ports[sw_asset["id"]].add(port)
+            bind_count[sw_asset["id"]] += 1
+            d["line_port_bindings"].append({"assetId": a["id"], "switchAssetId": sw_asset["id"], "port": port, "reservedUplinkPorts": [15, 16], "provenance": "synthetic_design_v2"})
+
+    # 공정·이중화 표시와 이름
+    def rename(a, new):
+        old = a["name"]
+        if old == new:
+            return
+        a["name"] = a["affectedEquipment"] = new
+        for rid, aid in r2a.items():
+            if aid != a["id"] or rid not in raw:
+                continue
+            p = raw[rid]["payload"]
+            for i in d["quality_truth"]["issues"]:
+                if i["rowId"] == rid and i["field"] == "설비명":
+                    suffix = i["reported"][len(i["expected"]):] if i["reported"].startswith(i["expected"]) else " / 확인필요"
+                    i["expected"], i["reported"] = new, new + suffix
+                    p["설비명"] = i["reported"]
+                    break
+            else:
+                if str(p.get("설비명", "")).strip() == old:
+                    p["설비명"] = new
+
+    for line in d["lines"]:
+        tp = line["lineType"]
+        kept = {k: sorted(v, key=lambda x: x["id"]) for k, v in line.pop("_kept").items()}
+        lid = line["id"]
+        plcs = kept.get("PLC", [])
+        n = len(plcs)
+        roles = {"가공": list(R.LINE_TYPES["가공"]["ops"]), "세척·검사": ["세척"] * (n - 1) + ["컨베이어"],
+                 "조립·포장": ["조립"] * max(n - 2, 0) + ["포장"] * min(n, 2)}[tp]
+        proc = {}
+        for k, a in enumerate(plcs):
+            proc[a["id"]] = roles[k]
+        inv_roles = {"가공": ["소재 투입", "디버링"], "세척·검사": ["세척"] * 99, "조립·포장": ["포장"] * 99}[tp]
+        for k, a in enumerate(kept.get("인버터", [])):
+            proc[a["id"]] = inv_roles[k] if k < len(inv_roles) else inv_roles[-1]
+        for a in kept.get("CNC 컨트롤러", []):
+            proc[a["id"]] = "절삭·밀링"
+        for a in kept.get("로봇 컨트롤러", []):
+            proc[a["id"]] = "절삭·밀링" if tp == "가공" else "조립"
+        for a in kept.get("비전 검사 PC", []):
+            proc[a["id"]] = "조립" if tp == "조립·포장" else "치수·비전 검사"
+        for a in kept.get("바코드 리더", []):
+            proc[a["id"]] = {"가공": "소재 투입", "세척·검사": "치수·비전 검사", "조립·포장": "포장"}[tp]
+        for kind in ("산업용 스위치", "HMI PC", "엣지 수집 PC", "안돈 단말"):
+            for a in kept.get(kind, []):
+                proc[a["id"]] = "라인 공용"
+        counters = collections.Counter()
+        kind_count = collections.Counter()
+        for kind, items in kept.items():
+            for a in items:
+                a["process"] = proc[a["id"]]
+                a["bottleneck"] = a["process"] == R.LINE_TYPES[tp]["bottleneck"]
+                group = [x for x in items if proc[x["id"]] == a["process"]]
+                a["redundancy"] = "parallel" if len(group) >= 2 else "none"
+                counters[(kind, a["process"])] += 1
+                k = counters[(kind, a["process"])]
+                if kind == "PLC":
+                    rename(a, f"{lid} {a['process']} PLC {k:02d}")
+                elif kind == "HMI PC":
+                    rename(a, f"{lid} 공용 HMI {k:02d}")
+                elif kind == "CNC 컨트롤러":
+                    rename(a, f"{lid} CNC {k:02d} 제어기")
+                elif kind in ("로봇 컨트롤러", "인버터", "비전 검사 PC", "산업용 스위치", "바코드 리더", "엣지 수집 PC", "안돈 단말"):
+                    kind_count[kind] += 1
+                    rename(a, f"{lid} {kind} {kind_count[kind]:02d}")
+                a["osManagement"] = "vendor_bundled" if kind in ("CNC 컨트롤러", "PLC", "로봇 컨트롤러", "인버터", "산업용 스위치", "바코드 리더") else "customer_managed"
+
+    # 새 자산의 대장 행(깨끗한 행으로 시작; 오류는 뒤 단계에서 일부만 생김)
+    template_collected = d["raw_asset_register"][0]["collectedAt"]
+    for a in created:
+        rid = f"{code}-RAW{next_raw:05d}"
+        next_raw += 1
+        d["raw_asset_register"].append({"id": rid, "source": "설비대장_최종.xlsx", "sourceRow": 0, "collectedAt": template_collected,
+                                        "payload": {"설비명": a["name"], "제조사": a["vendor"], "제품": a["product"], "버전": a["version"] or "", "IP": a["ip"] or "",
+                                                    "담당": a["ownerId"] or "", "라인": a["line"], "시리얼": a["serial"], "상태": a["lifecycle"], "확인일": a["lastVerifiedAt"] or ""}})
+        r2a[rid] = a["id"]
+
+    # 설비(물리 설비) 다시 만들기
+    by_ctrl = {e["controlAssetId"]: e for e in kept_eq}
+    equipment = []
+    for line in d["lines"]:
+        lid = line["id"]
+        cnt = collections.Counter()
+        for a in sorted((x for x in d["canonical_assets"] if x["line"] == lid and x["assetType"] in R.EQUIPMENT_TYPES), key=lambda x: x["id"]):
+            cnt[a["assetType"]] += 1
+            kind = a["assetType"]
+            label = {"CNC 컨트롤러": f"CNC 가공기 {cnt[kind]:02d}", "PLC": f"{a['process']} 셀 {cnt[kind]:02d}",
+                     "로봇 컨트롤러": f"로봇 {cnt[kind]:02d}", "비전 검사 PC": f"비전 검사 {cnt[kind]:02d}"}[kind]
+            e = by_ctrl.get(a["id"])
+            if e is None:
+                e = {"id": f"{code}-E{next_eq:05d}", "name": "", "siteId": a["siteId"], "lineId": lid, "controlAssetId": a["id"], "provenance": "synthetic_design_v2"}
+                next_eq += 1
+            e["name"] = f"{lid} {label}"
+            equipment.append(e)
+    d["equipment"] = equipment
+    # 가공 관측은 CNC 설비에만 붙인다(AI4I 값은 그대로, 연결만 다시 한다)
+    cnc_eq = [e["id"] for e in equipment if next(x for x in d["canonical_assets"] if x["id"] == e["controlAssetId"])["assetType"] == "CNC 컨트롤러"]
+    for i, o in enumerate(d["machine_observations"]):
+        o["equipmentId"] = cnc_eq[i % len(cnc_eq)]
+    stat["CNC 설비"] = len(cnc_eq)
+    return dict(stat)
+
+
+def assign_process_attributes(d, rng):
+    """공정(병목)·이중화·제조사로 중요도와 작업 제약을 정한다. 모든 설비가 같은 값이 되지 않게 한다."""
+    for a in d["canonical_assets"]:
+        if not a.get("process") or a["line"] == "공용":
+            continue
+        kind = a["assetType"]
+        table = R.CRIT_BY_TYPE.get(kind) or R.CRIT_BY_PROCESS[(a["bottleneck"], a["redundancy"] == "parallel")]
+        a["criticality"] = pick(rng, table)
+        a["criticalityBasis"] = "synthetic_assumption(bottleneck_redundancy)"
+        cons = []
+        if rng.random() < R.MAINT_WINDOW_CHANCE:
+            cons.append("maintenance_window")
+        chance = R.VENDOR_APPROVAL_CHANCE.get(kind, 0.0)
+        if kind == "PLC":
+            chance = R.PLC_VENDOR_APPROVAL.get(a["vendor"], 0.40)
+        if rng.random() < chance:
+            cons.append("vendor_approval")
+        if a["redundancy"] == "none" and rng.random() < (R.NO_DOWNTIME_SINGLE_BOTTLENECK if a["bottleneck"] else R.NO_DOWNTIME_SINGLE_OTHER):
+            cons.append("no_downtime")
+        a["patchConstraints"] = cons
+
+
+def add_line_flows(d, rng):
+    """라인 안의 통신(HMI·로봇·인버터·비전 → PLC, 엔지니어링 PC → PLC)을 추가한다. 포트는 제조사별 예시이며 실제 설정은 미검증."""
+    code = d["code"]
+    next_flow = _num(r"F(\d+)$", d["application_flows"], "id") + 1
+    assets = d["canonical_assets"]
+    by_line = {}
+    for a in assets:
+        by_line.setdefault(a["line"], []).append(a)
+    added = 0
+
+    def add(src, dst, port, purpose):
+        nonlocal next_flow, added
+        d["application_flows"].append({"id": f"{code}-F{next_flow:05d}", "sourceAssetId": src["id"], "targetAssetId": dst["id"], "protocol": "TCP",
+                                       "port": port, "purpose": purpose, "approval": "synthetic_baseline", "provenance": "synthetic_variation_v2",
+                                       "note": "포트는 제조사별로 널리 쓰는 예시이며 실제 설정·지원은 검증하지 않음"})
+        next_flow += 1
+        added += 1
+
+    first_plc = {}
+    for lid, items in by_line.items():
+        plcs = sorted((a for a in items if a["assetType"] == "PLC"), key=lambda x: x["id"])
+        if not plcs:
+            continue
+        first_plc[lid] = plcs[0]
+        for k, hmi in enumerate(sorted((a for a in items if a["assetType"] == "HMI PC"), key=lambda x: x["id"])):
+            for plc in plcs[:3]:
+                add(hmi, plc, R.PLC_PORT.get(plc["vendor"], 502), "공용 HMI의 PLC 상태 조회·조작")
+        for k, robot in enumerate(sorted((a for a in items if a["assetType"] == "로봇 컨트롤러"), key=lambda x: x["id"])):
+            plc = plcs[k % len(plcs)]
+            add(robot, plc, R.PLC_PORT.get(plc["vendor"], 502), "로봇과 PLC의 신호 교환")
+        for inv in (a for a in items if a["assetType"] == "인버터"):
+            same = [p for p in plcs if p["process"] == inv["process"]] or plcs
+            add(inv, rng.choice(same), 502, "인버터 운전 지령(Modbus TCP 예시)")
+        for vis in (a for a in items if a["assetType"] == "비전 검사 PC"):
+            plc = rng.choice([p for p in plcs if p["process"] == vis["process"]] or plcs)
+            add(vis, plc, R.PLC_PORT.get(plc["vendor"], 502), "비전 검사 결과 전달")
+    lines = list(first_plc)
+    for eng in (a for a in assets if a["assetType"] == "엔지니어링 PC"):
+        for lid in rng.sample(lines, min(3, len(lines))):
+            plc = first_plc[lid]
+            add(eng, plc, R.PLC_PORT.get(plc["vendor"], 502), "엔지니어링 PC의 PLC 프로그램 접속")
+    return added
+
+
+def assign_owners(d, rng):
+    """OT 라인 자산의 담당을 가공설비 보전조·후공정 보전조·협력사 상주로 나눈다(공용 OT는 기존 OT팀 그대로)."""
+    code = d["code"]
+    groups = {f"{code}-OT-MCH": "가상 가공설비 보전조", f"{code}-OT-FIN": "가상 후공정 보전조", f"{code}-VND": "가상 협력사 설비관리(현장 상주)"}
+    d["owners"] += [{"id": k, "name": v, "role": "member"} for k, v in groups.items() if k not in {o["id"] for o in d["owners"]}]
+    rows, flagged = _clean_rows(d)
+    raw = {r["id"]: r for r in d["raw_asset_register"]}
+    line_type = {l["id"]: l["lineType"] for l in d["lines"]}
+    changed = 0
+    for a in d["canonical_assets"]:
+        if a["line"] == "공용" or a["category"] != "OT" or not a.get("ownerId"):
+            continue
+        if "vendor_approval" in a["patchConstraints"] and rng.random() < 0.6:
+            new = f"{code}-VND"
+        else:
+            new = f"{code}-OT-MCH" if line_type[a["line"]] == "가공" else f"{code}-OT-FIN"
+        old = a["ownerId"]
+        if new == old:
+            continue
+        a["ownerId"] = new
+        _set_payload(raw, rows, a["id"], "담당", old, new)
+        for rid in rows.get(a["id"], []):
+            issue = flagged.get((rid, "담당"))
+            if issue:
+                issue["expected"] = new
+        changed += 1
+    return changed
+
+
+def randomize_identifiers(d, rng):
+    """시리얼은 순번이 아닌 불규칙한 값으로, 라인 자산의 IP는 짝수 순번이 아닌 무작위 호스트 번호로 바꾼다."""
+    code = d["code"]
+    rows, flagged = _clean_rows(d)
+    raw = {r["id"]: r for r in d["raw_asset_register"]}
+    used = {a["serial"] for a in d["canonical_assets"]}
+    ips = collections.defaultdict(set)
+    for a in d["canonical_assets"]:
+        if a.get("ip"):
+            ips[a["networkSegmentId"]].add(a["ip"])
+    seg = {s["id"]: s for s in d["network_segments"]}
+    n_serial = n_ip = 0
+    for a in d["canonical_assets"]:
+        old = a["serial"]
+        new = old
+        while new in used:
+            new = f"SIM-{code}-{rng.randrange(10 ** 6):06d}"
+        used.add(new)
+        if new != old:
+            a["serial"] = new
+            _set_payload(raw, rows, a["id"], "시리얼", old, new)
+            for rid in rows.get(a["id"], []):
+                issue = flagged.get((rid, "시리얼"))
+                if issue:
+                    issue["expected"] = new
+            n_serial += 1
+        if a["line"] != "공용" and a.get("ip") and not _blocked(rows, flagged, a["id"], ("IP",)):
+            prefix = seg[a["networkSegmentId"]]["cidr"].rsplit(".", 1)[0]
+            free = [h for h in range(10, 250) if f"{prefix}.{h}" not in ips[a["networkSegmentId"]]]
+            newip = f"{prefix}.{rng.choice(free)}"
+            ips[a["networkSegmentId"]].discard(a["ip"])
+            ips[a["networkSegmentId"]].add(newip)
+            _set_payload(raw, rows, a["id"], "IP", a["ip"], newip)
+            a["ip"] = newip
+            n_ip += 1
+    return n_serial, n_ip
 
 
 def pick(rng, options):
@@ -602,7 +955,24 @@ def add_server_software(d, rng, skip_ids):
     return dict(stat)
 
 
-def choose_version(pr, wanted_line, year, rng, end_year=None):
+def pick_by_date(line, year, rng, category):
+    """빌드 날짜가 있는 계열: OT는 도입 시점 빌드를 대부분 유지(약 25%만 점검 때 갱신), 사무(IT)는 최근 빌드 중심."""
+    dates = line.get("candidateDates")
+    if not dates:
+        return None
+    ordered = sorted(dates, key=lambda b: dates[b])
+    if category == "OT":
+        target = f"{year}-{rng.randint(1, 12):02d}-15"
+        base = max((b for b in ordered if dates[b] <= target), key=lambda b: dates[b], default=ordered[0])
+        if rng.random() < R.OT_UPDATED_CHANCE:
+            later = [b for b in ordered if dates[b] >= dates[base]]
+            return rng.choice(later)
+        return base
+    recent = [b for b in ordered if dates[b] >= R.IT_RECENT_FROM]
+    return rng.choice(recent) if recent and rng.random() < R.IT_RECENT_CHANCE else rng.choice(ordered)
+
+
+def choose_version(pr, wanted_line, year, rng, end_year=None, category="IT"):
     """제품 카탈로그에서 계열(line)과 버전 후보를 고른다. 계열 출시 연도 이전이면 고르지 않는다."""
     if end_year:
         year = min(year, end_year)
@@ -614,6 +984,9 @@ def choose_version(pr, wanted_line, year, rng, end_year=None):
         if not line:
             return None
     year = max(year, line["ga"] or 0)
+    dated = pick_by_date(line, year, rng, category)
+    if dated:
+        return line, dated, year
     cands = line["candidates"]
     idx = len(cands) - 1 if rng.random() < 0.2 else int(len(cands) * (rng.random() ** (1.4 if year >= 2023 else 0.8)))
     return line, cands[min(idx, len(cands) - 1)], year
@@ -641,7 +1014,7 @@ def apply_catalog_installs(d, catalog, research, rng, expected):
             continue
         pr = products[key]
         end_year = int(end["supportEndDate"][:4]) if end else None
-        chosen = choose_version(pr, s["version"], a.get("installedYear") or 2022, rng, end_year)
+        chosen = choose_version(pr, s["version"], a.get("installedYear") or 2022, rng, end_year, a.get("category", "IT"))
         if not chosen:
             continue
         line, version, _ = chosen
@@ -675,7 +1048,8 @@ def update_summary(d, as_of, hetero_ids, research_hits, extra_ids, catalog_hits=
     s = d["summary"]; q = d["quality_truth"]["issues"]
     s["assets"] = len(d["canonical_assets"])
     s["assetTypes"] = dict(collections.Counter(x["assetType"] for x in d["canonical_assets"]))
-    s["rawRows"] = len(d["raw_asset_register"]); s["issues"] = len(q)
+    s["equipment"] = len(d["equipment"]); s["cncMachines"] = sum(1 for a in d["canonical_assets"] if a["assetType"] == "CNC 컨트롤러")
+    s["lines"] = len(d["lines"]); s["rawRows"] = len(d["raw_asset_register"]); s["issues"] = len(q)
     s["issueTypes"] = dict(sorted(collections.Counter(i["issueType"] for i in q).items()))
     d["schemaVersion"] = "2.0-draft"
     d["v2"] = {"generator": "generate_v2.py", "seed": R.SEED, "asOfProgress": as_of, "heterogeneityAssets": hetero_ids,
@@ -695,6 +1069,11 @@ def raw_matches_truth(d):
             if r["payload"][field].strip().lower() != a[key].strip().lower():   # 공백·대소문자 변형은 원본의 의도된 잡음
                 return False
     return True
+
+
+def line_types_ok(d):
+    cnc = collections.Counter(a["line"] for a in d["canonical_assets"] if a["assetType"] == "CNC 컨트롤러")
+    return all((cnc[l["id"]] >= 6) if l["lineType"] == "가공" else (cnc[l["id"]] == 0) for l in d["lines"])
 
 
 def line_vendor_ok(d):
@@ -723,6 +1102,7 @@ def validate(d):
         "issue→raw 행": all(i["rowId"] in {r["id"] for r in d["raw_asset_register"]} for i in d["quality_truth"]["issues"]),
         "MES 예외→LOT/WO": all(e["lotId"] in lots and e["expectedWorkOrderId"] in wos for e in d["raw_mes_exceptions"]),
         "대장 제조사·제품 일치(오류 표시 없는 행)": raw_matches_truth(d),
+        "라인 유형별 구성(세척·조립에 CNC 없음, 가공 CNC 6대 이상)": line_types_ok(d),
         "라인당 CNC 제조사 2종 이하": line_vendor_ok(d),
         "기간 하루 이상": max(dt.datetime.fromisoformat(o["simulatedTimestamp"]) for o in d["machine_observations"]) - base > dt.timedelta(hours=24),
     }
@@ -733,15 +1113,21 @@ def build(code, src, out, research, catalog=None):
     d = json.loads((src / f"{code.lower()}_factory.json").read_text(encoding="utf-8"))
     original_obs = copy.deepcopy([o["original"] for o in d["machine_observations"]])
     rng = random.Random(f"{R.SEED}-{code}")
+    restructure_stat = restructure_lines(d)
     vary_attributes(d["canonical_assets"], rng)
     add_exposure_edr_reboot(d["canonical_assets"], d["lines"], rng)
     hetero_ids = apply_heterogeneity(d, rng)
     fleet_stat = diversify_fleet(d, rng, set(hetero_ids))
+    assign_process_attributes(d, rng)
+    fleet_stat.update(restructure_stat)
+    fleet_stat["담당 분리"] = assign_owners(d, rng)
+    fleet_stat["시리얼·IP 불규칙화"] = randomize_identifiers(d, rng)
     fleet_stat.update(add_server_software(d, rng, set(hetero_ids)))
     d["quality_truth"]["issues"] = [i for i in d["quality_truth"]["issues"] if not i.get("_drop")]
     hits = apply_research(d["canonical_assets"], d["software_installations"], research, rng)
     extra_ids = add_extra_assets(d, rng)
     diversify_flows(d, rng)
+    fleet_stat["라인 통신 추가"] = add_line_flows(d, rng)
     expected = []
     catalog_hits = apply_catalog(d["canonical_assets"], catalog, research, rng, expected)
     catalog_hits += apply_catalog_installs(d, catalog, research, rng, expected)

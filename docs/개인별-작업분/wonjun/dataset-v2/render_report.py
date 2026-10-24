@@ -17,11 +17,16 @@ def stats(d, exp):
     status = collections.Counter(m["status"] for x in cat for m in x["matches"])
     ports = collections.Counter(f["port"] for f in d["application_flows"])
     return {
+        "라인 유형(가공/세척·검사/조립·포장)": "/".join(str(sum(1 for l in d["lines"] if l.get("lineType") == k)) for k in ("가공", "세척·검사", "조립·포장")),
+        "라인당 자산 수(최소~최대)": f'{min(sum(1 for x in a if x["line"] == l["id"]) for l in d["lines"])}~{max(sum(1 for x in a if x["line"] == l["id"]) for l in d["lines"])}',
+        "서로 다른 라인 구성 수": len({tuple(sorted(collections.Counter(x["assetType"] for x in a if x["line"] == l["id"]).items())) for l in d["lines"]}),
+        "담당 종류 수": len({x.get("ownerId") for x in a if x.get("ownerId")}),
         "자산": len(a), "버전 배정 항목(자산+설치)": len(cat), "대장 행": len(d["raw_asset_register"]),
         "작업지시": len(d["mes_work_orders"]),
         "중요도 high/mid/low": "/".join(str(sum(1 for x in a if x["criticality"] == k)) for k in ("high", "mid", "low")),
         "되돌리기 가능/불가": f'{sum(1 for x in a if x["rollbackPossible"])}/{sum(1 for x in a if not x["rollbackPossible"])}',
         "노출 장비(remote·dmz·perimeter)": sum(1 for x in a if x.get("exposure") not in (None, "internal")),
+        "통신 흐름 전체": len(d["application_flows"]),
         "통신 4840(OPC UA)": f'{ports[4840]}/{len(d["application_flows"])}',
         "통신 102·5007": f'{ports[102]}·{ports[5007]}',
         "서버 설치 항목(OS·응용)": sum(1 for x in d["software_installations"] if x.get("role")),
